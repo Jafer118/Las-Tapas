@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>Las Tapas — Bestellen</title>
+<link rel="stylesheet" href="css/stijl.css">
+</head>
+<body>
+
+<header class="topbar">
+    <div class="titel">
+        <h1>Gilde DevOps</h1>
+        <span class="restaurant">Las Tapas — Bestellen</span>
+    </div>
+</header>
+
+<nav class="subnav">
+    <a href="bestellen.html" class="actief">Bestellen</a>
+    <a href="keuken.html">Keukenscherm</a>
+    <a href="bar.html">Barscherm</a>
+    <a href="kassa.html">Kassa</a>
+</nav>
+
+<main>
+    <div id="melding-plek"></div>
+
+    <div class="paneel" style="margin-bottom:20px;">
+        <h2>Stap 1 — Kies een tafel</h2>
+        <select id="tafel-select"></select>
+    </div>
+
+    <div class="paneel" style="margin-bottom:20px;">
+        <h2>Stap 2 — Keuken</h2>
+        <div id="keuken-lijst"></div>
+    </div>
+
+    <div class="paneel" style="margin-bottom:20px;">
+        <h2>Stap 2 — Bar</h2>
+        <div id="bar-lijst"></div>
+    </div>
+
+    <div class="mandje-samenvatting">
+        <div>
+            <strong id="mandje-aantal">0 items</strong> geselecteerd —
+            totaal: <strong id="mandje-totaal">€0,00</strong>
+        </div>
+        <button class="primair" id="btn-versturen">Bestelling versturen</button>
+    </div>
+</main>
+
+<footer class="privacy-footer">
+    Zie <a href="privacy.html" style="color:#a9bccb;">AVG &amp; Privacy</a> voor informatie over gegevensverwerking.
+</footer>
+
+<script src="js/gedeeld.js"></script>
+<script>
+let gerechten = [];
+let mandje = {}; // { gerecht_id: aantal }
+
+async function initialiseer() {
+    const tafelData = await apiGet('tafels_ophalen.php');
+    const select = document.getElementById('tafel-select');
+    tafelData.tafels.forEach(t => {
+        const optie = document.createElement('option');
+        optie.value = t.id;
+        optie.textContent = `${t.naam} (${t.status})`;
+        select.appendChild(optie);
+    });
+
+    const gerechtData = await apiGet('gerechten_ophalen.php');
+    gerechten = gerechtData.gerechten;
+
+    renderGerechten('keuken', 'keuken-lijst');
+    renderGerechten('bar', 'bar-lijst');
+}
+
+function renderGerechten(categorie, containerId) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = '';
+    gerechten.filter(g => g.categorie === categorie).forEach(g => {
+        const rij = document.createElement('div');
+        rij.className = 'gerecht-rij';
+        rij.innerHTML = `
+            <div class="naam-prijs">
+                <span>${g.naam}</span>
+                <span class="voorraad">${formatEuro(g.prijs)} — voorraad: ${g.voorraad}</span>
+            </div>
+            <div class="aantal-controls">
+                <button onclick="wijzigAantal(${g.id}, -1)">−</button>
+                <span class="aantal-waarde" id="aantal-${g.id}">0</span>
+                <button onclick="wijzigAantal(${g.id}, 1)">+</button>
+            </div>
+        `;
+        container.appendChild(rij);
+    });
+}
+
+function wijzigAantal(gerechtId, delta) {
+    const gerecht = gerechten.find(g => g.id === gerechtId);
+    const huidig = mandje[gerechtId] || 0;
+    const nieuw = Math.max(0, Math.min(gerecht.voorraad, huidig + delta));
+    mandje[gerechtId] = nieuw;
+    if (nieuw === 0) delete mandje[gerechtId];
+    document.getElementById(`aantal-${gerechtId}`).textContent = nieuw;
+    updateSamenvatting();
+}
+
+function updateSamenvatting() {
+    let aantalItems = 0;
+    let totaal = 0;
+    for (const [gerechtId, aantal] of Object.entries(mandje)) {
+        const gerecht = gerechten.find(g => g.id == gerechtId);
+        aantalItems += aantal;
+        totaal += aantal * gerecht.prijs;
+    }
+    document.getElementById('mandje-aantal').textContent = `${aantalItems} items`;
+    document.getElementById('mandje-totaal').textContent = formatEuro(totaal);
+}
+
+function toonMelding(tekst, type) {
+    const plek = document.getElementById('melding-plek');
+    plek.innerHTML = `<div class="melding ${type}">${tekst}</div>`;
+    setTimeout(() => { plek.innerHTML = ''; }, 4000);
+}
+
+document.getElementById('btn-versturen').addEventListener('click', async () => {
+    const tafelId = document.getElementById('tafel-select').value;
+    const regels = Object.entries(mandje).map(([gerecht_id, aantal]) => ({
+        gerecht_id: Number(gerecht_id),
+        aantal: Number(aantal),
+    }));
+
+    if (regels.length === 0) {
+        toonMelding('Selecteer eerst minimaal 1 gerecht of drankje.', 'fout');
+        return;
+    }
+
+    const resultaat = await apiPost('bestelling_toevoegen.php', { tafel_id: Number(tafelId), regels });
+
+    if (resultaat.succes) {
+        toonMelding('Bestelling succesvol verstuurd naar keuken/bar!', 'succes');
+        mandje = {};
+        const gerechtData = await apiGet('gerechten_ophalen.php'); // voorraad opnieuw ophalen
+        gerechten = gerechtData.gerechten;
+        renderGerechten('keuken', 'keuken-lijst');
+        renderGerechten('bar', 'bar-lijst');
+        updateSamenvatting();
+    } else {
+        toonMelding('Fout: ' + resultaat.fout, 'fout');
+    }
+});
+
+initialiseer();
+</script>
+</body>
+</html>

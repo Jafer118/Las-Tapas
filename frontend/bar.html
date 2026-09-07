@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>Las Tapas — Barscherm</title>
+<link rel="stylesheet" href="css/stijl.css">
+</head>
+<body>
+
+<header class="topbar">
+    <div class="titel">
+        <h1>Gilde DevOps</h1>
+        <span class="restaurant">Las Tapas — Barscherm</span>
+    </div>
+    <div class="status" id="klok"></div>
+</header>
+
+<nav class="subnav">
+    <a href="bestellen.html">Bestellen</a>
+    <a href="keuken.html">Keukenscherm</a>
+    <a href="bar.html" class="actief">Barscherm</a>
+    <a href="kassa.html">Kassa</a>
+</nav>
+
+<main>
+    <h2>Openstaande barbestellingen (live, ververst elke 5 sec.)</h2>
+    <div id="bestellingen-container" class="kolommen"></div>
+</main>
+
+<script src="js/gedeeld.js"></script>
+<script>
+async function laadBestellingen() {
+    const data = await apiGet('bar_bestellingen.php');
+    renderBestellingen(data.orderregels);
+}
+
+function renderBestellingen(regels) {
+    const container = document.getElementById('bestellingen-container');
+    container.innerHTML = '';
+
+    if (regels.length === 0) {
+        container.innerHTML = '<p style="color:#a9bccb;">Geen openstaande barbestellingen.</p>';
+        return;
+    }
+
+    const perTafel = {};
+    regels.forEach(r => {
+        if (!perTafel[r.tafel_id]) perTafel[r.tafel_id] = { naam: r.tafel_naam, regels: [] };
+        perTafel[r.tafel_id].regels.push(r);
+    });
+
+    Object.values(perTafel).forEach(tafel => {
+        const kaart = document.createElement('div');
+        kaart.className = 'paneel';
+
+        let regelsHtml = '';
+        tafel.regels.forEach(r => {
+            const badgeClass = r.status;
+            regelsHtml += `
+                <div class="kaart ${r.status === 'bereid' ? 'bezig' : ''}">
+                    <div class="kaart-header">
+                        <span>${r.gerecht_naam} (${r.aantal})</span>
+                        <span class="badge ${badgeClass}">${r.status.toUpperCase()}</span>
+                    </div>
+                    <div style="font-size:0.75rem;color:#5b6b78;margin-bottom:8px;">
+                        besteld om ${formatTijd(r.besteld_op)}
+                    </div>
+                    ${knoppenVoorStatus(r)}
+                </div>
+            `;
+        });
+
+        kaart.innerHTML = `<h2>${tafel.naam}</h2>${regelsHtml}`;
+        container.appendChild(kaart);
+    });
+}
+
+function knoppenVoorStatus(regel) {
+    if (regel.status === 'besteld') {
+        return `<button class="primair" onclick="zetStatus(${regel.orderregel_id}, 'bereid')">Start bereiding</button>`;
+    }
+    if (regel.status === 'bereid') {
+        return `<button class="secundair" onclick="zetStatus(${regel.orderregel_id}, 'geserveerd')">Markeer geserveerd</button>`;
+    }
+    return '';
+}
+
+async function zetStatus(orderregelId, nieuweStatus) {
+    await apiPost('status_bijwerken.php', { orderregel_id: orderregelId, status: nieuweStatus });
+    laadBestellingen();
+}
+
+function updateKlok() {
+    document.getElementById('klok').textContent = new Date().toLocaleTimeString('nl-NL');
+}
+
+setInterval(laadBestellingen, 5000);
+setInterval(updateKlok, 1000);
+laadBestellingen();
+updateKlok();
+</script>
+</body>
+</html>

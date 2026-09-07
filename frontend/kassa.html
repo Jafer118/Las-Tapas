@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>Las Tapas — Kassa</title>
+<link rel="stylesheet" href="css/stijl.css">
+</head>
+<body>
+
+<header class="topbar">
+    <div class="titel">
+        <h1>Gilde DevOps</h1>
+        <span class="restaurant">Las Tapas — Kassa</span>
+    </div>
+</header>
+
+<nav class="subnav">
+    <a href="bestellen.html">Bestellen</a>
+    <a href="keuken.html">Keukenscherm</a>
+    <a href="bar.html">Barscherm</a>
+    <a href="kassa.html" class="actief">Kassa</a>
+</nav>
+
+<main>
+    <div id="melding-plek"></div>
+
+    <div class="kolommen">
+        <div class="paneel">
+            <h2>Bezette tafels</h2>
+            <div id="tafel-lijst"></div>
+        </div>
+
+        <div class="paneel">
+            <h2 id="rekening-titel">Selecteer een tafel</h2>
+            <div id="rekening-details"></div>
+        </div>
+    </div>
+</main>
+
+<script src="js/gedeeld.js"></script>
+<script>
+let gekozenTafelId = null;
+
+async function laadTafels() {
+    const data = await apiGet('tafels_ophalen.php');
+    const container = document.getElementById('tafel-lijst');
+    container.innerHTML = '';
+
+    const bezetteTafels = data.tafels.filter(t => t.status === 'bezet');
+
+    if (bezetteTafels.length === 0) {
+        container.innerHTML = '<p style="color:#a9bccb;">Geen bezette tafels op dit moment.</p>';
+        return;
+    }
+
+    bezetteTafels.forEach(t => {
+        const kaart = document.createElement('div');
+        kaart.className = 'tafel-kaart';
+        kaart.style.cursor = 'pointer';
+        kaart.innerHTML = `
+            <span>${t.naam}</span>
+            <span class="status-bezet">bezet</span>
+        `;
+        kaart.addEventListener('click', () => toonRekening(t.id, t.naam));
+        container.appendChild(kaart);
+    });
+}
+
+async function toonRekening(tafelId, tafelNaam) {
+    gekozenTafelId = tafelId;
+    document.getElementById('rekening-titel').textContent = `Rekening — ${tafelNaam}`;
+
+    const data = await apiGet(`rekening.php?tafel_id=${tafelId}`);
+    const container = document.getElementById('rekening-details');
+
+    if (!data.bestelling_id) {
+        container.innerHTML = '<p>Geen openstaande bestelling voor deze tafel.</p>';
+        return;
+    }
+
+    let html = '';
+    data.orderregels.forEach(r => {
+        html += `
+            <div class="regel-item">
+                <span>${r.gerecht_naam} × ${r.aantal}</span>
+                <span>${formatEuro(r.subtotaal)}</span>
+            </div>
+        `;
+    });
+
+    html += `
+        <hr style="border-color:#24435e;margin:12px 0;">
+        <div class="regel-item" style="font-size:1.2rem;font-weight:700;">
+            <span>Totaal</span>
+            <span>${formatEuro(data.totaal)}</span>
+        </div>
+        <button class="primair" style="margin-top:16px;width:100%;" onclick="rekenAf()">
+            Afrekenen
+        </button>
+    `;
+
+    container.innerHTML = html;
+}
+
+async function rekenAf() {
+    if (!gekozenTafelId) return;
+
+    const resultaat = await apiPost('afrekenen.php', { tafel_id: gekozenTafelId });
+    const plek = document.getElementById('melding-plek');
+
+    if (resultaat.succes) {
+        plek.innerHTML = '<div class="melding succes">Tafel succesvol afgerekend. Tafel is weer vrij.</div>';
+        document.getElementById('rekening-titel').textContent = 'Selecteer een tafel';
+        document.getElementById('rekening-details').innerHTML = '';
+        gekozenTafelId = null;
+        laadTafels();
+    } else {
+        plek.innerHTML = `<div class="melding fout">Fout: ${resultaat.fout}</div>`;
+    }
+
+    setTimeout(() => { plek.innerHTML = ''; }, 4000);
+}
+
+setInterval(laadTafels, 8000);
+laadTafels();
+</script>
+</body>
+</html>
