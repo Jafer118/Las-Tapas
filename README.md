@@ -47,12 +47,7 @@ las-tapas/
 3. **Bestanden op de webserver zetten**
    Zet de hele map `las-tapas/` in de `htdocs`-map van XAMPP (of `www` bij MAMP).
 
-4. **Openen in de browser**
-   - Bestellen: `http://localhost/las-tapas/frontend/bestellen.html`
-   - Keukenscherm: `http://localhost/las-tapas/frontend/keuken.html`
-   - Barscherm: `http://localhost/las-tapas/frontend/bar.html`
-   - Kassa: `http://localhost/las-tapas/frontend/kassa.html`
-   - AVG/Privacy: `http://localhost/las-tapas/frontend/privacy.html`
+
 
 ## Werking in het kort
 
