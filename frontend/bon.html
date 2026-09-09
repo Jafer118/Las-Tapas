@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>Las Tapas — Bonnetje</title>
+<style>
+    :root {
+        --tekst: #1c1c1c;
+    }
+    * { box-sizing: border-box; }
+    body {
+        margin: 0;
+        background: #52586080;
+        background: #4b5563;
+        font-family: 'Courier New', Courier, monospace;
+        color: var(--tekst);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 24px 12px;
+    }
+
+    .bon {
+        background: white;
+        width: 320px;
+        max-width: 100%;
+        padding: 20px 18px;
+        box-shadow: 0 4px 18px rgba(0,0,0,0.25);
+    }
+
+    .bon-header {
+        text-align: center;
+        margin-bottom: 10px;
+    }
+    .bon-header .naam {
+        font-size: 1.2rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+    }
+    .bon-header .sub {
+        font-size: 0.75rem;
+        color: #555;
+    }
+
+    .streep {
+        border-top: 1px dashed #999;
+        margin: 10px 0;
+    }
+
+    .bon-meta {
+        font-size: 0.8rem;
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 4px;
+    }
+
+    .bon-regels {
+        margin: 10px 0;
+    }
+    .bon-regel {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.85rem;
+        padding: 3px 0;
+    }
+    .bon-regel .naam-aantal { flex: 1; padding-right: 8px; }
+
+    .bon-totaal {
+        display: flex;
+        justify-content: space-between;
+        font-weight: 700;
+        font-size: 1.05rem;
+        margin-top: 8px;
+    }
+
+    .bon-footer {
+        text-align: center;
+        font-size: 0.75rem;
+        color: #555;
+        margin-top: 16px;
+    }
+
+    .knoppen {
+        margin-top: 18px;
+        display: flex;
+        gap: 10px;
+    }
+    .knoppen button {
+        font-family: 'Segoe UI', Arial, sans-serif;
+        border: none;
+        border-radius: 6px;
+        padding: 9px 16px;
+        font-weight: 600;
+        cursor: pointer;
+        font-size: 0.85rem;
+    }
+    .knoppen .print-knop { background: #29b6a3; color: #04231d; }
+    .knoppen .terug-knop { background: #e7edf1; color: #16324a; }
+
+    .melding {
+        font-family: 'Segoe UI', Arial, sans-serif;
+        color: white;
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    /* Alleen de bon zelf tonen bij afdrukken/opslaan als PDF */
+    @media print {
+        body { background: white; padding: 0; }
+        .knoppen { display: none; }
+        .bon { box-shadow: none; width: 100%; }
+    }
+</style>
+</head>
+<body>
+
+<div class="bon" id="bon-inhoud" style="display:none;">
+    <div class="bon-header">
+        <div class="naam">Las Tapas</div>
+        <div class="sub">Restaurant &amp; Tapasbar</div>
+    </div>
+
+    <div class="streep"></div>
+
+    <div class="bon-meta">
+        <span id="bon-tafel"></span>
+        <span id="bon-datum"></span>
+    </div>
+    <div class="bon-meta">
+        <span>Bonnummer</span>
+        <span id="bon-nummer"></span>
+    </div>
+
+    <div class="streep"></div>
+
+    <div class="bon-regels" id="bon-regels"></div>
+
+    <div class="streep"></div>
+
+    <div class="bon-totaal">
+        <span>TOTAAL</span>
+        <span id="bon-totaal"></span>
+    </div>
+
+    <div class="bon-footer">
+        Bedankt voor uw bezoek aan Las Tapas!
+    </div>
+
+    <div class="knoppen">
+        <button class="print-knop" onclick="window.print()">Print / opslaan als PDF</button>
+        <button class="terug-knop" onclick="window.close()">Sluiten</button>
+    </div>
+</div>
+
+<div class="melding" id="melding" style="display:none;"></div>
+
+<script src="js/gedeeld.js"></script>
+<script>
+function toonMelding(tekst) {
+    document.getElementById('melding').style.display = 'block';
+    document.getElementById('melding').textContent = tekst;
+}
+
+async function laadBon() {
+    const params = new URLSearchParams(window.location.search);
+    const tafelId = params.get('tafel_id');
+    const bestellingId = params.get('bestelling_id');
+
+    if (!tafelId && !bestellingId) {
+        toonMelding('Geen tafel of bestelling opgegeven. Open dit bonnetje vanaf de kassapagina.');
+        return;
+    }
+
+    const query = bestellingId ? `bestelling_id=${bestellingId}` : `tafel_id=${tafelId}`;
+    const data = await apiGet(`bon_gegevens.php?${query}`);
+
+    if (!data.succes) {
+        toonMelding(data.fout || 'Geen bonnetje gevonden voor deze bestelling.');
+        return;
+    }
+
+    document.title = `Bon — ${data.tafel_naam}`;
+    document.getElementById('bon-tafel').textContent = data.tafel_naam;
+    document.getElementById('bon-datum').textContent = new Date(data.datum_tijd.replace(' ', 'T'))
+        .toLocaleString('nl-NL', { dateStyle: 'short', timeStyle: 'short' });
+    document.getElementById('bon-nummer').textContent = `#${String(data.bestelling_id).padStart(5, '0')}`;
+
+    const regelsContainer = document.getElementById('bon-regels');
+    regelsContainer.innerHTML = '';
+    data.orderregels.forEach(r => {
+        const rij = document.createElement('div');
+        rij.className = 'bon-regel';
+        rij.innerHTML = `
+            <span class="naam-aantal">${r.aantal}× ${r.gerecht_naam}</span>
+            <span>${formatEuro(r.subtotaal)}</span>
+        `;
+        regelsContainer.appendChild(rij);
+    });
+
+    document.getElementById('bon-totaal').textContent = formatEuro(data.totaal);
+    document.getElementById('bon-inhoud').style.display = 'block';
+}
+
+laadBon();
+</script>
+</body>
+</html>

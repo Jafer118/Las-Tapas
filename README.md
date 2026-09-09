@@ -67,6 +67,14 @@ las-tapas/
    de rekening opgebouwd uit de orderregels (`rekening.php`) en kan de
    bestelling worden afgesloten met **Afrekenen** (`afrekenen.php`), waarna de
    tafel weer vrij komt.
+4. **Bonnetje (PDF)**: op de kassapagina kun je altijd op **"Bonnetje bekijken
+   / printen"** klikken. Dit opent `bon.html` — een nette, smalle kassabon-lay-out.
+   Klik daar op **"Print / opslaan als PDF"**: in het printvenster van de
+   browser kies je als "printer" de optie **"Opslaan als PDF"** (Chrome/Edge)
+   of **"Microsoft Print to PDF"** (Windows), en je krijgt een echt
+   `.pdf`-bestand van het bonnetje. Dit werkt zowel vóór het afrekenen
+   (tussentijds bonnetje, via `bon.html?tafel_id=X`) als erna (definitief
+   bonnetje van een afgesloten rekening, via `bon.html?bestelling_id=X`).
 
 ## Mogelijke uitbreidingen (voor een hogere score / doorontwikkeling)
 

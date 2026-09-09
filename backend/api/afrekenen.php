@@ -39,7 +39,7 @@ try {
 
     $pdo->commit();
 
-    echo json_encode(['succes' => true]);
+    echo json_encode(['succes' => true, 'bestelling_id' => $bestelling['id']]);
 } catch (Exception $e) {
     $pdo->rollBack();
     http_response_code(400);

@@ -95,12 +95,21 @@ async function toonRekening(tafelId, tafelNaam) {
             <span>Totaal</span>
             <span>${formatEuro(data.totaal)}</span>
         </div>
-        <button class="primair" style="margin-top:16px;width:100%;" onclick="rekenAf()">
-            Afrekenen
-        </button>
+        <div style="display:flex; gap:10px; margin-top:16px;">
+            <button class="secundair" style="flex:1;" onclick="bekijkBon(${tafelId})">
+                Bonnetje bekijken / printen
+            </button>
+            <button class="primair" style="flex:1;" onclick="rekenAf()">
+                Afrekenen
+            </button>
+        </div>
     `;
 
     container.innerHTML = html;
+}
+
+function bekijkBon(tafelId) {
+    window.open(`bon.html?tafel_id=${tafelId}`, '_blank');
 }
 
 async function rekenAf() {
@@ -110,16 +119,22 @@ async function rekenAf() {
     const plek = document.getElementById('melding-plek');
 
     if (resultaat.succes) {
-        plek.innerHTML = '<div class="melding succes">Tafel succesvol afgerekend. Tafel is weer vrij.</div>';
+        plek.innerHTML = `
+            <div class="melding succes">
+                Tafel succesvol afgerekend. Tafel is weer vrij.
+                <button class="secundair" style="margin-left:12px;" onclick="window.open('bon.html?bestelling_id=${resultaat.bestelling_id}', '_blank')">
+                    Bonnetje bekijken / printen
+                </button>
+            </div>
+        `;
         document.getElementById('rekening-titel').textContent = 'Selecteer een tafel';
         document.getElementById('rekening-details').innerHTML = '';
         gekozenTafelId = null;
         laadTafels();
     } else {
         plek.innerHTML = `<div class="melding fout">Fout: ${resultaat.fout}</div>`;
+        setTimeout(() => { plek.innerHTML = ''; }, 4000);
     }
-
-    setTimeout(() => { plek.innerHTML = ''; }, 4000);
 }
 
 setInterval(laadTafels, 8000);
