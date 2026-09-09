@@ -1,0 +1,259 @@
+/* dashboard.css — stijl die het tablet-mockup (Tafel overzicht / Keuken / Bar) nabootst */
+
+:root {
+    --bg: #0d1e30;
+    --topbar-bg: #16293e;
+    --panel-bg: #16283c;
+    --panel-header: #16283c;
+    --card-white: #ffffff;
+    --card-white-text: #1c3145;
+    --card-mint: #d9f2e6;
+    --badge-bezig: #e2473c;
+    --badge-nieuw: #7b8b9b;
+    --accent-blue: #3fa0ea;
+    --accent-green: #33c98d;
+    --text-light: #f2f6f9;
+    --text-muted: #8fa3b7;
+    --border: #22374d;
+    font-size: 16px;
+}
+
+* { box-sizing: border-box; }
+
+body.dashboard {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text-light);
+    font-family: 'Segoe UI', Arial, sans-serif;
+    padding-bottom: 80px; /* ruimte voor vaste onderbalk */
+}
+
+/* ---------- Topbar ---------- */
+.db-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--topbar-bg);
+    padding: 14px 28px;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.db-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.db-brand .logo-icoon {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: var(--accent-blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.db-brand .logo-icoon svg { width: 19px; height: 19px; color: #0d1e30; }
+
+.db-brand .brand-tekst {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+    font-weight: 700;
+    font-size: 1rem;
+}
+.db-brand .brand-tekst .sub { font-weight: 500; color: var(--text-muted); font-size: 0.85rem; }
+
+.db-restaurant {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.15;
+}
+.db-restaurant .label { font-size: 0.8rem; color: var(--text-muted); }
+.db-restaurant .naam { font-size: 1.3rem; font-weight: 700; }
+
+.db-status {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    align-items: flex-start;
+}
+.db-status .rij {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.db-status .rij b { color: var(--text-light); }
+.db-status svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent-green);
+    display: inline-block;
+}
+
+.db-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: var(--card-white);
+    color: var(--card-white-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+}
+
+/* ---------- Subheader ---------- */
+.db-subheader {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 28px 0 28px;
+    color: var(--text-light);
+    font-weight: 600;
+}
+
+/* ---------- Kolommen ---------- */
+.db-kolommen {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    padding: 16px 28px 28px 28px;
+    align-items: start;
+}
+@media (max-width: 980px) {
+    .db-kolommen { grid-template-columns: 1fr; }
+}
+
+.db-paneel {
+    background: var(--panel-bg);
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 200px;
+}
+
+.db-paneel-titel {
+    padding: 14px 16px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+}
+
+.db-paneel-inhoud {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* ---------- Witte kaart (tafel) ---------- */
+.db-tafelkaart {
+    background: var(--card-white);
+    color: var(--card-white-text);
+    border-radius: 8px;
+    padding: 12px 14px;
+}
+.db-tafelkaart .naam { font-weight: 700; font-size: 1rem; }
+.db-tafelkaart .actief-label { color: var(--accent-green); font-weight: 600; font-size: 0.85rem; }
+.db-tafelkaart .regel {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 8px;
+    font-size: 0.9rem;
+}
+
+.db-geen-tafels {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    padding: 8px 4px;
+}
+
+/* ---------- Footer van tafel-paneel ---------- */
+.db-paneel-footer {
+    margin-top: auto;
+    background: var(--panel-header);
+    border-top: 1px solid var(--border);
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    font-weight: 700;
+}
+
+/* ---------- Order-kaart (keuken/bar) ---------- */
+.db-orderkaart {
+    background: var(--card-mint);
+    color: var(--card-white-text);
+    border-radius: 8px;
+    padding: 10px 12px;
+}
+.db-orderkaart .kop {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin-bottom: 6px;
+}
+.db-orderkaart .kop .tijd { font-weight: 500; color: #3f5468; font-size: 0.78rem; }
+
+.db-orderregel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 3px 0;
+    font-size: 0.9rem;
+}
+
+.db-badge {
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 2px 9px;
+    border-radius: 10px;
+    color: white;
+    letter-spacing: 0.03em;
+}
+.db-badge.bezig { background: var(--badge-bezig); }
+.db-badge.nieuw { background: var(--badge-nieuw); }
+
+/* ---------- Onderste navigatiebalk ---------- */
+.db-navbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--topbar-bg);
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 0 8px 0;
+}
+
+.db-navitem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    text-decoration: none;
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    padding-bottom: 4px;
+    border-bottom: 3px solid transparent;
+}
+.db-navitem .icoon svg { width: 20px; height: 20px; }
+.db-navitem.actief { border-bottom-color: var(--text-light); color: var(--text-light); }
+.db-navitem.blauw .icoon svg { color: var(--accent-blue); }
+
+.db-subheader svg { width: 17px; height: 17px; vertical-align: -3px; margin-right: 4px; color: var(--text-muted); }
+
+.voorraad-laag svg { width: 14px; height: 14px; vertical-align: -2px; margin-right: 4px; }

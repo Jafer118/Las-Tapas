@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>Las Tapas — Voorraad</title>
+<link rel="stylesheet" href="css/dashboard.css">
+<style>
+    .voorraad-tabel { width: 100%; border-collapse: collapse; background: var(--card-white); color: var(--card-white-text); border-radius: 8px; overflow: hidden; }
+    .voorraad-tabel th, .voorraad-tabel td { padding: 10px 14px; text-align: left; font-size: 0.9rem; }
+    .voorraad-tabel th { background: #eef2f5; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.03em; }
+    .voorraad-tabel tr:nth-child(even) { background: #f7f9fb; }
+    .voorraad-laag { color: var(--badge-bezig); font-weight: 700; }
+    .db-content-paneel { padding: 16px 28px 28px 28px; }
+</style>
+</head>
+<body class="dashboard">
+
+<header class="db-topbar">
+    <div class="db-brand">
+        <div class="logo-icoon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06A2 2 0 1 1 7.04 4.29l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.32 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </div>
+        <div class="brand-tekst">
+            <span>Gilde</span>
+            <span class="sub">DevOps</span>
+        </div>
+    </div>
+    <div class="db-restaurant">
+        <span class="label">Restaurant</span>
+        <span class="naam">Las Tapas</span>
+    </div>
+    <div class="db-status">
+        <span class="rij"><span class="status-dot"></span> Systeem <b>Online</b></span>
+        <span class="rij">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.5a16 16 0 0 1 20 0"/><path d="M5 12a11 11 0 0 1 14 0"/><path d="M8.5 15.5a6 6 0 0 1 7 0"/><circle cx="12" cy="19" r="1" fill="currentColor" stroke="none"/></svg>
+            WiFi: <b>Connected</b>
+        </span>
+        <span class="rij">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="17" height="10" rx="2"/><path d="M22 10.5v3"/><rect x="4" y="9" width="11" height="6" fill="currentColor" stroke="none"/></svg>
+            Batterij <b>85%</b>
+        </span>
+    </div>
+    <div class="db-avatar">S&amp;M</div>
+</header>
+
+<div class="db-subheader">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8 12 3 3 8l9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg>
+    <span>Voorraad gerechten &amp; drankjes</span>
+</div>
+
+<div class="db-content-paneel">
+    <table class="voorraad-tabel">
+        <thead>
+            <tr><th>Naam</th><th>Categorie</th><th>Prijs</th><th>Voorraad</th></tr>
+        </thead>
+        <tbody id="voorraad-body">
+            <tr><td colspan="4">Laden…</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<nav class="db-navbar">
+    <a href="overzicht.html" class="db-navitem blauw"><span class="icoon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9 21v-6h6v6"/></svg></span><span>Home</span></a>
+    <a href="bestellen.html" class="db-navitem"><span class="icoon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/><path d="M9 10h6M9 13h6M9 16h4"/></svg></span><span>Bestellingen</span></a>
+    <a href="overzicht.html" class="db-navitem"><span class="icoon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="4" rx="1"/><path d="M5 10v8M19 10v8"/></svg></span><span>Tafels</span></a>
+    <a href="voorraad.html" class="db-navitem actief"><span class="icoon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8 12 3 3 8l9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg></span><span>Voorraad</span></a>
+    <a href="instellingen.html" class="db-navitem"><span class="icoon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06A2 2 0 1 1 7.04 4.29l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.32 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span>Instellingen</span></a>
+</nav>
+
+<script src="js/gedeeld.js"></script>
+<script>
+async function laadVoorraad() {
+    const data = await apiGet('gerechten_ophalen.php');
+    const body = document.getElementById('voorraad-body');
+    body.innerHTML = '';
+
+    data.gerechten.forEach(g => {
+        const laag = g.voorraad <= 5;
+        const rij = document.createElement('tr');
+        rij.innerHTML = `
+            <td>${g.naam}</td>
+            <td>${g.categorie}</td>
+            <td>${formatEuro(g.prijs)}</td>
+            <td class="${laag ? 'voorraad-laag' : ''}">${g.voorraad}${laag ? ' <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 20h20L12 3z"/><path d="M12 9v5"/><circle cx="12" cy="17" r="0.6" fill="currentColor" stroke="none"/></svg> laag' : ''}</td>
+        `;
+        body.appendChild(rij);
+    });
+}
+
+laadVoorraad();
+setInterval(laadVoorraad, 10000);
+</script>
+</body>
+</html>
