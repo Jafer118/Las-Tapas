@@ -1,3 +1,5 @@
+    $stmt = $pdo->prepare("SELECT id FROM bestellingen WHERE tafel_id = ? AND status = 'open' LIMIT 1");
+    echo json_encode(['succes' => true, 'bestelling_id' => $bestelling['id']]);
 <?php
 /**
  * POST api/afrekenen.php

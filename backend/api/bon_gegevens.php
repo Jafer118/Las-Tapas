@@ -1,3 +1,5 @@
+    'SELECT b.id, b.aangemaakt_op, b.status, t.naam AS tafel_naam
+    "SELECT b.id, b.aangemaakt_op, b.status, t.naam AS tafel_naam
 <?php
 /**
  * GET api/bon_gegevens.php?tafel_id=10
