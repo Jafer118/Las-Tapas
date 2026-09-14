@@ -33,6 +33,7 @@ CREATE TABLE IF NOT EXISTS gerechten (
 CREATE TABLE IF NOT EXISTS bestellingen (
     id INT AUTO_INCREMENT PRIMARY KEY,
     tafel_id INT NOT NULL,
+    klant_email VARCHAR(255) NULL,
     aangemaakt_op DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     status ENUM('open', 'afgerekend') NOT NULL DEFAULT 'open',
     FOREIGN KEY (tafel_id) REFERENCES tafels(id)
@@ -81,3 +82,12 @@ INSERT INTO gerechten (naam, categorie, prijs, voorraad) VALUES
     ('Rioja (glas)', 'bar', 5.00, 80),
     ('Cerveza', 'bar', 3.50, 120),
     ('Water (plat/bruis)', 'bar', 2.50, 150);
+
+-- =====================================================================
+-- MIGRATIE (alleen nodig als je de database al eerder had aangemaakt
+-- ZONDER de kolom klant_email — voer dan alleen onderstaande regel uit
+-- in phpMyAdmin > SQL-tabblad. Heb je de database nu voor het eerst
+-- geïmporteerd? Dan hoef je dit NIET los uit te voeren, want de kolom
+-- staat dan al in de CREATE TABLE hierboven.
+-- =====================================================================
+-- ALTER TABLE bestellingen ADD COLUMN klant_email VARCHAR(255) NULL AFTER tafel_id;

@@ -95,10 +95,14 @@ async function toonRekening(tafelId, tafelNaam) {
             <span>Totaal</span>
             <span>${formatEuro(data.totaal)}</span>
         </div>
-        <div style="display:flex; gap:10px; margin-top:16px;">
+        <div style="display:flex; gap:10px; margin-top:16px; flex-wrap:wrap;">
             <button class="secundair" style="flex:1;" onclick="bekijkBon(${tafelId})">
                 Bonnetje bekijken / printen
             </button>
+            <a class="secundair" style="flex:1; text-align:center; padding:6px 12px; border-radius:6px; text-decoration:none; display:inline-block;"
+               href="../backend/api/bon_pdf.php?tafel_id=${tafelId}" target="_blank">
+                PDF downloaden
+            </a>
             <button class="primair" style="flex:1;" onclick="rekenAf()">
                 Afrekenen
             </button>
@@ -119,12 +123,23 @@ async function rekenAf() {
     const plek = document.getElementById('melding-plek');
 
     if (resultaat.succes) {
+        const bestellingId = resultaat.bestelling_id;
         plek.innerHTML = `
             <div class="melding succes">
-                Tafel succesvol afgerekend. Tafel is weer vrij.
-                <button class="secundair" style="margin-left:12px;" onclick="window.open('bon.html?bestelling_id=${resultaat.bestelling_id}', '_blank')">
-                    Bonnetje bekijken / printen
-                </button>
+                <div style="margin-bottom:10px;">Tafel succesvol afgerekend. Tafel is weer vrij.</div>
+                <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+                    <a class="secundair" style="padding:6px 12px; border-radius:6px; text-decoration:none;"
+                       href="bon.html?bestelling_id=${bestellingId}" target="_blank">
+                        Bonnetje bekijken
+                    </a>
+                    <a class="secundair" style="padding:6px 12px; border-radius:6px; text-decoration:none;"
+                       href="../backend/api/bon_pdf.php?bestelling_id=${bestellingId}" target="_blank">
+                        PDF downloaden
+                    </a>
+                    <input type="email" id="mail-naar-klant" placeholder="e-mailadres klant" style="padding:6px 8px; border-radius:6px; border:1px solid #ccc;">
+                    <button class="primair" onclick="verstuurBonPerMail(${bestellingId})">Bon e-mailen</button>
+                </div>
+                <div id="mail-status" style="margin-top:8px; font-size:0.85rem;"></div>
             </div>
         `;
         document.getElementById('rekening-titel').textContent = 'Selecteer een tafel';
@@ -134,6 +149,27 @@ async function rekenAf() {
     } else {
         plek.innerHTML = `<div class="melding fout">Fout: ${resultaat.fout}</div>`;
         setTimeout(() => { plek.innerHTML = ''; }, 4000);
+    }
+}
+
+async function verstuurBonPerMail(bestellingId) {
+    const emailVeld = document.getElementById('mail-naar-klant');
+    const statusVeld = document.getElementById('mail-status');
+    const email = emailVeld.value.trim();
+
+    statusVeld.textContent = 'Bezig met versturen…';
+
+    const resultaat = await apiPost('verstuur_bon_email.php', {
+        bestelling_id: bestellingId,
+        email: email, // mag leeg zijn: dan wordt het e-mailadres van bij het bestellen gebruikt
+    });
+
+    if (resultaat.succes) {
+        statusVeld.style.color = '#9df0c4';
+        statusVeld.textContent = resultaat.bericht;
+    } else {
+        statusVeld.style.color = '#ffb4b4';
+        statusVeld.textContent = 'Fout: ' + resultaat.fout;
     }
 }
 

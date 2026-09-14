@@ -148,6 +148,7 @@
 
     <div class="knoppen">
         <button class="print-knop" onclick="window.print()">Print / opslaan als PDF</button>
+        <button class="terug-knop" id="download-pdf-knop" onclick="downloadPdf()">PDF downloaden</button>
         <button class="terug-knop" onclick="window.close()">Sluiten</button>
     </div>
 </div>
@@ -161,6 +162,8 @@ function toonMelding(tekst) {
     document.getElementById('melding').textContent = tekst;
 }
 
+let huidigeQuery = '';
+
 async function laadBon() {
     const params = new URLSearchParams(window.location.search);
     const tafelId = params.get('tafel_id');
@@ -171,8 +174,8 @@ async function laadBon() {
         return;
     }
 
-    const query = bestellingId ? `bestelling_id=${bestellingId}` : `tafel_id=${tafelId}`;
-    const data = await apiGet(`bon_gegevens.php?${query}`);
+    huidigeQuery = bestellingId ? `bestelling_id=${bestellingId}` : `tafel_id=${tafelId}`;
+    const data = await apiGet(`bon_gegevens.php?${huidigeQuery}`);
 
     if (!data.succes) {
         toonMelding(data.fout || 'Geen bonnetje gevonden voor deze bestelling.');
@@ -199,6 +202,10 @@ async function laadBon() {
 
     document.getElementById('bon-totaal').textContent = formatEuro(data.totaal);
     document.getElementById('bon-inhoud').style.display = 'block';
+}
+
+function downloadPdf() {
+    window.open(`${API_BASIS}/bon_pdf.php?${huidigeQuery}`, '_blank');
 }
 
 laadBon();

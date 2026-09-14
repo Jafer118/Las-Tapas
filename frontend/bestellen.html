@@ -31,6 +31,14 @@
     </div>
 
     <div class="paneel" style="margin-bottom:20px;">
+        <h2>E-mailadres klant (optioneel)</h2>
+        <p style="color:#a9bccb; font-size:0.85rem; margin-top:-4px;">
+            Invullen als de klant het bonnetje per e-mail wil ontvangen. Mag ook leeg blijven.
+        </p>
+        <input type="email" id="klant-email" placeholder="naam@voorbeeld.nl" style="width:100%; max-width:320px;">
+    </div>
+
+    <div class="paneel" style="margin-bottom:20px;">
         <h2>Stap 2 — Keuken</h2>
         <div id="keuken-lijst"></div>
     </div>
@@ -126,6 +134,7 @@ function toonMelding(tekst, type) {
 
 document.getElementById('btn-versturen').addEventListener('click', async () => {
     const tafelId = document.getElementById('tafel-select').value;
+    const klantEmail = document.getElementById('klant-email').value.trim();
     const regels = Object.entries(mandje).map(([gerecht_id, aantal]) => ({
         gerecht_id: Number(gerecht_id),
         aantal: Number(aantal),
@@ -136,7 +145,11 @@ document.getElementById('btn-versturen').addEventListener('click', async () => {
         return;
     }
 
-    const resultaat = await apiPost('bestelling_toevoegen.php', { tafel_id: Number(tafelId), regels });
+    const resultaat = await apiPost('bestelling_toevoegen.php', {
+        tafel_id: Number(tafelId),
+        regels,
+        klant_email: klantEmail,
+    });
 
     if (resultaat.succes) {
         toonMelding('Bestelling succesvol verstuurd naar keuken/bar!', 'succes');

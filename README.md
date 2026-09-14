@@ -76,6 +76,37 @@ las-tapas/
    (tussentijds bonnetje, via `bon.html?tafel_id=X`) als erna (definitief
    bonnetje van een afgesloten rekening, via `bon.html?bestelling_id=X`).
 
+5. **Echte PDF-download (zonder printdialoog)**: naast de printknop is er nu
+   ook een knop **"PDF downloaden"**. Deze roept `backend/api/bon_pdf.php`
+   aan, dat met pure PHP (geen externe library!) een écht `.pdf`-bestand
+   genereert en direct teruggeeft als download.
+
+6. **Bonnetje e-mailen naar de klant**:
+   - Bij het **bestellen** (`bestellen.html`) kan de klant optioneel een
+     e-mailadres invullen — dit wordt opgeslagen bij de bestelling.
+   - Na het **afrekenen** (`kassa.html`) verschijnt een knop **"Bon
+     e-mailen"**. Is er al een e-mailadres bij het bestellen ingevuld, dan
+     kun je het veld leeg laten; vul je zelf iets in, dan wordt dát gebruikt
+     (en meteen opgeslagen).
+   - Dit gaat via `backend/api/verstuur_bon_email.php`, dat de PDF genereert
+     en als bijlage verstuurt met PHP's ingebouwde `mail()`-functie.
+
+   **Let op — mailserver nodig voor écht verzenden:** een kale
+   XAMPP/MAMP-installatie heeft standaard **geen** mailserver
+   geconfigureerd. De code werkt functioneel correct (en `mail()` geeft
+   "gelukt" terug), maar de e-mail komt dan nergens echt aan. Voor een
+   werkende demo/opdracht is dat meestal geen probleem — je kunt in je
+   verslag uitleggen hoe het werkt. Wil je dat het écht e-mails verstuurt,
+   dan heb je twee opties:
+   - **Lokaal testen**: installeer een gratis SMTP-debugtool zoals
+     [Mailtrap](https://mailtrap.io) of [Mailpit](https://github.com/axllent/mailpit),
+     en stel in `php.ini` de `sendmail_path` in om daarnaartoe te sturen.
+   - **Echt verzenden**: gebruik een SMTP-provider (bijv. Gmail SMTP,
+     SendGrid, of het mailaccount van school/opdrachtgever) via een
+     bibliotheek als PHPMailer. Dat vervangt dan alleen het verzendgedeelte
+     onderin `verstuur_bon_email.php` — de PDF-generatie en e-mailopbouw
+     blijven hetzelfde.
+
 ## Mogelijke uitbreidingen (voor een hogere score / doorontwikkeling)
 
 - Inloggen voor personeel (authenticatie/autorisatie), zodat niet iedereen bij

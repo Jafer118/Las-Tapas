@@ -32,6 +32,13 @@ if (!$input || empty($input['tafel_id']) || empty($input['regels']) || !is_array
 
 $tafelId = (int) $input['tafel_id'];
 $regels  = $input['regels'];
+$klantEmail = isset($input['klant_email']) ? trim($input['klant_email']) : '';
+
+if ($klantEmail !== '' && !filter_var($klantEmail, FILTER_VALIDATE_EMAIL)) {
+    http_response_code(400);
+    echo json_encode(['succes' => false, 'fout' => 'Het opgegeven e-mailadres is ongeldig.']);
+    exit;
+}
 
 try {
     $pdo->beginTransaction();
@@ -50,9 +57,14 @@ try {
 
     if ($bestelling) {
         $bestellingId = $bestelling['id'];
+        // Als er nu alsnog een e-mailadres wordt meegegeven, werk het bij
+        if ($klantEmail !== '') {
+            $stmt = $pdo->prepare('UPDATE bestellingen SET klant_email = ? WHERE id = ?');
+            $stmt->execute([$klantEmail, $bestellingId]);
+        }
     } else {
-        $stmt = $pdo->prepare('INSERT INTO bestellingen (tafel_id, status) VALUES (?, "open")');
-        $stmt->execute([$tafelId]);
+        $stmt = $pdo->prepare('INSERT INTO bestellingen (tafel_id, klant_email, status) VALUES (?, ?, "open")');
+        $stmt->execute([$tafelId, $klantEmail !== '' ? $klantEmail : null]);
         $bestellingId = $pdo->lastInsertId();
     }
 
