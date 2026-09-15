@@ -81,7 +81,7 @@ las-tapas/
    aan, dat met pure PHP (geen externe library!) een écht `.pdf`-bestand
    genereert en direct teruggeeft als download.
 
-6. **Bonnetje e-mailen naar de klant**:
+6. **Bonnetje e-mailen naar de klant** (echt werkend, via SMTP):
    - Bij het **bestellen** (`bestellen.html`) kan de klant optioneel een
      e-mailadres invullen — dit wordt opgeslagen bij de bestelling.
    - Na het **afrekenen** (`kassa.html`) verschijnt een knop **"Bon
@@ -89,23 +89,24 @@ las-tapas/
      kun je het veld leeg laten; vul je zelf iets in, dan wordt dát gebruikt
      (en meteen opgeslagen).
    - Dit gaat via `backend/api/verstuur_bon_email.php`, dat de PDF genereert
-     en als bijlage verstuurt met PHP's ingebouwde `mail()`-functie.
+     en zelf, met een eigen kleine SMTP-client (geen externe library), inlogt
+     bij een mailserver en de e-mail met PDF-bijlage verstuurt.
 
-   **Let op — mailserver nodig voor écht verzenden:** een kale
-   XAMPP/MAMP-installatie heeft standaard **geen** mailserver
-   geconfigureerd. De code werkt functioneel correct (en `mail()` geeft
-   "gelukt" terug), maar de e-mail komt dan nergens echt aan. Voor een
-   werkende demo/opdracht is dat meestal geen probleem — je kunt in je
-   verslag uitleggen hoe het werkt. Wil je dat het écht e-mails verstuurt,
-   dan heb je twee opties:
-   - **Lokaal testen**: installeer een gratis SMTP-debugtool zoals
-     [Mailtrap](https://mailtrap.io) of [Mailpit](https://github.com/axllent/mailpit),
-     en stel in `php.ini` de `sendmail_path` in om daarnaartoe te sturen.
-   - **Echt verzenden**: gebruik een SMTP-provider (bijv. Gmail SMTP,
-     SendGrid, of het mailaccount van school/opdrachtgever) via een
-     bibliotheek als PHPMailer. Dat vervangt dan alleen het verzendgedeelte
-     onderin `verstuur_bon_email.php` — de PDF-generatie en e-mailopbouw
-     blijven hetzelfde.
+   **Instellen (eenmalig, verplicht om te testen):** open
+   `backend/mail_config.php` en vul je eigen gegevens in. Met Gmail:
+   1. Zorg dat 2-staps-verificatie aanstaat op je Google-account.
+   2. Ga naar <https://myaccount.google.com/apppasswords> en maak een nieuw
+      app-wachtwoord aan (kies bv. "Mail" / "Overig").
+   3. Kopieer het gegenereerde wachtwoord (16 tekens) naar `wachtwoord` in
+      `mail_config.php`. **Niet** je normale Google-wachtwoord gebruiken —
+      dat werkt niet en is bovendien onveilig.
+   4. Vul je eigen Gmail-adres in bij `gebruiker` en `van_email`.
+   5. Test door op de kassapagina een bestelling af te rekenen en de bon
+      naar je eigen adres te mailen.
+
+   Gebruik je liever een ander mailaccount (Outlook, school-mailaccount,
+   etc.)? Pas dan `host`/`port` in `mail_config.php` aan naar de SMTP-
+   gegevens van die provider.
 
 ## Mogelijke uitbreidingen (voor een hogere score / doorontwikkeling)
 

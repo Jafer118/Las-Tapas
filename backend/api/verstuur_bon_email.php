@@ -5,22 +5,18 @@
  *
  * "email" is optioneel: als je hem niet meestuurt, wordt het e-mailadres
  * gebruikt dat bij het bestellen is opgeslagen (klant_email). Geef je wel
- * een e-mailadres mee, dan wordt dat gebruikt (en niet opgeslagen).
+ * een e-mailadres mee, dan wordt dat gebruikt (en meteen opgeslagen).
  *
- * BELANGRIJK — lees dit als de e-mail niet aankomt:
- * Dit script gebruikt PHP's ingebouwde mail()-functie. Op een kale
- * XAMPP/MAMP-installatie is er standaard GEEN mailserver geconfigureerd,
- * dus mail() geeft dan wel "verstuurd" terug, maar de e-mail wordt
- * nergens echt afgeleverd. Voor een werkende opdracht/demo is dat vaak
- * geen probleem (de code is functioneel correct), maar voor ECHTE
- * verzending moet je op je server/lokale machine een mailserver of
- * SMTP-relay instellen (zie de README voor opties).
+ * Verstuurt écht via SMTP (zie backend/mail_config.php voor de
+ * serverinstellingen) — dus vul dat bestand in met jouw eigen
+ * mailaccountgegevens voordat je dit test.
  */
 
 header('Content-Type: application/json');
 require_once __DIR__ . '/../db.php';
 require_once __DIR__ . '/../lib/bon_data.php';
 require_once __DIR__ . '/../lib/pdf_bon.php';
+require_once __DIR__ . '/../lib/smtp_mailer.php';
 
 $input = json_decode(file_get_contents('php://input'), true);
 
@@ -55,46 +51,49 @@ if ($emailOverride !== '') {
     $stmt->execute([$emailOverride, $bestellingId]);
 }
 
+// Mailserverinstellingen inladen
+$mailConfigPad = __DIR__ . '/../mail_config.php';
+if (!file_exists($mailConfigPad)) {
+    http_response_code(500);
+    echo json_encode(['succes' => false, 'fout' => 'backend/mail_config.php ontbreekt.']);
+    exit;
+}
+$mailConfig = require $mailConfigPad;
+
+if ($mailConfig['gebruiker'] === 'jouw-adres@gmail.com') {
+    http_response_code(500);
+    echo json_encode([
+        'succes' => false,
+        'fout' => 'Mailserver is nog niet ingesteld. Vul je eigen gegevens in bij backend/mail_config.php (zie de instructies bovenin dat bestand).',
+    ]);
+    exit;
+}
+
 $pdfBytes = genereer_bon_pdf($bonData);
 $bestandsnaam = 'bon-' . $bonData['bestelling_id'] . '.pdf';
-
-// ---------- E-mail met PDF-bijlage opbouwen (multipart/mixed) ----------
-$afzender = 'Las Tapas <noreply@las-tapas.local>';
-$onderwerp = 'Uw bonnetje van Las Tapas — ' . $bonData['tafel_naam'];
-$grens = 'las-tapas-bon-' . md5((string) time());
 
 $berichttekst = "Beste gast,\r\n\r\n"
     . "Bedankt voor uw bezoek aan Las Tapas! In de bijlage vindt u uw bonnetje.\r\n\r\n"
     . "Tot ziens!\r\nLas Tapas\r\n";
 
-$headers  = "From: {$afzender}\r\n";
-$headers .= "MIME-Version: 1.0\r\n";
-$headers .= "Content-Type: multipart/mixed; boundary=\"{$grens}\"\r\n";
+$resultaat = verstuur_email_smtp(
+    $mailConfig,
+    $emailAdres,
+    'Uw bonnetje van Las Tapas — ' . $bonData['tafel_naam'],
+    $berichttekst,
+    $bestandsnaam,
+    $pdfBytes
+);
 
-$body  = "--{$grens}\r\n";
-$body .= "Content-Type: text/plain; charset=UTF-8\r\n";
-$body .= "Content-Transfer-Encoding: 8bit\r\n\r\n";
-$body .= $berichttekst . "\r\n";
-
-$body .= "--{$grens}\r\n";
-$body .= "Content-Type: application/pdf; name=\"{$bestandsnaam}\"\r\n";
-$body .= "Content-Transfer-Encoding: base64\r\n";
-$body .= "Content-Disposition: attachment; filename=\"{$bestandsnaam}\"\r\n\r\n";
-$body .= chunk_split(base64_encode($pdfBytes)) . "\r\n";
-$body .= "--{$grens}--";
-
-$verzonden = @mail($emailAdres, $onderwerp, $body, $headers);
-
-if ($verzonden) {
+if ($resultaat['succes']) {
     echo json_encode([
         'succes' => true,
-        'bericht' => "E-mail aangeboden voor verzending naar {$emailAdres}. "
-            . "Let op: of hij écht aankomt, hangt af van de mailserver-configuratie van je omgeving (zie README).",
+        'bericht' => "E-mail met bonnetje is verstuurd naar {$emailAdres}.",
     ]);
 } else {
     http_response_code(500);
     echo json_encode([
         'succes' => false,
-        'fout' => 'PHP kon de e-mail niet aanbieden voor verzending. Waarschijnlijk is er geen mailserver/SMTP geconfigureerd op deze omgeving (zie README voor hoe je dit instelt).',
+        'fout' => $resultaat['fout'],
     ]);
 }
