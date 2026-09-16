@@ -68,7 +68,7 @@ INSERT INTO tafels (naam, status) VALUES
     ('Tafel 7', 'vrij'),
     ('Tafel 8', 'vrij'),
     ('Tafel 9', 'vrij'),
-    ('Tafel 10 (Sofia & Marcus)', 'vrij');
+    ('Tafel 10', 'vrij');
 
 INSERT INTO gerechten (naam, categorie, prijs, voorraad) VALUES
     ('Gambas al Ajillo', 'keuken', 9.50, 40),
