@@ -23,7 +23,7 @@ $tafelId = (int) $input['tafel_id'];
 try {
     $pdo->beginTransaction();
 
-    $stmt = $pdo->prepare("SELECT id FROM bestellingen WHERE tafel_id = ? AND status = 'open' LIMIT 1");
+    $stmt = $pdo->prepare("SELECT id, klant_email FROM bestellingen WHERE tafel_id = ? AND status = 'open' LIMIT 1");
     $stmt->execute([$tafelId]);
     $bestelling = $stmt->fetch();
 
@@ -39,7 +39,11 @@ try {
 
     $pdo->commit();
 
-    echo json_encode(['succes' => true, 'bestelling_id' => $bestelling['id']]);
+    echo json_encode([
+        'succes'        => true,
+        'bestelling_id' => $bestelling['id'],
+        'klant_email'   => $bestelling['klant_email'],
+    ]);
 } catch (Exception $e) {
     $pdo->rollBack();
     http_response_code(400);

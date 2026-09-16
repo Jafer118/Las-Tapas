@@ -124,22 +124,35 @@ async function rekenAf() {
 
     if (resultaat.succes) {
         const bestellingId = resultaat.bestelling_id;
+        const opgeslagenEmail = resultaat.klant_email || '';
+
         plek.innerHTML = `
             <div class="melding succes">
                 <div style="margin-bottom:10px;">Tafel succesvol afgerekend. Tafel is weer vrij.</div>
-                <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
-                    <a class="secundair" style="padding:6px 12px; border-radius:6px; text-decoration:none;"
-                       href="bon.html?bestelling_id=${bestellingId}" target="_blank">
-                        Bonnetje bekijken
-                    </a>
-                    <a class="secundair" style="padding:6px 12px; border-radius:6px; text-decoration:none;"
+
+                <div style="margin-bottom:10px;">
+                    <strong>Stap 1 —</strong> download het bonnetje:
+                    <a class="secundair" style="padding:6px 12px; border-radius:6px; text-decoration:none; margin-left:6px; display:inline-block;"
                        href="../backend/api/bon_pdf.php?bestelling_id=${bestellingId}" target="_blank">
                         PDF downloaden
                     </a>
-                    <input type="email" id="mail-naar-klant" placeholder="e-mailadres klant" style="padding:6px 8px; border-radius:6px; border:1px solid #ccc;">
-                    <button class="primair" onclick="verstuurBonPerMail(${bestellingId})">Bon e-mailen</button>
+                    <a class="secundair" style="padding:6px 12px; border-radius:6px; text-decoration:none; margin-left:6px; display:inline-block;"
+                       href="bon.html?bestelling_id=${bestellingId}" target="_blank">
+                        Bonnetje bekijken
+                    </a>
                 </div>
-                <div id="mail-status" style="margin-top:8px; font-size:0.85rem;"></div>
+
+                <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+                    <strong>Stap 2 —</strong>
+                    <input type="email" id="mail-naar-klant" placeholder="e-mailadres klant"
+                           value="${opgeslagenEmail}"
+                           style="padding:6px 8px; border-radius:6px; border:1px solid #ccc; min-width:220px;">
+                    <button class="primair" onclick="openGmail(${bestellingId})">Openen in Gmail</button>
+                </div>
+
+                <div style="margin-top:8px; font-size:0.8rem; color:#c8e6d5;">
+                    Gmail opent met de e-mail al ingevuld. Voeg daar de gedownloade PDF toe als bijlage en verstuur.
+                </div>
             </div>
         `;
         document.getElementById('rekening-titel').textContent = 'Selecteer een tafel';
@@ -152,25 +165,28 @@ async function rekenAf() {
     }
 }
 
-async function verstuurBonPerMail(bestellingId) {
-    const emailVeld = document.getElementById('mail-naar-klant');
-    const statusVeld = document.getElementById('mail-status');
-    const email = emailVeld.value.trim();
+/**
+ * Opent Gmail in een nieuw tabblad met ontvanger, onderwerp en berichttekst
+ * al ingevuld. De PDF voegt de medewerker zelf toe als bijlage (browsers
+ * mogen om veiligheidsredenen geen bestanden automatisch koppelen).
+ */
+function openGmail(bestellingId) {
+    const email = document.getElementById('mail-naar-klant').value.trim();
 
-    statusVeld.textContent = 'Bezig met versturen…';
+    const onderwerp = 'Uw bonnetje van Las Tapas';
+    const bericht =
+        'Beste gast,\n\n' +
+        'Bedankt voor uw bezoek aan Las Tapas! In de bijlage vindt u uw bonnetje ' +
+        '(bonnummer #' + String(bestellingId).padStart(5, '0') + ').\n\n' +
+        'Tot ziens!\n' +
+        'Team Las Tapas';
 
-    const resultaat = await apiPost('verstuur_bon_email.php', {
-        bestelling_id: bestellingId,
-        email: email, // mag leeg zijn: dan wordt het e-mailadres van bij het bestellen gebruikt
-    });
+    const gmailUrl = 'https://mail.google.com/mail/?view=cm&fs=1'
+        + '&to=' + encodeURIComponent(email)
+        + '&su=' + encodeURIComponent(onderwerp)
+        + '&body=' + encodeURIComponent(bericht);
 
-    if (resultaat.succes) {
-        statusVeld.style.color = '#9df0c4';
-        statusVeld.textContent = resultaat.bericht;
-    } else {
-        statusVeld.style.color = '#ffb4b4';
-        statusVeld.textContent = 'Fout: ' + resultaat.fout;
-    }
+    window.open(gmailUrl, '_blank');
 }
 
 setInterval(laadTafels, 8000);

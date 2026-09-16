@@ -81,32 +81,24 @@ las-tapas/
    aan, dat met pure PHP (geen externe library!) een écht `.pdf`-bestand
    genereert en direct teruggeeft als download.
 
-6. **Bonnetje e-mailen naar de klant** (echt werkend, via SMTP):
+6. **Bonnetje naar de klant sturen** (via Gmail, in 2 stappen):
    - Bij het **bestellen** (`bestellen.html`) kan de klant optioneel een
-     e-mailadres invullen — dit wordt opgeslagen bij de bestelling.
-   - Na het **afrekenen** (`kassa.html`) verschijnt een knop **"Bon
-     e-mailen"**. Is er al een e-mailadres bij het bestellen ingevuld, dan
-     kun je het veld leeg laten; vul je zelf iets in, dan wordt dát gebruikt
-     (en meteen opgeslagen).
-   - Dit gaat via `backend/api/verstuur_bon_email.php`, dat de PDF genereert
-     en zelf, met een eigen kleine SMTP-client (geen externe library), inlogt
-     bij een mailserver en de e-mail met PDF-bijlage verstuurt.
+     e-mailadres invullen — dit wordt opgeslagen bij de bestelling en na het
+     afrekenen automatisch ingevuld in het mailveld.
+   - Na het **afrekenen** (`kassa.html`) verschijnt een blokje met 2 stappen:
+     1. **PDF downloaden** — genereert en downloadt het bonnetje als
+        `.pdf`-bestand.
+     2. **Openen in Gmail** — opent Gmail in een nieuw tabblad met de
+        ontvanger, het onderwerp en de berichttekst al ingevuld. Je sleept
+        daar de gedownloade PDF in als bijlage en klikt op Verzenden.
 
-   **Instellen (eenmalig, verplicht om te testen):** open
-   `backend/mail_config.php` en vul je eigen gegevens in. Met Gmail:
-   1. Zorg dat 2-staps-verificatie aanstaat op je Google-account.
-   2. Ga naar <https://myaccount.google.com/apppasswords> en maak een nieuw
-      app-wachtwoord aan (kies bv. "Mail" / "Overig").
-   3. Kopieer het gegenereerde wachtwoord (16 tekens) naar `wachtwoord` in
-      `mail_config.php`. **Niet** je normale Google-wachtwoord gebruiken —
-      dat werkt niet en is bovendien onveilig.
-   4. Vul je eigen Gmail-adres in bij `gebruiker` en `van_email`.
-   5. Test door op de kassapagina een bestelling af te rekenen en de bon
-      naar je eigen adres te mailen.
-
-   Gebruik je liever een ander mailaccount (Outlook, school-mailaccount,
-   etc.)? Pas dan `host`/`port` in `mail_config.php` aan naar de SMTP-
-   gegevens van die provider.
+   **Waarom niet volledig automatisch?** Browsers mogen om
+   veiligheidsredenen geen bestanden van je computer automatisch aan een
+   e-mail koppelen — anders zou elke website ongemerkt je bestanden kunnen
+   versturen. Volledig automatisch verzenden zou een mailserver of
+   SMTP-account vereisen (met opgeslagen wachtwoord in de code). Voor een
+   restaurant-kassasysteem is deze aanpak prima werkbaar: het scheelt de
+   medewerker het handmatig overtypen van adres, onderwerp en tekst.
 
 ## Mogelijke uitbreidingen (voor een hogere score / doorontwikkeling)
 
