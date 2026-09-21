@@ -70,7 +70,7 @@ INSERT INTO tafels (naam, capaciteit, status) VALUES
     ('Tafel 7', 6, 'vrij'),
     ('Tafel 8', 8, 'vrij'),
     ('Tafel 9', 2, 'vrij'),
-    ('Tafel 10 (Sofia & Marcus)', 4, 'vrij');
+    ('Tafel 10', 4, 'vrij');
 
 INSERT INTO gerechten (naam, categorie, prijs, voorraad) VALUES
     ('Gambas al Ajillo', 'keuken', 9.50, 40),
@@ -99,3 +99,4 @@ INSERT INTO gerechten (naam, categorie, prijs, voorraad) VALUES
 -- UPDATE tafels SET capaciteit = 2 WHERE naam IN ('Tafel 1', 'Tafel 2', 'Tafel 9');
 -- UPDATE tafels SET capaciteit = 6 WHERE naam IN ('Tafel 6', 'Tafel 7');
 -- UPDATE tafels SET capaciteit = 8 WHERE naam = 'Tafel 8';
+-- UPDATE tafels SET naam = 'Tafel 10' WHERE naam LIKE 'Tafel 10%';
