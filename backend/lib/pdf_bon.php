@@ -35,8 +35,8 @@ function genereer_bon_pdf(array $data): string
     $regelHoogte = 14;
     $regels = []; // elke regel: ['tekst' => ..., 'grootte' => 10, 'vet' => false]
 
-    $regels[] = ['Las Tapas', 13, true];
-    $regels[] = ['Restaurant & Tapasbar', 9, false];
+    $regels[] = ['LAS TAPAS', 13, true];
+    $regels[] = ['Bar de Espana - Tapas y Vino', 9, false];
     $regels[] = ['------------------------------', 9, false];
     $regels[] = [$data['tafel_naam'], 10, true];
     $datumTekst = date('d-m-Y H:i', strtotime($data['datum_tijd']));
