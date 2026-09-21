@@ -33,6 +33,9 @@ if (!$input || empty($input['tafel_id']) || empty($input['regels']) || !is_array
 $tafelId = (int) $input['tafel_id'];
 $regels  = $input['regels'];
 $klantEmail = isset($input['klant_email']) ? trim($input['klant_email']) : '';
+$aantalPersonen = isset($input['aantal_personen']) && $input['aantal_personen'] !== ''
+    ? (int) $input['aantal_personen']
+    : null;
 
 if ($klantEmail !== '' && !filter_var($klantEmail, FILTER_VALIDATE_EMAIL)) {
     http_response_code(400);
@@ -40,14 +43,28 @@ if ($klantEmail !== '' && !filter_var($klantEmail, FILTER_VALIDATE_EMAIL)) {
     exit;
 }
 
+if ($aantalPersonen !== null && $aantalPersonen <= 0) {
+    http_response_code(400);
+    echo json_encode(['succes' => false, 'fout' => 'Aantal personen moet minimaal 1 zijn.']);
+    exit;
+}
+
 try {
     $pdo->beginTransaction();
 
-    // 1. Controleer of de tafel bestaat
-    $stmt = $pdo->prepare('SELECT id FROM tafels WHERE id = ?');
+    // 1. Controleer of de tafel bestaat, en haal de capaciteit op
+    $stmt = $pdo->prepare('SELECT id, naam, capaciteit FROM tafels WHERE id = ?');
     $stmt->execute([$tafelId]);
-    if (!$stmt->fetch()) {
+    $tafel = $stmt->fetch();
+    if (!$tafel) {
         throw new Exception('Tafel bestaat niet.');
+    }
+
+    if ($aantalPersonen !== null && $aantalPersonen > $tafel['capaciteit']) {
+        throw new Exception(
+            "{$tafel['naam']} heeft plaats voor maximaal {$tafel['capaciteit']} personen "
+            . "(opgegeven: {$aantalPersonen})."
+        );
     }
 
     // 2. Zoek open bestelling voor deze tafel, of maak nieuwe aan
@@ -57,14 +74,20 @@ try {
 
     if ($bestelling) {
         $bestellingId = $bestelling['id'];
-        // Als er nu alsnog een e-mailadres wordt meegegeven, werk het bij
+        // Als er nu alsnog een e-mailadres of aantal personen wordt meegegeven, werk het bij
         if ($klantEmail !== '') {
             $stmt = $pdo->prepare('UPDATE bestellingen SET klant_email = ? WHERE id = ?');
             $stmt->execute([$klantEmail, $bestellingId]);
         }
+        if ($aantalPersonen !== null) {
+            $stmt = $pdo->prepare('UPDATE bestellingen SET aantal_personen = ? WHERE id = ?');
+            $stmt->execute([$aantalPersonen, $bestellingId]);
+        }
     } else {
-        $stmt = $pdo->prepare('INSERT INTO bestellingen (tafel_id, klant_email, status) VALUES (?, ?, "open")');
-        $stmt->execute([$tafelId, $klantEmail !== '' ? $klantEmail : null]);
+        $stmt = $pdo->prepare(
+            'INSERT INTO bestellingen (tafel_id, klant_email, aantal_personen, status) VALUES (?, ?, ?, "open")'
+        );
+        $stmt->execute([$tafelId, $klantEmail !== '' ? $klantEmail : null, $aantalPersonen]);
         $bestellingId = $pdo->lastInsertId();
     }
 

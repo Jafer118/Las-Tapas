@@ -147,6 +147,10 @@
         <span>Bonnummer</span>
         <span id="bon-nummer"></span>
     </div>
+    <div class="bon-meta" id="bon-personen-rij" style="display:none;">
+        <span>Personen</span>
+        <span id="bon-personen"></span>
+    </div>
 
     <div class="streep"></div>
 
@@ -204,6 +208,11 @@ async function laadBon() {
     document.getElementById('bon-datum').textContent = new Date(data.datum_tijd.replace(' ', 'T'))
         .toLocaleString('nl-NL', { dateStyle: 'short', timeStyle: 'short' });
     document.getElementById('bon-nummer').textContent = `#${String(data.bestelling_id).padStart(5, '0')}`;
+
+    if (data.aantal_personen) {
+        document.getElementById('bon-personen-rij').style.display = 'flex';
+        document.getElementById('bon-personen').textContent = data.aantal_personen;
+    }
 
     const regelsContainer = document.getElementById('bon-regels');
     regelsContainer.innerHTML = '';

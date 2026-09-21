@@ -111,11 +111,14 @@ async function laadTafelOverzicht() {
         const rekening = await apiGet(`rekening.php?tafel_id=${tafel.id}`);
         const actieveOrders = (rekening.orderregels || []).filter(r => r.status !== 'geserveerd').length;
         totaalAlleTafels += rekening.totaal || 0;
+        const personenTekst = rekening.aantal_personen
+            ? `${rekening.aantal_personen} / ${tafel.capaciteit} personen`
+            : `max ${tafel.capaciteit} personen`;
 
         htmlKaarten += `
             <div class="db-tafelkaart">
                 <div class="naam">${tafel.naam}</div>
-                <div class="actief-label">${actieveOrders} actieve order${actieveOrders === 1 ? '' : 's'}</div>
+                <div class="actief-label">${actieveOrders} actieve order${actieveOrders === 1 ? '' : 's'} — ${personenTekst}</div>
                 <div class="regel">
                     <span>Openstaand bedrag</span>
                     <span>${formatEuro(rekening.totaal || 0)}</span>

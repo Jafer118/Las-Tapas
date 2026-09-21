@@ -13,6 +13,7 @@ USE las_tapas;
 CREATE TABLE IF NOT EXISTS tafels (
     id INT AUTO_INCREMENT PRIMARY KEY,
     naam VARCHAR(50) NOT NULL,
+    capaciteit INT NOT NULL DEFAULT 4,
     status ENUM('vrij', 'bezet') NOT NULL DEFAULT 'vrij'
 ) ENGINE=InnoDB;
 
@@ -34,6 +35,7 @@ CREATE TABLE IF NOT EXISTS bestellingen (
     id INT AUTO_INCREMENT PRIMARY KEY,
     tafel_id INT NOT NULL,
     klant_email VARCHAR(255) NULL,
+    aantal_personen INT NULL,
     aangemaakt_op DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     status ENUM('open', 'afgerekend') NOT NULL DEFAULT 'open',
     FOREIGN KEY (tafel_id) REFERENCES tafels(id)
@@ -58,17 +60,17 @@ CREATE TABLE IF NOT EXISTS orderregels (
 -- Voorbeelddata
 -- =====================================================================
 
-INSERT INTO tafels (naam, status) VALUES
-    ('Tafel 1', 'vrij'),
-    ('Tafel 2', 'vrij'),
-    ('Tafel 3', 'vrij'),
-    ('Tafel 4', 'vrij'),
-    ('Tafel 5', 'vrij'),
-    ('Tafel 6', 'vrij'),
-    ('Tafel 7', 'vrij'),
-    ('Tafel 8', 'vrij'),
-    ('Tafel 9', 'vrij'),
-    ('Tafel 10 (Sofia & Marcus)', 'vrij');
+INSERT INTO tafels (naam, capaciteit, status) VALUES
+    ('Tafel 1', 2, 'vrij'),
+    ('Tafel 2', 2, 'vrij'),
+    ('Tafel 3', 4, 'vrij'),
+    ('Tafel 4', 4, 'vrij'),
+    ('Tafel 5', 4, 'vrij'),
+    ('Tafel 6', 6, 'vrij'),
+    ('Tafel 7', 6, 'vrij'),
+    ('Tafel 8', 8, 'vrij'),
+    ('Tafel 9', 2, 'vrij'),
+    ('Tafel 10 (Sofia & Marcus)', 4, 'vrij');
 
 INSERT INTO gerechten (naam, categorie, prijs, voorraad) VALUES
     ('Gambas al Ajillo', 'keuken', 9.50, 40),
@@ -91,3 +93,9 @@ INSERT INTO gerechten (naam, categorie, prijs, voorraad) VALUES
 -- staat dan al in de CREATE TABLE hierboven.
 -- =====================================================================
 -- ALTER TABLE bestellingen ADD COLUMN klant_email VARCHAR(255) NULL AFTER tafel_id;
+-- ALTER TABLE bestellingen ADD COLUMN aantal_personen INT NULL AFTER klant_email;
+-- ALTER TABLE tafels ADD COLUMN capaciteit INT NOT NULL DEFAULT 4 AFTER naam;
+-- Optioneel: pas daarna per tafel de juiste capaciteit aan, bv.:
+-- UPDATE tafels SET capaciteit = 2 WHERE naam IN ('Tafel 1', 'Tafel 2', 'Tafel 9');
+-- UPDATE tafels SET capaciteit = 6 WHERE naam IN ('Tafel 6', 'Tafel 7');
+-- UPDATE tafels SET capaciteit = 8 WHERE naam = 'Tafel 8';

@@ -11,7 +11,7 @@ function bon_data_ophalen(PDO $pdo, int $tafelId, int $bestellingId): ?array
 {
     if ($bestellingId > 0) {
         $stmt = $pdo->prepare(
-            'SELECT b.id, b.aangemaakt_op, b.status, b.klant_email, t.naam AS tafel_naam
+            'SELECT b.id, b.aangemaakt_op, b.status, b.klant_email, b.aantal_personen, t.naam AS tafel_naam
              FROM bestellingen b
              JOIN tafels t ON t.id = b.tafel_id
              WHERE b.id = ?'
@@ -19,7 +19,7 @@ function bon_data_ophalen(PDO $pdo, int $tafelId, int $bestellingId): ?array
         $stmt->execute([$bestellingId]);
     } elseif ($tafelId > 0) {
         $stmt = $pdo->prepare(
-            "SELECT b.id, b.aangemaakt_op, b.status, b.klant_email, t.naam AS tafel_naam
+            "SELECT b.id, b.aangemaakt_op, b.status, b.klant_email, b.aantal_personen, t.naam AS tafel_naam
              FROM bestellingen b
              JOIN tafels t ON t.id = b.tafel_id
              WHERE b.tafel_id = ? AND b.status = 'open'
@@ -56,7 +56,8 @@ function bon_data_ophalen(PDO $pdo, int $tafelId, int $bestellingId): ?array
         'tafel_naam'    => $bestelling['tafel_naam'],
         'datum_tijd'    => $bestelling['aangemaakt_op'],
         'status'        => $bestelling['status'],
-        'klant_email'   => $bestelling['klant_email'],
+        'klant_email'      => $bestelling['klant_email'],
+        'aantal_personen'  => $bestelling['aantal_personen'],
         'orderregels'   => $regels,
         'totaal'        => round($totaal, 2),
     ];

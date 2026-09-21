@@ -17,7 +17,7 @@ if ($tafelId <= 0) {
 }
 
 // Open bestelling zoeken
-$stmt = $pdo->prepare("SELECT id, aangemaakt_op FROM bestellingen WHERE tafel_id = ? AND status = 'open' LIMIT 1");
+$stmt = $pdo->prepare("SELECT id, aangemaakt_op, aantal_personen FROM bestellingen WHERE tafel_id = ? AND status = 'open' LIMIT 1");
 $stmt->execute([$tafelId]);
 $bestelling = $stmt->fetch();
 
@@ -49,9 +49,10 @@ foreach ($regels as $regel) {
 }
 
 echo json_encode([
-    'succes'       => true,
-    'tafel_id'     => $tafelId,
-    'bestelling_id'=> $bestelling['id'],
-    'orderregels'  => $regels,
-    'totaal'       => round($totaal, 2),
+    'succes'          => true,
+    'tafel_id'        => $tafelId,
+    'bestelling_id'   => $bestelling['id'],
+    'aantal_personen' => $bestelling['aantal_personen'],
+    'orderregels'     => $regels,
+    'totaal'          => round($totaal, 2),
 ]);

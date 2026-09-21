@@ -33,25 +33,34 @@
     <div id="melding-plek"></div>
 
     <div class="paneel" style="margin-bottom:20px;">
-        <h2>Stap 1 — Kies een tafel</h2>
+        <h2>Kies een tafel</h2>
         <select id="tafel-select"></select>
+        <p id="capaciteit-info" style="color:#C9AC93; font-size:0.85rem; margin:8px 0 0 0;"></p>
+    </div>
+
+    <div class="paneel" style="margin-bottom:20px;">
+        <h2>Aantal personen</h2>
+        <p style="color:#C9AC93; font-size:0.85rem; margin-top:-4px;">
+            Moet passen binnen de capaciteit van de gekozen tafel.
+        </p>
+        <input type="number" id="aantal-personen" min="1" value="2" style="width:100px;">
     </div>
 
     <div class="paneel" style="margin-bottom:20px;">
         <h2>E-mailadres klant (optioneel)</h2>
-        <p style="color:#a9bccb; font-size:0.85rem; margin-top:-4px;">
+        <p style="color:#C9AC93; font-size:0.85rem; margin-top:-4px;">
             Invullen als de klant het bonnetje per e-mail wil ontvangen. Mag ook leeg blijven.
         </p>
         <input type="email" id="klant-email" placeholder="naam@voorbeeld.nl" style="width:100%; max-width:320px;">
     </div>
 
     <div class="paneel" style="margin-bottom:20px;">
-        <h2>Stap 2 — Keuken</h2>
+        <h2>Keuken</h2>
         <div id="keuken-lijst"></div>
     </div>
 
     <div class="paneel" style="margin-bottom:20px;">
-        <h2>Stap 2 — Bar</h2>
+        <h2>Bar</h2>
         <div id="bar-lijst"></div>
     </div>
 
@@ -71,23 +80,49 @@
 <script src="js/gedeeld.js"></script>
 <script>
 let gerechten = [];
+let tafels = [];
 let mandje = {}; // { gerecht_id: aantal }
 
 async function initialiseer() {
     const tafelData = await apiGet('tafels_ophalen.php');
+    tafels = tafelData.tafels;
     const select = document.getElementById('tafel-select');
-    tafelData.tafels.forEach(t => {
+    tafels.forEach(t => {
         const optie = document.createElement('option');
         optie.value = t.id;
-        optie.textContent = `${t.naam} (${t.status})`;
+        optie.textContent = `${t.naam} — max ${t.capaciteit} personen (${t.status})`;
         select.appendChild(optie);
     });
+    select.addEventListener('change', toonCapaciteitInfo);
+    toonCapaciteitInfo();
+
+    document.getElementById('aantal-personen').addEventListener('input', toonCapaciteitInfo);
 
     const gerechtData = await apiGet('gerechten_ophalen.php');
     gerechten = gerechtData.gerechten;
 
     renderGerechten('keuken', 'keuken-lijst');
     renderGerechten('bar', 'bar-lijst');
+}
+
+function toonCapaciteitInfo() {
+    const tafelId = Number(document.getElementById('tafel-select').value);
+    const tafel = tafels.find(t => t.id === tafelId);
+    const aantalPersonen = Number(document.getElementById('aantal-personen').value) || 0;
+    const infoVeld = document.getElementById('capaciteit-info');
+
+    if (!tafel) {
+        infoVeld.textContent = '';
+        return;
+    }
+
+    if (aantalPersonen > tafel.capaciteit) {
+        infoVeld.textContent = `⚠ ${tafel.naam} heeft plaats voor maximaal ${tafel.capaciteit} personen — verlaag het aantal of kies een andere tafel.`;
+        infoVeld.style.color = '#F0C2C2';
+    } else {
+        infoVeld.textContent = `${tafel.naam} heeft plaats voor maximaal ${tafel.capaciteit} personen.`;
+        infoVeld.style.color = '#C9AC93';
+    }
 }
 
 function renderGerechten(categorie, containerId) {
@@ -140,8 +175,9 @@ function toonMelding(tekst, type) {
 }
 
 document.getElementById('btn-versturen').addEventListener('click', async () => {
-    const tafelId = document.getElementById('tafel-select').value;
+    const tafelId = Number(document.getElementById('tafel-select').value);
     const klantEmail = document.getElementById('klant-email').value.trim();
+    const aantalPersonen = Number(document.getElementById('aantal-personen').value) || 0;
     const regels = Object.entries(mandje).map(([gerecht_id, aantal]) => ({
         gerecht_id: Number(gerecht_id),
         aantal: Number(aantal),
@@ -152,10 +188,22 @@ document.getElementById('btn-versturen').addEventListener('click', async () => {
         return;
     }
 
+    if (aantalPersonen <= 0) {
+        toonMelding('Vul een geldig aantal personen in (minimaal 1).', 'fout');
+        return;
+    }
+
+    const tafel = tafels.find(t => t.id === tafelId);
+    if (tafel && aantalPersonen > tafel.capaciteit) {
+        toonMelding(`${tafel.naam} heeft plaats voor maximaal ${tafel.capaciteit} personen. Kies een andere tafel of verlaag het aantal.`, 'fout');
+        return;
+    }
+
     const resultaat = await apiPost('bestelling_toevoegen.php', {
-        tafel_id: Number(tafelId),
+        tafel_id: tafelId,
         regels,
         klant_email: klantEmail,
+        aantal_personen: aantalPersonen,
     });
 
     if (resultaat.succes) {

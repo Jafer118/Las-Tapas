@@ -100,6 +100,24 @@ las-tapas/
    restaurant-kassasysteem is deze aanpak prima werkbaar: het scheelt de
    medewerker het handmatig overtypen van adres, onderwerp en tekst.
 
+7. **Aantal personen & tafelcapaciteit**:
+   - Elke tafel heeft nu een vaste **capaciteit** (max. aantal personen),
+     ingesteld in de database (kolom `capaciteit` in `tafels`).
+   - Bij het **bestellen** (`bestellen.html`) kies je eerst een tafel — het
+     maximumaantal personen wordt er meteen bij getoond — en vul je het
+     **aantal personen** in. Vul je meer personen in dan de tafel aankan,
+     dan krijg je direct een waarschuwing en weigert de server het
+     versturen van de bestelling (dubbele controle: in de browser én in
+     `backend/api/bestelling_toevoegen.php`).
+   - Het aantal personen wordt opgeslagen bij de bestelling en is zichtbaar
+     op `overzicht.html` (tafelkaart), `kassa.html` (rekening) en op het
+     bonnetje (`bon.html` + PDF).
+
+   **Migratie (alleen als je de database al eerder importeerde):** voer de
+   twee ALTER-regels onderaan `las_tapas.sql` uit (kolom `capaciteit` bij
+   `tafels`, kolom `aantal_personen` bij `bestellingen`), en pas daarna
+   optioneel de capaciteit per tafel aan met de voorbeeld-UPDATE-regels.
+
 ## Mogelijke uitbreidingen (voor een hogere score / doorontwikkeling)
 
 - Inloggen voor personeel (authenticatie/autorisatie), zodat niet iedereen bij

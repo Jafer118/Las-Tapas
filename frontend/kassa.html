@@ -87,6 +87,11 @@ async function toonRekening(tafelId, tafelNaam) {
     }
 
     let html = '';
+
+    if (data.aantal_personen) {
+        html += `<p style="color:#C9AC93; font-size:0.85rem; margin-top:0;">${data.aantal_personen} personen aan tafel</p>`;
+    }
+
     data.orderregels.forEach(r => {
         html += `
             <div class="regel-item">

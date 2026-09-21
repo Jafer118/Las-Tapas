@@ -42,6 +42,9 @@ function genereer_bon_pdf(array $data): string
     $datumTekst = date('d-m-Y H:i', strtotime($data['datum_tijd']));
     $regels[] = ['Datum: ' . $datumTekst, 9, false];
     $regels[] = ['Bonnummer: #' . str_pad((string) $data['bestelling_id'], 5, '0', STR_PAD_LEFT), 9, false];
+    if (!empty($data['aantal_personen'])) {
+        $regels[] = ['Personen: ' . $data['aantal_personen'], 9, false];
+    }
     $regels[] = ['------------------------------', 9, false];
 
     foreach ($data['orderregels'] as $regel) {
