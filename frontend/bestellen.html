@@ -108,20 +108,32 @@ async function initialiseer() {
 function toonCapaciteitInfo() {
     const tafelId = Number(document.getElementById('tafel-select').value);
     const tafel = tafels.find(t => t.id === tafelId);
-    const aantalPersonen = Number(document.getElementById('aantal-personen').value) || 0;
+    const aantalVeld = document.getElementById('aantal-personen');
+    const aantalPersonen = Number(aantalVeld.value) || 0;
     const infoVeld = document.getElementById('capaciteit-info');
+    const btnVersturen = document.getElementById('btn-versturen');
 
     if (!tafel) {
         infoVeld.textContent = '';
         return;
     }
 
+    // Zet ook het HTML max-attribuut, zodat de pijltjes/spinner van het
+    // getalveld zelf ook niet verder gaan dan de capaciteit van de tafel.
+    aantalVeld.max = tafel.capaciteit;
+
     if (aantalPersonen > tafel.capaciteit) {
         infoVeld.textContent = `⚠ ${tafel.naam} heeft plaats voor maximaal ${tafel.capaciteit} personen — verlaag het aantal of kies een andere tafel.`;
         infoVeld.style.color = '#F0C2C2';
+        btnVersturen.disabled = true;
+        btnVersturen.style.opacity = '0.5';
+        btnVersturen.style.cursor = 'not-allowed';
     } else {
         infoVeld.textContent = `${tafel.naam} heeft plaats voor maximaal ${tafel.capaciteit} personen.`;
         infoVeld.style.color = '#C9AC93';
+        btnVersturen.disabled = false;
+        btnVersturen.style.opacity = '1';
+        btnVersturen.style.cursor = 'pointer';
     }
 }
 
