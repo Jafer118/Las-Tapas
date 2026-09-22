@@ -156,7 +156,7 @@ UPDATE gerechten SET prijs = 6.95 WHERE naam = 'Gambas al ajillo';
   naar `keuken.html` of `bar.html`.
 - `menugroep` (Frías/Calientes/Especialidades/Postres/Bebidas) bepaalt **waar
   het op de menukaart staat** — gebruikt door de tabbladen op
-  `bestellen.html` en de groepering op `voorraad.html`.
+  `bestellen.html`.
 
 **Nieuw op de bestelpagina:** de menukaart is nu opgedeeld in tabbladen per
 categorie (net als op een echte kaart), met een korte beschrijving per
