@@ -55,13 +55,9 @@
     </div>
 
     <div class="paneel" style="margin-bottom:20px;">
-        <h2>Keuken</h2>
-        <div id="keuken-lijst"></div>
-    </div>
-
-    <div class="paneel" style="margin-bottom:20px;">
-        <h2>Bar</h2>
-        <div id="bar-lijst"></div>
+        <h2 style="margin-bottom:14px;">Menukaart</h2>
+        <div class="menu-tabs" id="menu-tabs"></div>
+        <div id="menu-lijst"></div>
     </div>
 
     <div class="mandje-samenvatting">
@@ -82,6 +78,8 @@
 let gerechten = [];
 let tafels = [];
 let mandje = {}; // { gerecht_id: aantal }
+const MENUGROEPEN = ['Frías', 'Calientes', 'Especialidades', 'Postres', 'Bebidas'];
+let actieveGroep = 'Frías';
 
 async function initialiseer() {
     const tafelData = await apiGet('tafels_ophalen.php');
@@ -90,7 +88,7 @@ async function initialiseer() {
     tafels.forEach(t => {
         const optie = document.createElement('option');
         optie.value = t.id;
-        optie.textContent = `${t.naam} — max ${t.capaciteit} personen (${t.status})`;
+        optie.textContent = `${t.naam} (${t.verdieping}) — max ${t.capaciteit} personen — ${t.status}`;
         select.appendChild(optie);
     });
     select.addEventListener('change', toonCapaciteitInfo);
@@ -101,8 +99,24 @@ async function initialiseer() {
     const gerechtData = await apiGet('gerechten_ophalen.php');
     gerechten = gerechtData.gerechten;
 
-    renderGerechten('keuken', 'keuken-lijst');
-    renderGerechten('bar', 'bar-lijst');
+    renderTabs();
+    renderGerechten();
+}
+
+function renderTabs() {
+    const tabsContainer = document.getElementById('menu-tabs');
+    tabsContainer.innerHTML = '';
+    MENUGROEPEN.forEach(groep => {
+        const tab = document.createElement('div');
+        tab.className = 'tab' + (groep === actieveGroep ? ' actief' : '');
+        tab.textContent = groep;
+        tab.addEventListener('click', () => {
+            actieveGroep = groep;
+            renderTabs();
+            renderGerechten();
+        });
+        tabsContainer.appendChild(tab);
+    });
 }
 
 function toonCapaciteitInfo() {
@@ -137,20 +151,28 @@ function toonCapaciteitInfo() {
     }
 }
 
-function renderGerechten(categorie, containerId) {
-    const container = document.getElementById(containerId);
+function renderGerechten() {
+    const container = document.getElementById('menu-lijst');
     container.innerHTML = '';
-    gerechten.filter(g => g.categorie === categorie).forEach(g => {
+    const items = gerechten.filter(g => g.menugroep === actieveGroep);
+
+    if (items.length === 0) {
+        container.innerHTML = '<p style="color:#C9AC93;">Geen gerechten in deze categorie.</p>';
+        return;
+    }
+
+    items.forEach(g => {
         const rij = document.createElement('div');
         rij.className = 'gerecht-rij';
         rij.innerHTML = `
             <div class="naam-prijs">
                 <span>${g.naam}</span>
+                ${g.beschrijving ? `<span class="beschrijving">${g.beschrijving}</span>` : ''}
                 <span class="voorraad">${formatEuro(g.prijs)} — voorraad: ${g.voorraad}</span>
             </div>
             <div class="aantal-controls">
                 <button onclick="wijzigAantal(${g.id}, -1)">−</button>
-                <span class="aantal-waarde" id="aantal-${g.id}">0</span>
+                <span class="aantal-waarde" id="aantal-${g.id}">${mandje[g.id] || 0}</span>
                 <button onclick="wijzigAantal(${g.id}, 1)">+</button>
             </div>
         `;
@@ -223,8 +245,7 @@ document.getElementById('btn-versturen').addEventListener('click', async () => {
         mandje = {};
         const gerechtData = await apiGet('gerechten_ophalen.php'); // voorraad opnieuw ophalen
         gerechten = gerechtData.gerechten;
-        renderGerechten('keuken', 'keuken-lijst');
-        renderGerechten('bar', 'bar-lijst');
+        renderGerechten();
         updateSamenvatting();
     } else {
         toonMelding('Fout: ' + resultaat.fout, 'fout');

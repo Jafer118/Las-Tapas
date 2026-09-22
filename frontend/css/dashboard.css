@@ -344,6 +344,15 @@ body.dashboard {
    Content-paneel (voorraad, instellingen)
    --------------------------------------------------------------------- */
 .db-content-paneel { padding: 18px 28px 28px 28px; }
+.db-content-paneel h2 {
+    font-family: var(--font-kop);
+    color: var(--kleur-saffraan);
+    font-size: 1.15rem;
+    letter-spacing: 0.02em;
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--kleur-paneel-rand);
+    padding-bottom: 6px;
+}
 
 .voorraad-tabel {
     width: 100%;

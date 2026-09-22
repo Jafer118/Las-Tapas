@@ -241,6 +241,38 @@ select, input[type=number], input[type=email], input[type=text] {
     letter-spacing: 0.03em;
 }
 
+.gerecht-rij .beschrijving {
+    font-size: 0.78rem;
+    color: var(--kleur-tekst-zacht);
+    font-style: italic;
+    margin: 2px 0;
+}
+
+/* ---------- Menu-tabbladen (bestelpagina) ---------- */
+.menu-tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 16px;
+    border-bottom: 2px solid var(--kleur-paneel-rand);
+    flex-wrap: wrap;
+}
+.tab {
+    padding: 9px 18px;
+    font-family: var(--font-kop);
+    font-size: 0.9rem;
+    letter-spacing: 0.04em;
+    color: var(--kleur-tekst-zacht);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    transition: color 0.15s ease;
+}
+.tab:hover { color: var(--kleur-saffraan); }
+.tab.actief {
+    color: var(--kleur-saffraan);
+    border-bottom-color: var(--kleur-terracotta);
+}
+
 .aantal-controls {
     display: flex;
     align-items: center;

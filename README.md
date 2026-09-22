@@ -134,3 +134,36 @@ Zie `frontend/privacy.html` voor de privacyverklaring die hoort bij dit
 systeem. Deze legt uit welke gegevens worden opgeslagen (uitsluitend
 operationele bestelgegevens, geen persoonsgegevens van gasten), hoe lang deze
 bewaard worden en hoe de toegang beveiligd is geregeld.
+
+## Officiële menukaart & plattegrond (belangrijke update)
+
+De database is bijgewerkt met de **officiële menukaart** (55 gerechten in 5
+categorieën: Frías, Calientes, Especialidades, Postres, Bebidas) en de
+**officiële plattegrond** (26 tafels: 10 op de begane grond, 16 op de eerste
+verdieping, elk met plaats voor 4 personen).
+
+**Let op — prijzen zijn nog placeholders.** De aangeleverde menukaart bevatte
+geen prijzen. Er staan nu realistische standaardprijzen in (gebaseerd op
+gangbare tapasbar-prijzen), zodat het systeem meteen te testen is. Pas de
+echte prijzen aan via phpMyAdmin → tabel `gerechten` → kolom `prijs`, of met
+een UPDATE-query, bijvoorbeeld:
+```sql
+UPDATE gerechten SET prijs = 6.95 WHERE naam = 'Gambas al ajillo';
+```
+
+**Twee soorten indeling, niet met elkaar te verwarren:**
+- `categorie` (keuken/bar) bepaalt **wie het bereidt** — stuurt het gerecht
+  naar `keuken.html` of `bar.html`.
+- `menugroep` (Frías/Calientes/Especialidades/Postres/Bebidas) bepaalt **waar
+  het op de menukaart staat** — gebruikt door de tabbladen op
+  `bestellen.html` en de groepering op `voorraad.html`.
+
+**Nieuw op de bestelpagina:** de menukaart is nu opgedeeld in tabbladen per
+categorie (net als op een echte kaart), met een korte beschrijving per
+gerecht.
+
+**Migreren van een bestaande database:** de nieuwste ALTER-regels staan
+onderaan `las_tapas.sql`. Omdat de menukaart en plattegrond zo grondig
+veranderd zijn, is het meestal simpeler om de hele database te droppen en
+`las_tapas.sql` in zijn geheel opnieuw te importeren — zie de instructie
+onderaan dat bestand.
