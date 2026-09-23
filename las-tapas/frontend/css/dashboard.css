@@ -76,15 +76,12 @@ body.dashboard {
     gap: 12px;
 }
 
-/* Het ronde logo, uitgesneden tot cirkel met warme rand */
+/* Het horizontale tekstlogo, transparante achtergrond, direct op de bodega-kleur */
 .db-logo {
-    width: 58px;
-    height: 58px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid var(--kleur-saffraan);
-    box-shadow: var(--schaduw-kaart);
-    background: var(--kleur-papier);
+    height: 42px;
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.35));
 }
 
 .db-brand .brand-tekst {

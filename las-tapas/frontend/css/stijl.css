@@ -65,13 +65,10 @@ header.topbar .titel {
 }
 
 header.topbar .logo {
-    width: 52px;
-    height: 52px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid var(--kleur-saffraan);
-    background: var(--kleur-papier);
-    box-shadow: var(--schaduw-kaart);
+    height: 38px;
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.35));
 }
 
 header.topbar .titel h1 {
