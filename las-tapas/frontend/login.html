@@ -35,15 +35,24 @@
 <script>
 const api = '../backend/api/auth.php';
 const melding = document.getElementById('melding');
+const emailVeld = document.getElementById('email');
+const wachtwoordVeld = document.getElementById('wachtwoord');
 document.getElementById('login-form').addEventListener('submit', async (event) => {
     event.preventDefault();
     melding.className = 'auth-melding'; melding.textContent = 'Bezig met inloggen…';
-    const response = await fetch(`${api}?actie=login`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({email: email.value, wachtwoord: wachtwoord.value}) });
-    const data = await response.json();
-    if (!data.succes) { melding.className = 'auth-melding fout'; melding.textContent = data.fout; return; }
-    const requestedNext = new URLSearchParams(location.search).get('next') || 'overzicht.html';
-    const next = /^[a-z0-9_-]+\.html(?:\?.*)?$/i.test(requestedNext) ? requestedNext : 'overzicht.html';
-    location.href = next;
+    const ingevoerdEmail = emailVeld.value.trim().toLowerCase();
+    const email = ingevoerdEmail === 'admin' ? 'admin@lastapas.nl' : ingevoerdEmail;
+    try {
+        const response = await fetch(`${api}?actie=login`, { method: 'POST', credentials: 'same-origin', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({email, wachtwoord: wachtwoordVeld.value}) });
+        const data = await response.json();
+        if (!response.ok || !data.succes) { melding.className = 'auth-melding fout'; melding.textContent = data.fout || `Inloggen mislukt (HTTP ${response.status}).`; return; }
+        const requestedNext = new URLSearchParams(location.search).get('next') || 'overzicht.html';
+        const next = /^[a-z0-9_-]+\.html(?:\?.*)?$/i.test(requestedNext) ? requestedNext : 'overzicht.html';
+        location.href = next;
+    } catch (error) {
+        melding.className = 'auth-melding fout';
+        melding.textContent = 'De server kan niet worden bereikt. Open deze pagina via localhost/WAMP en niet als lokaal bestand.';
+    }
 });
 </script>
 </body>
