@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+<title>Las Tapas — Style Guide</title>
+<link rel="stylesheet" href="css/stijl.css">
+<style>
+    .sg-hero {
+        text-align: center;
+        padding: 38px 20px 26px 20px;
+    }
+    .sg-hero img {
+        height: 90px;
+        width: auto;
+        object-fit: contain;
+        filter: drop-shadow(0 4px 14px rgba(0,0,0,0.45));
+    }
+    .sg-hero h1 {
+        font-family: var(--font-kop);
+        font-size: 2.2rem;
+        margin: 16px 0 4px 0;
+        letter-spacing: 0.06em;
+        color: var(--kleur-papier);
+    }
+    .sg-hero p {
+        color: var(--kleur-saffraan);
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        font-size: 0.78rem;
+        margin: 0;
+    }
+
+    .sg-sectie { margin-bottom: 38px; }
+    .sg-sectie > h2 {
+        border-bottom: 1px solid var(--kleur-paneel-rand);
+        padding-bottom: 8px;
+    }
+
+    .swatch-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
+        gap: 14px;
+    }
+    .swatch {
+        border-radius: var(--rond-klein);
+        overflow: hidden;
+        box-shadow: var(--schaduw-kaart);
+        border: 1px solid var(--kleur-paneel-rand);
+    }
+    .swatch .vlak { height: 68px; }
+    .swatch .info {
+        background: var(--kleur-papier);
+        color: var(--kleur-papier-tekst);
+        padding: 9px 11px;
+        font-size: 0.78rem;
+        line-height: 1.45;
+    }
+    .swatch .info b { display: block; font-family: var(--font-kop); font-size: 0.86rem; }
+    .swatch .info code { color: var(--kleur-wijn); font-weight: 700; }
+
+    .font-demo {
+        background: var(--kleur-papier);
+        color: var(--kleur-papier-tekst);
+        border-radius: var(--rond-klein);
+        padding: 18px 20px;
+        margin-bottom: 12px;
+        box-shadow: var(--schaduw-kaart);
+        border-left: 4px solid var(--kleur-terracotta);
+    }
+    .font-demo .label {
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        color: var(--kleur-wijn);
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+    .font-demo .kop-voorbeeld {
+        font-family: var(--font-kop);
+        font-size: 1.9rem;
+        margin: 0 0 6px 0;
+    }
+    .font-demo .tekst-voorbeeld {
+        font-family: var(--font-tekst);
+        font-size: 0.95rem;
+        line-height: 1.6;
+        margin: 0;
+    }
+
+    .comp-rij {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        align-items: center;
+        margin-bottom: 16px;
+    }
+
+    .menukaart {
+        background: var(--kleur-papier);
+        color: var(--kleur-papier-tekst);
+        border-radius: var(--rond-groot);
+        padding: 22px 24px;
+        box-shadow: var(--schaduw-kaart);
+        max-width: 420px;
+    }
+    .menukaart h3 {
+        font-family: var(--font-kop);
+        text-align: center;
+        color: var(--kleur-wijn);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        font-size: 0.95rem;
+        margin: 0 0 4px 0;
+    }
+    .menukaart .ornament {
+        text-align: center;
+        color: var(--kleur-saffraan);
+        letter-spacing: 0.4em;
+        margin-bottom: 14px;
+    }
+    .menu-item {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+        padding: 7px 0;
+    }
+    .menu-item .naam { font-family: var(--font-kop); font-size: 1rem; }
+    .menu-item .stippel {
+        flex: 1;
+        border-bottom: 1px dotted #B79C80;
+        transform: translateY(-4px);
+    }
+    .menu-item .prijs { font-weight: 700; color: var(--kleur-wijn); }
+    .menu-item .beschrijving {
+        font-size: 0.8rem;
+        color: #7A5B47;
+        font-style: italic;
+    }
+
+    .tabs {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 14px;
+        border-bottom: 2px solid var(--kleur-paneel-rand);
+    }
+    .tab {
+        padding: 9px 18px;
+        font-family: var(--font-kop);
+        font-size: 0.88rem;
+        letter-spacing: 0.06em;
+        color: var(--kleur-tekst-zacht);
+        cursor: pointer;
+        border-bottom: 3px solid transparent;
+        margin-bottom: -2px;
+    }
+    .tab.actief {
+        color: var(--kleur-saffraan);
+        border-bottom-color: var(--kleur-terracotta);
+    }
+
+    .richtlijn-lijst { line-height: 1.75; padding-left: 20px; }
+    .richtlijn-lijst li { margin-bottom: 7px; }
+    .richtlijn-lijst strong { color: var(--kleur-saffraan); }
+
+    .doe-niet {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 14px;
+    }
+    .doe-blok {
+        border-radius: var(--rond-klein);
+        padding: 15px 17px;
+        font-size: 0.88rem;
+        line-height: 1.6;
+    }
+    .doe-blok.wel { background: #3A4226; border-left: 4px solid var(--kleur-olijf); }
+    .doe-blok.niet { background: #4A1E20; border-left: 4px solid var(--kleur-wijn); }
+    .doe-blok h4 { margin: 0 0 8px 0; font-family: var(--font-kop); }
+</style>
+</head>
+<body>
+
+<div class="sg-hero">
+    <img src="img/logo-las-tapas.png" alt="Las Tapas — Smaak & Beleving">
+    <p style="margin-top:16px;">UI / UX Style Guide</p>
+</div>
+
+<nav class="subnav" style="justify-content:center;">
+    <a href="overzicht.html">Terug naar systeem</a>
+</nav>
+
+<main>
+
+<!-- ================= 1. KLEURENPALET ================= -->
+<section class="sg-sectie">
+    <h2>1. Kleurenpalet</h2>
+    <p style="color:var(--kleur-tekst-zacht); max-width:700px; line-height:1.65;">
+        Afgeleid van het logo: gebrand terracotta, diep bordeaux en warm perkament.
+        Donkere achtergronden roepen de sfeer op van een bodega-kelder; papierkleurige
+        kaarten daarbovenop verwijzen naar de klassieke handgeschreven menukaart.
+    </p>
+
+    <h3 style="font-family:var(--font-kop); color:var(--kleur-tekst-zacht); font-size:0.95rem;">Achtergronden</h3>
+    <div class="swatch-grid" style="margin-bottom:22px;">
+        <div class="swatch"><div class="vlak" style="background:#3B1A18"></div>
+            <div class="info"><b>Bodega</b><code>#3B1A18</code> Hoofdachtergrond</div></div>
+        <div class="swatch"><div class="vlak" style="background:#2C1210"></div>
+            <div class="info"><b>Bodega diep</b><code>#2C1210</code> Balken &amp; koppen</div></div>
+        <div class="swatch"><div class="vlak" style="background:#4A2320"></div>
+            <div class="info"><b>Paneel</b><code>#4A2320</code> Kaartcontainer</div></div>
+        <div class="swatch"><div class="vlak" style="background:#6B3A2E"></div>
+            <div class="info"><b>Randlijn</b><code>#6B3A2E</code> Subtiele scheiding</div></div>
+    </div>
+
+    <h3 style="font-family:var(--font-kop); color:var(--kleur-tekst-zacht); font-size:0.95rem;">Accenten</h3>
+    <div class="swatch-grid" style="margin-bottom:22px;">
+        <div class="swatch"><div class="vlak" style="background:#C1562F"></div>
+            <div class="info"><b>Terracotta</b><code>#C1562F</code> Primaire knoppen, CTA</div></div>
+        <div class="swatch"><div class="vlak" style="background:#A8441F"></div>
+            <div class="info"><b>Terracotta hover</b><code>#A8441F</code> Hover-staat</div></div>
+        <div class="swatch"><div class="vlak" style="background:#E0A33E"></div>
+            <div class="info"><b>Saffraan</b><code>#E0A33E</code> Koppen, prijzen, accent</div></div>
+        <div class="swatch"><div class="vlak" style="background:#7A8B4F"></div>
+            <div class="info"><b>Olijfgroen</b><code>#7A8B4F</code> Succes, "vrij", nieuw</div></div>
+        <div class="swatch"><div class="vlak" style="background:#8C2F39"></div>
+            <div class="info"><b>Wijnrood</b><code>#8C2F39</code> Urgent, "bezig", fout</div></div>
+    </div>
+
+    <h3 style="font-family:var(--font-kop); color:var(--kleur-tekst-zacht); font-size:0.95rem;">Papier &amp; tekst</h3>
+    <div class="swatch-grid">
+        <div class="swatch"><div class="vlak" style="background:#FBF4E6"></div>
+            <div class="info"><b>Perkament</b><code>#FBF4E6</code> Kaarten, menukaart</div></div>
+        <div class="swatch"><div class="vlak" style="background:#F3E4CB"></div>
+            <div class="info"><b>Perkament warm</b><code>#F3E4CB</code> Actieve kaart, rijen</div></div>
+        <div class="swatch"><div class="vlak" style="background:#3B2419"></div>
+            <div class="info"><b>Tekst op papier</b><code>#3B2419</code> Donkerbruin</div></div>
+        <div class="swatch"><div class="vlak" style="background:#F6EBDA"></div>
+            <div class="info"><b>Tekst op donker</b><code>#F6EBDA</code> Crème</div></div>
+        <div class="swatch"><div class="vlak" style="background:#C9AC93"></div>
+            <div class="info"><b>Tekst gedempt</b><code>#C9AC93</code> Bijschriften</div></div>
+    </div>
+</section>
+
+<!-- ================= 2. TYPOGRAFIE ================= -->
+<section class="sg-sectie">
+    <h2>2. Typografie</h2>
+
+    <div class="font-demo">
+        <div class="label">Koppen — Playfair Display (Google Fonts)</div>
+        <p class="kop-voorbeeld">Gambas al Ajillo</p>
+        <p style="font-family:var(--font-tekst); font-size:0.85rem; color:#7A5B47; margin:0;">
+            Een serif met hoog contrast en klassieke elegantie — past bij het ambachtelijke,
+            handgezette karakter van een Spaanse menukaart. Gebruik gewicht 600 en 700.
+            Voor koppen boven 1.2rem: letterspacing 0.04–0.1em voor een gegraveerd effect.
+        </p>
+    </div>
+
+    <div class="font-demo">
+        <div class="label">Lopende tekst — Lato (Google Fonts)</div>
+        <p class="tekst-voorbeeld">
+            Verse garnalen gebakken in olijfolie met knoflook en een vleugje pimentón.
+            Geserveerd met geroosterd brood. Lato is humanistisch en warm van vorm,
+            leest rustig op een tablet in een druk restaurant, en botst niet met de
+            expressieve koppen. Gebruik gewicht 400 voor tekst en 700 voor nadruk.
+        </p>
+    </div>
+
+    <div class="paneel">
+        <strong style="color:var(--kleur-saffraan);">Importregel (staat al in elke pagina):</strong>
+        <pre style="background:var(--kleur-bodega-diep); padding:12px 14px; border-radius:6px; overflow-x:auto; font-size:0.78rem; color:var(--kleur-tekst-zacht);">&lt;link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&amp;family=Lato:wght@400;700&amp;display=swap" rel="stylesheet"&gt;</pre>
+    </div>
+</section>
+
+<!-- ================= 3. UI COMPONENTEN ================= -->
+<section class="sg-sectie">
+    <h2>3. UI-componenten</h2>
+
+    <div class="paneel" style="margin-bottom:18px;">
+        <h3 style="font-family:var(--font-kop); margin-top:0; color:var(--kleur-saffraan);">Knoppen</h3>
+        <div class="comp-rij">
+            <button class="primair">Bestelling versturen</button>
+            <button class="secundair">Bonnetje bekijken</button>
+            <button class="gevaar">Annuleren</button>
+        </div>
+        <p style="font-size:0.85rem; color:var(--kleur-tekst-zacht); margin:0; line-height:1.6;">
+            Afronding <strong>6px</strong> (zacht, niet modern-strak). Hoofdletters vermijden,
+            wel <strong>letterspacing 0.04em</strong> en gewicht 700. Schaduw subtiel
+            (<code style="color:var(--kleur-saffraan)">0 3px 10px rgba(30,10,8,.28)</code>) — het effect van
+            een kaartje dat op tafel ligt, niet van zwevende glas-UI. Bij klikken 1px
+            naar beneden voor tactiele feedback.
+        </p>
+    </div>
+
+    <div class="paneel" style="margin-bottom:18px;">
+        <h3 style="font-family:var(--font-kop); margin-top:0; color:var(--kleur-saffraan);">Menukaart</h3>
+
+        <div class="tabs">
+            <div class="tab actief">Frías</div>
+            <div class="tab">Calientes</div>
+            <div class="tab">Vinos</div>
+        </div>
+
+        <div class="menukaart">
+            <h3>Tapas Frías</h3>
+            <div class="ornament">✦ ✦ ✦</div>
+
+            <div class="menu-item">
+                <span class="naam">Pan con Tomate</span>
+                <span class="stippel"></span>
+                <span class="prijs">€4,00</span>
+            </div>
+            <div class="beschrijving" style="font-size:0.8rem; color:#7A5B47; font-style:italic; margin:-4px 0 8px 0;">
+                Geroosterd brood, rijpe tomaat, olijfolie
+            </div>
+
+            <div class="menu-item">
+                <span class="naam">Jamón Ibérico</span>
+                <span class="stippel"></span>
+                <span class="prijs">€8,50</span>
+            </div>
+            <div class="beschrijving" style="font-size:0.8rem; color:#7A5B47; font-style:italic; margin:-4px 0 8px 0;">
+                24 maanden gerijpt, handgesneden
+            </div>
+
+            <div class="menu-item">
+                <span class="naam">Aceitunas Aliñadas</span>
+                <span class="stippel"></span>
+                <span class="prijs">€3,50</span>
+            </div>
+        </div>
+
+        <p style="font-size:0.85rem; color:var(--kleur-tekst-zacht); margin-top:14px; line-height:1.6;">
+            Menukaarten staan op <strong>perkament</strong>, nooit op de donkere achtergrond.
+            Gerechtnaam in Playfair, <strong>stippellijn</strong> naar de prijs (klassiek
+            menukaart-idioom), beschrijving cursief in gedempt bruin. Tabbladen scheiden
+            <strong>Frías / Calientes / Vinos</strong> zodat gasten niet hoeven scrollen.
+        </p>
+    </div>
+
+    <div class="paneel">
+        <h3 style="font-family:var(--font-kop); margin-top:0; color:var(--kleur-saffraan);">Reserveringsformulier</h3>
+        <div class="comp-rij" style="align-items:flex-end;">
+            <div style="display:flex; flex-direction:column; gap:5px;">
+                <label style="font-size:0.75rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--kleur-tekst-zacht);">Naam</label>
+                <input type="text" placeholder="Uw naam" style="min-width:180px;">
+            </div>
+            <div style="display:flex; flex-direction:column; gap:5px;">
+                <label style="font-size:0.75rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--kleur-tekst-zacht);">Aantal personen</label>
+                <input type="number" value="2" min="1" style="width:90px;">
+            </div>
+            <div style="display:flex; flex-direction:column; gap:5px;">
+                <label style="font-size:0.75rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--kleur-tekst-zacht);">Tafel</label>
+                <select><option>Tafel 4 — bij het raam</option><option>Tafel 7 — terras</option></select>
+            </div>
+            <button class="primair">Reserveren</button>
+        </div>
+        <p style="font-size:0.85rem; color:var(--kleur-tekst-zacht); margin:0; line-height:1.6;">
+            Invoervelden hebben een <strong>perkament-achtergrond</strong> met warme rand
+            (<code style="color:var(--kleur-saffraan)">#C9B49A</code>) — ze zien eruit als iets
+            waarop je schrijft, niet als een systeemveld. Labels klein, in kapitalen met ruime
+            letterspacing, boven het veld.
+        </p>
+    </div>
+</section>
+
+<!-- ================= 4. SFEER & LAY-OUT ================= -->
+<section class="sg-sectie">
+    <h2>4. Sfeer &amp; lay-out</h2>
+
+    <div class="paneel" style="margin-bottom:18px;">
+        <h3 style="font-family:var(--font-kop); margin-top:0; color:var(--kleur-saffraan);">Witruimte &amp; ritme</h3>
+        <ul class="richtlijn-lijst" style="color:var(--kleur-tekst-zacht);">
+            <li>Werk met een <strong>basisritme van 4px</strong>: padding 12/16/20/24px, nooit willekeurige waarden.</li>
+            <li>Kaarten krijgen minimaal <strong>13px binnenruimte</strong>; te krappe kaarten voelen goedkoop.</li>
+            <li>Tussen secties <strong>38px</strong>, tussen kaarten onderling <strong>11–14px</strong>.</li>
+            <li>Maximale leesbreedte voor lopende tekst: <strong>~700px</strong>.</li>
+            <li>Laat de donkere achtergrond ademen — niet elk vlak hoeft gevuld te zijn.</li>
+        </ul>
+    </div>
+
+    <div class="paneel" style="margin-bottom:18px;">
+        <h3 style="font-family:var(--font-kop); margin-top:0; color:var(--kleur-saffraan);">Fotografie-stijl</h3>
+        <ul class="richtlijn-lijst" style="color:var(--kleur-tekst-zacht);">
+            <li><strong>Warm, natuurlijk licht</strong> van opzij — nooit flits of koel wit licht.</li>
+            <li>Gerechten <strong>van bovenaf of op 45°</strong>, op aardewerk of hout, niet op wit porselein.</li>
+            <li>Ondiepe scherptediepte: één gerecht scherp, de rest van de tafel zacht.</li>
+            <li>Kleurcorrectie richting <strong>amber/terracotta</strong>, schaduwen warm houden.</li>
+            <li>Rand van foto's: <strong>12px afronding</strong>, zelfde schaduw als kaarten.</li>
+            <li>Mensen mogen in beeld — handen die delen, een glas dat geheven wordt. Tapas is samen eten.</li>
+        </ul>
+    </div>
+
+    <div class="paneel" style="margin-bottom:18px;">
+        <h3 style="font-family:var(--font-kop); margin-top:0; color:var(--kleur-saffraan);">Sectie-indeling website</h3>
+        <ul class="richtlijn-lijst" style="color:var(--kleur-tekst-zacht);">
+            <li><strong>Hero</strong> — logo groot, sfeerfoto van de bar, één zin + knop "Reserveer een tafel".</li>
+            <li><strong>Over ons</strong> — kort verhaal, foto van de keuken of eigenaars.</li>
+            <li><strong>Menukaart</strong> — tabbladen Frías / Calientes / Vinos, perkament-kaarten.</li>
+            <li><strong>Sfeerimpressie</strong> — galerij van 4–6 foto's in een raster.</li>
+            <li><strong>Reserveren</strong> — compact formulier, direct zichtbaar zonder scrollen op mobiel.</li>
+            <li><strong>Praktisch</strong> — adres, openingstijden, kaart. Rustig, geen accentkleuren.</li>
+        </ul>
+    </div>
+
+    <div class="doe-niet">
+        <div class="doe-blok wel">
+            <h4>Wel doen</h4>
+            <ul style="margin:0; padding-left:18px; line-height:1.7;">
+                <li>Terracotta reserveren voor de belangrijkste actie per scherm</li>
+                <li>Papierkleur gebruiken zodra er iets gelezen moet worden</li>
+                <li>Saffraan voor koppen en prijzen — het trekt precies genoeg aandacht</li>
+                <li>Randen en schaduwen zacht en warm houden</li>
+            </ul>
+        </div>
+        <div class="doe-blok niet">
+            <h4>Niet doen</h4>
+            <ul style="margin:0; padding-left:18px; line-height:1.7;">
+                <li>Koel blauw, neon of puur zwart/wit gebruiken</li>
+                <li>Meer dan twee lettertypen combineren</li>
+                <li>Lange teksten op de donkere achtergrond zetten</li>
+                <li>Harde slagschaduwen of scherpe 0px-hoeken</li>
+                <li>Clip-art of emoji als iconen — gebruik lijn-SVG's</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+</main>
+
+<footer class="privacy-footer">
+    Las Tapas — Bar de España · Style guide voor het digitale bestel- en kassasysteem
+</footer>
+
+</body>
+</html>

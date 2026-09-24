@@ -1,0 +1,396 @@
+/* =====================================================================
+   LAS TAPAS — Visueel thema (UI/UX style guide)
+   Warme, rustieke Spaanse bodega-stijl: terracotta, bordeaux, olijf.
+   Gebaseerd op het ronde logo "Las Tapas — Bar de España".
+   ===================================================================== */
+
+:root {
+    /* ---------- Kleurenpalet ---------- */
+    /* Achtergronden */
+    --kleur-bodega:        #3B1A18;  /* diep bordeauxbruin - hoofdachtergrond */
+    --kleur-bodega-diep:   #2C1210;  /* donkerder, voor koppen/balken */
+    --kleur-paneel:        #4A2320;  /* paneel op de achtergrond */
+    --kleur-paneel-rand:   #6B3A2E;  /* subtiele randlijn */
+
+    /* Accenten */
+    --kleur-terracotta:    #C1562F;  /* primair accent - knoppen, logo-rand */
+    --kleur-terracotta-op: #A8441F;  /* hover-staat */
+    --kleur-saffraan:      #E0A33E;  /* secundair accent - highlights, prijzen */
+    --kleur-olijf:         #7A8B4F;  /* olijfgroen - succes, "vrij" */
+    --kleur-wijn:          #8C2F39;  /* diep wijnrood - waarschuwing, "bezig" */
+
+    /* Papier (kaarten) */
+    --kleur-papier:        #FBF4E6;  /* warm perkament */
+    --kleur-papier-warm:   #F3E4CB;  /* iets dieper, voor actieve kaarten */
+    --kleur-papier-tekst:  #3B2419;  /* donkerbruine tekst op papier */
+
+    /* Tekst op donkere achtergrond */
+    --kleur-tekst:         #F6EBDA;  /* gebroken crème */
+    --kleur-tekst-zacht:   #C9AC93;  /* gedempt, voor bijschriften */
+
+    /* ---------- Typografie ---------- */
+    --font-kop:  'Playfair Display', Georgia, 'Times New Roman', serif;
+    --font-tekst: 'Lato', 'Segoe UI', Arial, sans-serif;
+
+    /* ---------- Vorm & schaduw ---------- */
+    --rond-klein:  6px;
+    --rond-groot:  12px;
+    --schaduw-kaart: 0 3px 10px rgba(30, 10, 8, 0.28);
+    --schaduw-diep:  0 6px 20px rgba(30, 10, 8, 0.38);
+
+    font-size: 16px;
+}
+
+* { box-sizing: border-box; }
+
+body.dashboard {
+    margin: 0;
+    background-color: var(--kleur-bodega);
+    /* Subtiele papier/stuc-textuur met CSS, geen externe afbeelding nodig */
+    background-image:
+        radial-gradient(circle at 18% 12%, rgba(193, 86, 47, 0.13), transparent 42%),
+        radial-gradient(circle at 82% 78%, rgba(140, 47, 57, 0.16), transparent 46%);
+    background-attachment: fixed;
+    color: var(--kleur-tekst);
+    font-family: var(--font-tekst);
+    padding-bottom: 88px;
+}
+
+/* ---------------------------------------------------------------------
+   Topbar
+   --------------------------------------------------------------------- */
+.db-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--kleur-bodega-diep);
+    padding: 12px 28px;
+    border-bottom: 3px solid var(--kleur-terracotta);
+    flex-wrap: wrap;
+    gap: 18px;
+}
+
+.db-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Het horizontale tekstlogo, transparante achtergrond, direct op de bodega-kleur */
+.db-logo {
+    height: 42px;
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.35));
+}
+
+.db-brand .brand-tekst {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.15;
+}
+.db-brand .brand-tekst .hoofd {
+    font-family: var(--font-kop);
+    font-size: 1.45rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--kleur-papier);
+}
+.db-brand .brand-tekst .sub {
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--kleur-saffraan);
+}
+
+.db-restaurant {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+}
+.db-restaurant .label {
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--kleur-tekst-zacht);
+}
+.db-restaurant .naam {
+    font-family: var(--font-kop);
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--kleur-tekst);
+}
+
+.db-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--kleur-terracotta);
+    color: var(--kleur-papier);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-kop);
+    font-weight: 700;
+    font-size: 0.9rem;
+    border: 1px solid var(--kleur-saffraan);
+}
+
+/* ---------------------------------------------------------------------
+   Subheader
+   --------------------------------------------------------------------- */
+.db-subheader {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 22px 28px 0 28px;
+    font-family: var(--font-kop);
+    font-size: 1.15rem;
+    color: var(--kleur-saffraan);
+    letter-spacing: 0.02em;
+}
+.db-subheader svg { width: 19px; height: 19px; color: var(--kleur-saffraan); }
+
+/* Decoratief streepje onder een sectiekop */
+.db-subheader::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, var(--kleur-paneel-rand), transparent);
+    margin-left: 10px;
+}
+
+/* ---------------------------------------------------------------------
+   Kolommen & panelen
+   --------------------------------------------------------------------- */
+.db-kolommen {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 18px 28px 28px 28px;
+    align-items: start;
+}
+@media (max-width: 980px) {
+    .db-kolommen { grid-template-columns: 1fr; }
+}
+
+.db-paneel {
+    background: var(--kleur-paneel);
+    border: 1px solid var(--kleur-paneel-rand);
+    border-radius: var(--rond-groot);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 200px;
+    box-shadow: var(--schaduw-kaart);
+}
+
+.db-paneel-titel {
+    padding: 14px 18px;
+    font-family: var(--font-kop);
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    color: var(--kleur-saffraan);
+    background: var(--kleur-bodega-diep);
+    border-bottom: 1px solid var(--kleur-paneel-rand);
+}
+
+.db-paneel-inhoud {
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+}
+
+/* ---------------------------------------------------------------------
+   Papieren kaarten (tafel / order)
+   --------------------------------------------------------------------- */
+.db-tafelkaart {
+    background: var(--kleur-papier);
+    color: var(--kleur-papier-tekst);
+    border-radius: var(--rond-klein);
+    padding: 13px 15px;
+    box-shadow: var(--schaduw-kaart);
+    border-left: 4px solid var(--kleur-terracotta);
+}
+.db-tafelkaart .naam {
+    font-family: var(--font-kop);
+    font-weight: 700;
+    font-size: 1.05rem;
+}
+.db-tafelkaart .actief-label {
+    color: var(--kleur-olijf);
+    font-weight: 700;
+    font-size: 0.82rem;
+}
+.db-tafelkaart .regel {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 9px;
+    margin-top: 7px;
+    border-top: 1px dashed #C9B49A;
+    font-size: 0.9rem;
+}
+
+.db-geen-tafels {
+    color: var(--kleur-tekst-zacht);
+    font-size: 0.9rem;
+    font-style: italic;
+    padding: 10px 4px;
+}
+
+.db-paneel-footer {
+    margin-top: auto;
+    background: var(--kleur-bodega-diep);
+    border-top: 1px solid var(--kleur-paneel-rand);
+    padding: 13px 18px;
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-kop);
+    font-weight: 700;
+    color: var(--kleur-saffraan);
+}
+
+.db-orderkaart {
+    background: var(--kleur-papier-warm);
+    color: var(--kleur-papier-tekst);
+    border-radius: var(--rond-klein);
+    padding: 11px 13px;
+    box-shadow: var(--schaduw-kaart);
+    border-left: 4px solid var(--kleur-saffraan);
+}
+.db-orderkaart .kop {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-family: var(--font-kop);
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-bottom: 7px;
+    padding-bottom: 5px;
+    border-bottom: 1px dashed #C9B49A;
+}
+.db-orderkaart .kop .tijd {
+    font-family: var(--font-tekst);
+    font-weight: 400;
+    color: #7A5B47;
+    font-size: 0.75rem;
+}
+
+.db-orderregel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+    font-size: 0.9rem;
+}
+
+.db-badge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 11px;
+    color: var(--kleur-papier);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+.db-badge.bezig { background: var(--kleur-wijn); }
+.db-badge.nieuw { background: var(--kleur-olijf); }
+
+/* ---------------------------------------------------------------------
+   Onderste navigatiebalk
+   --------------------------------------------------------------------- */
+.db-navbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--kleur-bodega-diep);
+    border-top: 2px solid var(--kleur-terracotta);
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 0 8px 0;
+    box-shadow: 0 -3px 14px rgba(20, 8, 6, 0.4);
+}
+
+.db-navitem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    text-decoration: none;
+    color: var(--kleur-tekst-zacht);
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding-bottom: 4px;
+    border-bottom: 3px solid transparent;
+    transition: color 0.15s ease;
+}
+.db-navitem .icoon svg { width: 21px; height: 21px; }
+.db-navitem:hover { color: var(--kleur-saffraan); }
+.db-navitem.actief {
+    border-bottom-color: var(--kleur-terracotta);
+    color: var(--kleur-saffraan);
+}
+.db-navitem.blauw .icoon svg { color: var(--kleur-terracotta); }
+
+/* ---------------------------------------------------------------------
+   Content-paneel (voorraad, instellingen)
+   --------------------------------------------------------------------- */
+.db-content-paneel { padding: 18px 28px 28px 28px; }
+.db-content-paneel h2 {
+    font-family: var(--font-kop);
+    color: var(--kleur-saffraan);
+    font-size: 1.15rem;
+    letter-spacing: 0.02em;
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--kleur-paneel-rand);
+    padding-bottom: 6px;
+}
+
+.voorraad-tabel {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--kleur-papier);
+    color: var(--kleur-papier-tekst);
+    border-radius: var(--rond-groot);
+    overflow: hidden;
+    box-shadow: var(--schaduw-kaart);
+}
+.voorraad-tabel th, .voorraad-tabel td {
+    padding: 11px 16px;
+    text-align: left;
+    font-size: 0.9rem;
+}
+.voorraad-tabel th {
+    background: var(--kleur-terracotta);
+    color: var(--kleur-papier);
+    font-family: var(--font-kop);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+.voorraad-tabel tr:nth-child(even) { background: var(--kleur-papier-warm); }
+.voorraad-laag { color: var(--kleur-wijn); font-weight: 700; }
+.voorraad-laag svg { width: 14px; height: 14px; vertical-align: -2px; margin-right: 4px; }
+
+.instellingen-kaart {
+    background: var(--kleur-papier);
+    color: var(--kleur-papier-tekst);
+    border-radius: var(--rond-groot);
+    padding: 20px;
+    margin-bottom: 15px;
+    max-width: 540px;
+    box-shadow: var(--schaduw-kaart);
+    border-left: 4px solid var(--kleur-terracotta);
+}
+.instellingen-kaart h3 {
+    margin-top: 0;
+    font-family: var(--font-kop);
+    font-size: 1.1rem;
+    color: var(--kleur-wijn);
+}
+.instellingen-kaart a { color: var(--kleur-terracotta); font-weight: 600; }
