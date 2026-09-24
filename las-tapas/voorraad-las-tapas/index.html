@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f7f1e7">
+    <title>Las Tapas | Voorraadbeheer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <a class="brand" href="index.html" aria-label="Las Tapas voorraadbeheer"><span class="brand-mark">LT</span><span><strong>Las Tapas</strong><small>Casa de sabores</small></span></a>
+            <div class="sidebar-label">Beheer</div>
+            <nav class="main-nav" aria-label="Hoofdnavigatie">
+                <a class="nav-item active" href="#voorraad"><span class="nav-icon">▦</span>Voorraad<span class="nav-count" id="nav-low-count">0</span></a>
+                <a class="nav-item" href="#bestellingen"><span class="nav-icon">⌁</span>Bestellingen</a>
+                <a class="nav-item" href="#menu"><span class="nav-icon">◒</span>Menukaart</a>
+                <a class="nav-item" href="#rapporten"><span class="nav-icon">▤</span>Rapporten</a>
+            </nav>
+            <div class="sidebar-footer">
+                <a class="user-chip logout-sidebar" href="logout.php"><span class="avatar">LT</span><span><strong>Uitloggen</strong><small>Sessie beëindigen</small></span><span class="more">↗</span></a>
+                <div class="connection"><span class="status-dot"></span><span><strong>Live verbonden</strong><small>Laatste sync <b id="last-sync">--:--</b></small></span></div>
+            </div>
+        </aside>
+        <main class="main-content" id="voorraad">
+            <header class="topbar"><div class="breadcrumbs"><span>Casa de sabores</span><i>/</i><strong>Voorraad</strong></div><div class="topbar-actions"><span class="date-label" id="today-label"></span><button class="icon-button" title="Meldingen" aria-label="Meldingen">♢<span class="notification-dot"></span></button><button class="outline-button" id="refresh-button" type="button">↻ <span>Synchroniseren</span></button></div></header>
+            <section class="page-heading"><div><p class="eyebrow">OPERATIE &nbsp;•&nbsp; KEUKEN + BAR</p><h1>Voorraad <em>inzichtelijk.</em></h1><p class="intro">Houd elke tapa, drank en ingrediënt onder controle.</p></div><button class="primary-button" id="open-add" type="button"><span>＋</span> Nieuw artikel</button></section>
+            <section class="stats-grid" aria-label="Voorraad kerncijfers">
+                <article class="stat-card"><div class="stat-icon warm">◫</div><div><span class="stat-label">Totaal artikelen</span><strong id="stat-total">0</strong><small>actief in assortiment</small></div></article>
+                <article class="stat-card"><div class="stat-icon coral">!</div><div><span class="stat-label">Lage voorraad</span><strong id="stat-low">0</strong><small class="danger-text">direct aandacht nodig</small></div></article>
+                <article class="stat-card"><div class="stat-icon green">✓</div><div><span class="stat-label">Op voorraad</span><strong id="stat-healthy">0%</strong><small class="positive-text">van alle artikelen</small></div></article>
+                <article class="stat-card"><div class="stat-icon ink">€</div><div><span class="stat-label">Voorraadwaarde</span><strong id="stat-value">€ 0</strong><small>inkoopwaarde totaal</small></div></article>
+            </section>
+            <section class="inventory-section" aria-labelledby="inventory-title">
+                <div class="section-heading"><div><h2 id="inventory-title">Actuele voorraad</h2><p>Beheer alle artikelen van de zaak op één plek.</p></div><button class="text-button" id="export-button" type="button">↓ Inkooplijst exporteren</button></div>
+                <div class="toolbar"><label class="search-box"><span>⌕</span><input id="search-input" type="search" placeholder="Zoek op artikelnaam..." autocomplete="off"></label><div class="filter-group" role="group" aria-label="Filter op categorie"><button class="filter-button active" data-category="all" type="button">Alles <b id="all-count">0</b></button><button class="filter-button" data-category="keuken" type="button">Keuken <b id="kitchen-count">0</b></button><button class="filter-button" data-category="bar" type="button">Bar <b id="bar-count">0</b></button></div><label class="low-toggle"><input id="low-only" type="checkbox"><span class="toggle"></span> Alleen lage voorraad</label></div>
+                <div class="table-wrap"><table><thead><tr><th>Artikel</th><th>Categorie</th><th>Voorraad</th><th>Minimum</th><th>Status</th><th>Inkoopwaarde</th><th aria-label="Acties"></th></tr></thead><tbody id="inventory-body"></tbody></table><div id="empty-state" class="empty-state" hidden><span>⌕</span><strong>Geen artikelen gevonden</strong><p>Pas je zoekterm of filters aan.</p></div></div>
+                <div class="table-footer"><span id="result-count">0 artikelen</span><span><span class="legend-dot low"></span> Bijvullen&nbsp;&nbsp; <span class="legend-dot good"></span> Op niveau</span></div>
+            </section>
+            <footer class="page-footer"><span>Las Tapas voorraadbeheer</span><span>Automatische synchronisatie elke 30 sec.</span></footer>
+        </main>
+    </div>
+    <div class="modal-backdrop" id="modal-backdrop" hidden><section class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><button class="close-button" id="close-modal" type="button" aria-label="Sluiten">×</button><p class="eyebrow">ASSORTIMENT UITBREIDEN</p><h2 id="modal-title">Nieuw artikel</h2><p class="modal-intro">Voeg een artikel toe aan je actuele voorraad.</p><form id="add-form"><label>Naam artikel<input name="name" required placeholder="Bijv. Manchego 12 maanden"></label><div class="form-row"><label>Categorie<select name="category"><option value="keuken">Keuken</option><option value="bar">Bar</option></select></label><label>Beginvoorraad<input name="stock" type="number" min="0" value="10" required></label></div><div class="form-row"><label>Minimumvoorraad<input name="minimum" type="number" min="0" value="5" required></label><label>Prijs per stuk<input name="price" type="number" min="0" step="0.01" value="3.50" required></label></div><div class="modal-actions"><button class="outline-button" id="cancel-modal" type="button">Annuleren</button><button class="primary-button" type="submit">Artikel toevoegen</button></div></form></section></div>
+    <div class="toast" id="toast" role="status"></div>
+    <script src="script.js"></script>
+</body>
+</html>
