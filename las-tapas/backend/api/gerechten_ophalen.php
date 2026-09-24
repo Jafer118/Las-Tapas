@@ -4,6 +4,8 @@
  * Geeft alle gerechten terug (voor de bestelpagina).
  */
 
+require_once __DIR__ . '/../lib/auth.php';
+vereisIngelogd();
 header('Content-Type: application/json');
 require_once __DIR__ . '/../db.php';
 

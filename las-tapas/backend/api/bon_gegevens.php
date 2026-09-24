@@ -7,6 +7,8 @@
  * bon.html (JSON-variant). Voor de echte PDF-download, zie bon_pdf.php.
  */
 
+require_once __DIR__ . '/../lib/auth.php';
+vereisIngelogd();
 header('Content-Type: application/json');
 require_once __DIR__ . '/../db.php';
 require_once __DIR__ . '/../lib/bon_data.php';

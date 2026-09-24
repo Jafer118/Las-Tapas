@@ -30,7 +30,9 @@ las-tapas/
     ├── keuken.html              -> live keukenscherm
     ├── bar.html                 -> live barscherm
     ├── kassa.html                -> kassascherm (rekening + afrekenen)
-    └── privacy.html               -> AVG/privacy-pagina
+   ├── privacy.html               -> AVG/privacy-pagina
+   ├── login.html                 -> medewerkerslogin
+   └── resetten.html              -> wachtwoord vergeten/resetten
 ```
 
 ## Installatie (lokaal testen, bv. met XAMPP/MAMP)
@@ -38,6 +40,9 @@ las-tapas/
 1. **Database aanmaken**
    Open phpMyAdmin (of de mysql command line) en importeer `database/las_tapas.sql`.
    Dit maakt de database `las_tapas` aan met tabellen én voorbeelddata (tafels en gerechten).
+   Ook de tabellen `gebruikers` en `wachtwoord_resets` worden aangemaakt. Het
+   eerste beheeraccount is `admin@lastapas.nl` met wachtwoord `LasTapas123!`.
+   Wijzig dit wachtwoord direct na de eerste login via de resetfunctie.
 
 2. **Backend configureren**
    Open `backend/db.php` en pas zo nodig `$DB_HOST`, `$DB_USER` en `$DB_PASS` aan
@@ -48,6 +53,7 @@ las-tapas/
    Zet de hele map `las-tapas/` in de `htdocs`-map van XAMPP (of `www` bij MAMP).
 
 4. **Openen in de browser**
+   - Login: `http://localhost/las-tapas/frontend/login.html`
    - Bestellen: `http://localhost/las-tapas/frontend/bestellen.html`
    - Keukenscherm: `http://localhost/las-tapas/frontend/keuken.html`
    - Barscherm: `http://localhost/las-tapas/frontend/bar.html`
@@ -118,10 +124,16 @@ las-tapas/
    `tafels`, kolom `aantal_personen` bij `bestellingen`), en pas daarna
    optioneel de capaciteit per tafel aan met de voorbeeld-UPDATE-regels.
 
+## Authenticatie
+
+Alle operationele schermen en API's vereisen een PHP-sessie. Wachtwoorden
+worden met `password_hash` opgeslagen en resetlinks zijn eenmalig en 60 minuten
+geldig. Op een lokale WAMP-installatie toont `resetten.html` de resetlink direct
+op het scherm. Voor productie moet `backend/api/auth.php` worden gekoppeld aan
+een SMTP-provider en mag de link niet meer in de API-response staan.
+
 ## Mogelijke uitbreidingen (voor een hogere score / doorontwikkeling)
 
-- Inloggen voor personeel (authenticatie/autorisatie), zodat niet iedereen bij
-  de kassa/voorraad kan.
 - Extra kassafunctie: rekening splitsen of kortingen toepassen.
 - Notificatie/geluid op het keuken-/barscherm bij een nieuwe bestelling
   (bijv. met WebSockets i.p.v. elke 5 sec. verversen).

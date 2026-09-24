@@ -7,6 +7,8 @@
  * terug als download (Content-Type: application/pdf).
  */
 
+require_once __DIR__ . '/../lib/auth.php';
+vereisIngelogd();
 require_once __DIR__ . '/../db.php';
 require_once __DIR__ . '/../lib/bon_data.php';
 require_once __DIR__ . '/../lib/pdf_bon.php';
