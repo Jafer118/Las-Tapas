@@ -4,27 +4,27 @@
    ===================================================================== */
 
 :root {
-    --kleur-bodega:        #3B1A18;
-    --kleur-bodega-diep:   #2C1210;
-    --kleur-paneel:        #4A2320;
-    --kleur-paneel-licht:  #5A2E28;
-    --kleur-paneel-rand:   #6B3A2E;
+    --kleur-bodega:        #2B0F16;
+    --kleur-bodega-diep:   #1E0B10;
+    --kleur-paneel:        #3B1620;
+    --kleur-paneel-licht:  #451A26;
+    --kleur-paneel-rand:   #6B1E2A;
 
-    --kleur-terracotta:    #C1562F;
-    --kleur-terracotta-op: #A8441F;
-    --kleur-saffraan:      #E0A33E;
-    --kleur-olijf:         #7A8B4F;
-    --kleur-wijn:          #8C2F39;
+    --kleur-terracotta:    #D98B45;
+    --kleur-terracotta-op: #E9AE72;
+    --kleur-saffraan:      #E9AE72;
+    --kleur-olijf:         #9CB379;
+    --kleur-wijn:          #6B1E2A;
 
-    --kleur-papier:        #FBF4E6;
-    --kleur-papier-warm:   #F3E4CB;
-    --kleur-papier-tekst:  #3B2419;
+    --kleur-papier:        #2B0F16;
+    --kleur-papier-warm:   #3B1620;
+    --kleur-papier-tekst:  #F5EAD9;
 
-    --kleur-tekst:         #F6EBDA;
-    --kleur-tekst-zacht:   #C9AC93;
+    --kleur-tekst:         #F5EAD9;
+    --kleur-tekst-zacht:   #C9A98E;
 
-    --font-kop:   'Playfair Display', Georgia, serif;
-    --font-tekst: 'Lato', 'Segoe UI', Arial, sans-serif;
+    --font-kop:   'Fraunces', Georgia, serif;
+    --font-tekst: 'Work Sans', 'Segoe UI', Arial, sans-serif;
 
     --rond-klein: 6px;
     --rond-groot: 12px;
@@ -40,8 +40,8 @@ body {
     font-family: var(--font-tekst);
     background-color: var(--kleur-bodega);
     background-image:
-        radial-gradient(circle at 18% 12%, rgba(193, 86, 47, 0.13), transparent 42%),
-        radial-gradient(circle at 82% 78%, rgba(140, 47, 57, 0.16), transparent 46%);
+        radial-gradient(circle at 15% 20%, rgba(224, 162, 63, 0.18), transparent 45%),
+        radial-gradient(circle at 85% 80%, rgba(110, 123, 74, 0.22), transparent 50%);
     background-attachment: fixed;
     color: var(--kleur-tekst);
 }

@@ -7,30 +7,30 @@
 :root {
     /* ---------- Kleurenpalet ---------- */
     /* Achtergronden */
-    --kleur-bodega:        #3B1A18;  /* diep bordeauxbruin - hoofdachtergrond */
-    --kleur-bodega-diep:   #2C1210;  /* donkerder, voor koppen/balken */
-    --kleur-paneel:        #4A2320;  /* paneel op de achtergrond */
-    --kleur-paneel-rand:   #6B3A2E;  /* subtiele randlijn */
+    --kleur-bodega:        #2B0F16;  /* hoofdachtergrond */
+    --kleur-bodega-diep:   #1E0B10;  /* donkerder, voor koppen/balken */
+    --kleur-paneel:        #3B1620;  /* paneel op de achtergrond */
+    --kleur-paneel-rand:   #6B1E2A;  /* subtiele randlijn */
 
     /* Accenten */
-    --kleur-terracotta:    #C1562F;  /* primair accent - knoppen, logo-rand */
-    --kleur-terracotta-op: #A8441F;  /* hover-staat */
-    --kleur-saffraan:      #E0A33E;  /* secundair accent - highlights, prijzen */
-    --kleur-olijf:         #7A8B4F;  /* olijfgroen - succes, "vrij" */
-    --kleur-wijn:          #8C2F39;  /* diep wijnrood - waarschuwing, "bezig" */
+    --kleur-terracotta:    #D98B45;  /* primair accent */
+    --kleur-terracotta-op: #E9AE72;  /* hover-staat */
+    --kleur-saffraan:      #E9AE72;  /* highlights en prijzen */
+    --kleur-olijf:         #9CB379;  /* succes, "vrij" */
+    --kleur-wijn:          #6B1E2A;  /* waarschuwing, "bezig" */
 
     /* Papier (kaarten) */
-    --kleur-papier:        #FBF4E6;  /* warm perkament */
-    --kleur-papier-warm:   #F3E4CB;  /* iets dieper, voor actieve kaarten */
-    --kleur-papier-tekst:  #3B2419;  /* donkerbruine tekst op papier */
+    --kleur-papier:        #2B0F16;  /* donkere kaartachtergrond */
+    --kleur-papier-warm:   #3B1620;  /* iets lichtere actieve kaart */
+    --kleur-papier-tekst:  #F5EAD9;  /* lichte tekst op donkere kaarten */
 
     /* Tekst op donkere achtergrond */
-    --kleur-tekst:         #F6EBDA;  /* gebroken crème */
-    --kleur-tekst-zacht:   #C9AC93;  /* gedempt, voor bijschriften */
+    --kleur-tekst:         #F5EAD9;  /* gebroken crème */
+    --kleur-tekst-zacht:   #C9A98E;  /* gedempt, voor bijschriften */
 
     /* ---------- Typografie ---------- */
-    --font-kop:  'Playfair Display', Georgia, 'Times New Roman', serif;
-    --font-tekst: 'Lato', 'Segoe UI', Arial, sans-serif;
+    --font-kop:  'Fraunces', Georgia, 'Times New Roman', serif;
+    --font-tekst: 'Work Sans', 'Segoe UI', Arial, sans-serif;
 
     /* ---------- Vorm & schaduw ---------- */
     --rond-klein:  6px;
@@ -48,8 +48,8 @@ body.dashboard {
     background-color: var(--kleur-bodega);
     /* Subtiele papier/stuc-textuur met CSS, geen externe afbeelding nodig */
     background-image:
-        radial-gradient(circle at 18% 12%, rgba(193, 86, 47, 0.13), transparent 42%),
-        radial-gradient(circle at 82% 78%, rgba(140, 47, 57, 0.16), transparent 46%);
+        radial-gradient(circle at 15% 20%, rgba(224, 162, 63, 0.18), transparent 45%),
+        radial-gradient(circle at 85% 80%, rgba(110, 123, 74, 0.22), transparent 50%);
     background-attachment: fixed;
     color: var(--kleur-tekst);
     font-family: var(--font-tekst);
@@ -275,7 +275,7 @@ body.dashboard {
 .db-orderkaart .kop .tijd {
     font-family: var(--font-tekst);
     font-weight: 400;
-    color: #7A5B47;
+    color: var(--kleur-tekst-zacht);
     font-size: 0.75rem;
 }
 

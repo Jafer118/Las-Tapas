@@ -25,7 +25,7 @@ async function authGuard() {
             knop.className = 'auth-uitloggen';
             knop.type = 'button';
             knop.textContent = 'Uitloggen';
-            knop.style.cssText = 'position:fixed;right:18px;bottom:18px;z-index:20;padding:9px 14px;background:#8c2f39;color:#fbf4e6;border:0;border-radius:6px;font:700 0.85rem Lato,Arial,sans-serif;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.28)';
+            knop.style.cssText = 'position:fixed;right:18px;bottom:18px;z-index:20;padding:9px 14px;background:var(--kleur-wijn);color:var(--kleur-tekst);border:0;border-radius:6px;font:700 0.85rem var(--font-tekst);cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.28)';
             knop.addEventListener('click', async () => {
                 await fetch(`${API_BASIS}/auth.php?actie=logout`, { method: 'POST', credentials: 'same-origin' });
                 location.href = 'login.html';
