@@ -1030,3 +1030,122 @@ tbody tr:hover {
     transition-duration: 0.01ms !important;
   }
 }
+
+.login-page {
+  display: flex;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: var(--wine-dark);
+}
+
+.login-card {
+  width: 100%;
+  max-width: 430px;
+  padding: 42px;
+  border: 1px solid rgba(217, 139, 69, 0.38);
+  border-radius: 5px;
+  background: var(--panel);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.38);
+}
+
+.login-brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin-bottom: 44px;
+}
+
+.login-brand strong {
+  display: block;
+  font: 600 21px/1.2 var(--font-display);
+}
+
+.login-brand small {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.login-card h1 {
+  margin: 0 0 9px;
+  font: 600 38px/1.1 var(--font-display);
+}
+
+.login-intro {
+  margin: 0 0 24px;
+  color: rgba(245, 234, 217, 0.72);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.login-form {
+  display: grid;
+  gap: 16px;
+}
+
+.login-form label {
+  display: grid;
+  gap: 7px;
+  color: rgba(245, 234, 217, 0.84);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.login-form input {
+  width: 100%;
+  min-height: 44px;
+  padding: 12px;
+  border: 1px solid rgba(245, 234, 217, 0.2);
+  border-radius: 3px;
+  outline: 0;
+  background: var(--wine-dark);
+  color: var(--cream-text);
+}
+
+.login-form input::placeholder {
+  color: rgba(201, 169, 142, 0.68);
+}
+
+.login-form input:focus {
+  border-color: var(--saffron);
+}
+
+.login-form .primary-button {
+  width: 100%;
+  margin-top: 6px;
+  padding: 12px;
+}
+
+.login-error {
+  margin-bottom: 16px;
+  padding: 11px;
+  border: 1px solid rgba(229, 138, 120, 0.38);
+  border-radius: 3px;
+  background: rgba(229, 138, 120, 0.12);
+  color: #E58A78;
+  font-size: 11px;
+}
+
+.login-note {
+  margin: 25px 0 0;
+  color: rgba(201, 169, 142, 0.72);
+  font-size: 10px;
+  text-align: center;
+}
+
+@media (max-width: 480px) {
+  .login-card {
+    padding: 32px 24px;
+  }
+
+  .login-brand {
+    margin-bottom: 36px;
+  }
+
+  .login-card h1 {
+    font-size: 32px;
+  }
+}
