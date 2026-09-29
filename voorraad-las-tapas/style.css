@@ -882,7 +882,9 @@ tbody tr:hover {
   }
 
   .sidebar {
-    position: relative;
+    position: sticky;
+    top: 0;
+    z-index: 25;
     width: 100%;
     height: auto;
     padding: 15px;
@@ -1049,6 +1051,22 @@ tbody tr:hover {
   background: var(--panel);
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.38);
 }
+
+.login-back-link {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 26px;
+  padding: 8px 12px;
+  border: 1px solid var(--saffron);
+  border-radius: 3px;
+  color: var(--saffron-light);
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.login-back-link:hover { background: rgba(217, 139, 69, 0.1); }
+.login-back-link:focus-visible { outline: 2px solid var(--saffron); outline-offset: 4px; }
 
 .login-brand {
   display: flex;

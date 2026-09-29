@@ -118,15 +118,32 @@
         margin-top: 20px;
     }
 
+    .portal-return {
+        position: fixed;
+        top: 16px;
+        left: 16px;
+        z-index: 2;
+        padding: 9px 12px;
+        border: 1px solid #E9AE72;
+        border-radius: 6px;
+        background: #2B0F16;
+        color: #F5EAD9;
+        font: 600 13px 'Work Sans', sans-serif;
+        text-decoration: none;
+    }
+    .portal-return:hover { background: #3B1620; }
+
     /* Alleen de bon zelf tonen bij afdrukken/opslaan als PDF */
     @media print {
         body { background: white; padding: 0; }
+        .portal-return { display: none; }
         .knoppen { display: none; }
         .bon { box-shadow: none; width: 100%; }
     }
 </style>
 </head>
 <body>
+<a class="portal-return" href="../../index.html">← Startpagina</a>
 
 <div class="bon" id="bon-inhoud" style="display:none;">
     <div class="bon-header">

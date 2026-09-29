@@ -3,6 +3,38 @@
 // Pas dit pad aan als jouw backend-map ergens anders staat
 const API_BASIS = '../backend/api';
 
+function voegSysteemnavigatieToe() {
+    const subnav = document.querySelector('.subnav');
+    if (subnav) {
+        const homeLink = document.createElement('a');
+        homeLink.href = '../../index.html';
+        homeLink.textContent = '← Startpagina';
+        subnav.prepend(homeLink);
+
+        const stockLink = document.createElement('a');
+        stockLink.href = '../../voorraad-las-tapas/login.php';
+        stockLink.textContent = 'Voorraadbeheer';
+        subnav.appendChild(stockLink);
+    }
+
+    const dashboardNav = document.querySelector('.db-navbar');
+    if (dashboardNav) {
+        const homeLink = document.createElement('a');
+        homeLink.className = 'db-navitem';
+        homeLink.href = '../../index.html';
+        homeLink.innerHTML = '<span class="icoon" aria-hidden="true">⌂</span><span>Start</span>';
+        dashboardNav.prepend(homeLink);
+
+        const stockLink = document.createElement('a');
+        stockLink.className = 'db-navitem';
+        stockLink.href = '../../voorraad-las-tapas/login.php';
+        stockLink.innerHTML = '<span class="icoon" aria-hidden="true">▤</span><span>Voorraad</span>';
+        dashboardNav.appendChild(stockLink);
+    }
+}
+
+voegSysteemnavigatieToe();
+
 async function authGuard() {
     const response = await fetch(`${API_BASIS}/auth.php?actie=me`, { credentials: 'same-origin' });
     const data = await response.json();

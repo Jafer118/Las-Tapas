@@ -18,6 +18,7 @@ $hasError = isset($_GET['error']);
 </head>
 <body class="login-page">
     <main class="login-card">
+        <a class="login-back-link" href="../index.html">← Terug naar startpagina</a>
         <div class="login-brand"><span class="brand-mark">LT</span><span><strong>Las Tapas</strong><small>Casa de sabores</small></span></div>
         <p class="eyebrow">VOORRAADBEHEER</p>
         <h1>Welkom terug.</h1>
