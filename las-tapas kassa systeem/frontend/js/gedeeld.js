@@ -1,6 +1,6 @@
-// gedeeld.js - kleine helperfuncties die op meerdere schermen gebruikt worden
+// Shared helpers used by multiple screens.
 
-// Pas dit pad aan als jouw backend-map ergens anders staat
+// Update this path if the backend directory is located elsewhere.
 const API_BASIS = '../backend/api';
 
 function voegSysteemnavigatieToe() {

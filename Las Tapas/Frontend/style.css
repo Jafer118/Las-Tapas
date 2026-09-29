@@ -282,7 +282,7 @@ section { padding: 84px 0; }
 .section-head p { margin: 6px 0 0; opacity: 0.75; max-width: 52ch; }
 .rule { height: 1px; background: currentColor; opacity: 0.15; margin: 8px 0 0; }
 
-/* ---------- Over ons ---------- */
+/* ---------- About ---------- */
 .about-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -303,7 +303,7 @@ section { padding: 84px 0; }
   flex-wrap: wrap;
   margin-bottom: 40px;
 }
-/* ---------- Formules (all-you-can-eat) ---------- */
+/* ---------- Formulas (all-you-can-eat) ---------- */
 .formula-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -468,7 +468,7 @@ section { padding: 84px 0; }
 }
 .venue-stats .stat span { font-size: 0.85rem; opacity: 0.7; }
 
-/* ---------- Reserveren / contact ---------- */
+/* ---------- Reservations / contact ---------- */
 .cta-band {
   background: var(--panel-2);
   color: var(--cream-text);

@@ -1,6 +1,6 @@
 /* =====================================================================
-   LAS TAPAS — thema voor de werkschermen
-   (bestellen, keuken, bar, kassa) — zelfde palet als dashboard.css
+    LAS TAPAS — Theme for the work screens
+    (ordering, kitchen, bar, cashier) — same palette as dashboard.css
    ===================================================================== */
 
 :root {
@@ -46,7 +46,7 @@ body {
     color: var(--kleur-tekst);
 }
 
-/* ---------- Topbar ---------- */
+/* Top bar */
 header.topbar {
     display: flex;
     align-items: center;
@@ -93,6 +93,7 @@ header.topbar .status {
     font-family: var(--font-tekst);
 }
 
+<<<<<<< HEAD
 .portal-header-link {
     padding: 8px 12px;
     border: 1px solid var(--kleur-saffraan);
@@ -106,6 +107,9 @@ header.topbar .status {
 .portal-page-header { position: sticky; top: 0; z-index: 20; }
 
 /* ---------- Hoofdinhoud ---------- */
+=======
+/* Main content */
+>>>>>>> d8c37539271b9bb1c258f6bf1b8d42a211ab0a9c
 main {
     padding: 26px;
     max-width: 1400px;
@@ -134,7 +138,7 @@ h2 {
     box-shadow: var(--schaduw-kaart);
 }
 
-/* ---------- Papieren kaarten ---------- */
+/* Cards */
 .kaart {
     background: var(--kleur-papier);
     color: var(--kleur-papier-tekst);
@@ -181,7 +185,7 @@ h2 {
     font-size: 0.95rem;
 }
 
-/* ---------- Knoppen ---------- */
+/* Buttons */
 button {
     font-family: var(--font-tekst);
     cursor: pointer;
@@ -223,7 +227,7 @@ select, input[type=number], input[type=email], input[type=text] {
     color: var(--kleur-papier-tekst);
 }
 
-/* ---------- Gerechtenrijen (bestelpagina) ---------- */
+/* Menu item rows (ordering page) */
 .gerecht-rij {
     display: flex;
     align-items: center;
@@ -257,7 +261,7 @@ select, input[type=number], input[type=email], input[type=text] {
     margin: 2px 0;
 }
 
-/* ---------- Menu-tabbladen (bestelpagina) ---------- */
+/* Menu tabs (ordering page) */
 .menu-tabs {
     display: flex;
     gap: 6px;
@@ -309,7 +313,7 @@ select, input[type=number], input[type=email], input[type=text] {
     color: var(--kleur-saffraan);
 }
 
-/* ---------- Mandje ---------- */
+/* Cart summary */
 .mandje-samenvatting {
     position: sticky;
     bottom: 0;
@@ -327,7 +331,7 @@ select, input[type=number], input[type=email], input[type=text] {
 }
 .mandje-samenvatting strong { color: var(--kleur-saffraan); font-family: var(--font-kop); }
 
-/* ---------- Tafelkaarten (kassa) ---------- */
+/* Table cards (cashier) */
 .tafel-kaart {
     background: var(--kleur-papier);
     color: var(--kleur-papier-tekst);
@@ -348,7 +352,7 @@ select, input[type=number], input[type=email], input[type=text] {
 .tafel-kaart .status-vrij { color: var(--kleur-olijf); font-weight: 700; font-size: 0.85rem; }
 .tafel-kaart .status-bezet { color: var(--kleur-wijn); font-weight: 700; font-size: 0.85rem; }
 
-/* ---------- Meldingen ---------- */
+/* Notifications */
 .melding {
     padding: 13px 16px;
     border-radius: var(--rond-klein);
@@ -367,7 +371,7 @@ select, input[type=number], input[type=email], input[type=text] {
     border-left-color: var(--kleur-olijf);
 }
 
-/* ---------- Footer ---------- */
+/* Footer */
 footer.privacy-footer {
     text-align: center;
     color: var(--kleur-tekst-zacht);
@@ -376,7 +380,7 @@ footer.privacy-footer {
 }
 footer.privacy-footer a { color: var(--kleur-saffraan); }
 
-/* ---------- Subnavigatie ---------- */
+/* Subnavigation */
 nav.subnav {
     position: sticky;
     top: 0;

@@ -1,10 +1,8 @@
 <?php
 /**
  * bon_data.php
- * Haalt alle gegevens op die nodig zijn voor een bonnetje (JSON-weergave,
- * PDF-download of e-mail). Wordt hergebruikt door bon_gegevens.php,
- * bon_pdf.php en verstuur_bon_email.php, zodat de logica maar op één
- * plek staat.
+ * Retrieves the data needed for a receipt in JSON or PDF form.
+ * Shared by bon_gegevens.php and bon_pdf.php to keep this logic in one place.
  */
 
 function bon_data_ophalen(PDO $pdo, int $tafelId, int $bestellingId): ?array

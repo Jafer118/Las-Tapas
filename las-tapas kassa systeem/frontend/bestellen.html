@@ -74,7 +74,7 @@
 <script>
 let gerechten = [];
 let tafels = [];
-let mandje = {}; // { gerecht_id: aantal }
+let mandje = {};
 const MENUGROEPEN = ['Frías', 'Calientes', 'Especialidades', 'Postres', 'Bebidas'];
 let actieveGroep = 'Frías';
 
@@ -129,8 +129,7 @@ function toonCapaciteitInfo() {
         return;
     }
 
-    // Zet ook het HTML max-attribuut, zodat de pijltjes/spinner van het
-    // getalveld zelf ook niet verder gaan dan de capaciteit van de tafel.
+    // Keep the number input's native spinner within the table capacity.
     aantalVeld.max = tafel.capaciteit;
 
     if (aantalPersonen > tafel.capaciteit) {
@@ -240,7 +239,7 @@ document.getElementById('btn-versturen').addEventListener('click', async () => {
     if (resultaat.succes) {
         toonMelding('Bestelling succesvol verstuurd naar keuken/bar!', 'succes');
         mandje = {};
-        const gerechtData = await apiGet('gerechten_ophalen.php'); // voorraad opnieuw ophalen
+        const gerechtData = await apiGet('gerechten_ophalen.php');
         gerechten = gerechtData.gerechten;
         renderGerechten();
         updateSamenvatting();

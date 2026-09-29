@@ -1,12 +1,4 @@
 <?php
-/**
- * GET api/bon_pdf.php?tafel_id=10
- * GET api/bon_pdf.php?bestelling_id=7
- *
- * Genereert een echt PDF-bestand van het bonnetje en stuurt dit direct
- * terug als download (Content-Type: application/pdf).
- */
-
 require_once __DIR__ . '/../lib/auth.php';
 vereisIngelogd();
 require_once __DIR__ . '/../db.php';

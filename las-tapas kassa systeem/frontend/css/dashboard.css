@@ -1,38 +1,38 @@
 /* =====================================================================
-   LAS TAPAS — Visueel thema (UI/UX style guide)
-   Warme, rustieke Spaanse bodega-stijl: terracotta, bordeaux, olijf.
-   Gebaseerd op het ronde logo "Las Tapas — Bar de España".
+    LAS TAPAS — Visual theme (UI/UX style guide)
+    Warm, rustic Spanish bodega style: terracotta, burgundy, and olive.
+    Based on the round "Las Tapas — Bar de España" logo.
    ===================================================================== */
 
 :root {
-    /* ---------- Kleurenpalet ---------- */
-    /* Achtergronden */
-    --kleur-bodega:        #2B0F16;  /* hoofdachtergrond */
-    --kleur-bodega-diep:   #1E0B10;  /* donkerder, voor koppen/balken */
-    --kleur-paneel:        #3B1620;  /* paneel op de achtergrond */
-    --kleur-paneel-rand:   #6B1E2A;  /* subtiele randlijn */
+    /* Color palette */
+    /* Backgrounds */
+    --kleur-bodega:        #2B0F16;  /* Main background */
+    --kleur-bodega-diep:   #1E0B10;  /* Darker background for headings and bars */
+    --kleur-paneel:        #3B1620;  /* Panel background */
+    --kleur-paneel-rand:   #6B1E2A;  /* Subtle border */
 
-    /* Accenten */
-    --kleur-terracotta:    #D98B45;  /* primair accent */
-    --kleur-terracotta-op: #E9AE72;  /* hover-staat */
-    --kleur-saffraan:      #E9AE72;  /* highlights en prijzen */
-    --kleur-olijf:         #9CB379;  /* succes, "vrij" */
-    --kleur-wijn:          #6B1E2A;  /* waarschuwing, "bezig" */
+    /* Accents */
+    --kleur-terracotta:    #D98B45;  /* Primary accent */
+    --kleur-terracotta-op: #E9AE72;  /* Hover state */
+    --kleur-saffraan:      #E9AE72;  /* Highlights and prices */
+    --kleur-olijf:         #9CB379;  /* Success and "free" status */
+    --kleur-wijn:          #6B1E2A;  /* Warning and "busy" status */
 
-    /* Papier (kaarten) */
-    --kleur-papier:        #2B0F16;  /* donkere kaartachtergrond */
-    --kleur-papier-warm:   #3B1620;  /* iets lichtere actieve kaart */
-    --kleur-papier-tekst:  #F5EAD9;  /* lichte tekst op donkere kaarten */
+    /* Card surfaces */
+    --kleur-papier:        #2B0F16;  /* Dark card background */
+    --kleur-papier-warm:   #3B1620;  /* Lighter active card */
+    --kleur-papier-tekst:  #F5EAD9;  /* Light text on dark cards */
 
-    /* Tekst op donkere achtergrond */
-    --kleur-tekst:         #F5EAD9;  /* gebroken crème */
-    --kleur-tekst-zacht:   #C9A98E;  /* gedempt, voor bijschriften */
+    /* Text on dark backgrounds */
+    --kleur-tekst:         #F5EAD9;  /* Off-white */
+    --kleur-tekst-zacht:   #C9A98E;  /* Muted text for captions */
 
-    /* ---------- Typografie ---------- */
+    /* Typography */
     --font-kop:  'Fraunces', Georgia, 'Times New Roman', serif;
     --font-tekst: 'Work Sans', 'Segoe UI', Arial, sans-serif;
 
-    /* ---------- Vorm & schaduw ---------- */
+    /* Shape and shadow */
     --rond-klein:  6px;
     --rond-groot:  12px;
     --schaduw-kaart: 0 3px 10px rgba(30, 10, 8, 0.28);
@@ -46,7 +46,6 @@
 body.dashboard {
     margin: 0;
     background-color: var(--kleur-bodega);
-    /* Subtiele papier/stuc-textuur met CSS, geen externe afbeelding nodig */
     background-image:
         radial-gradient(circle at 15% 20%, rgba(224, 162, 63, 0.18), transparent 45%),
         radial-gradient(circle at 85% 80%, rgba(110, 123, 74, 0.22), transparent 50%);
@@ -56,9 +55,7 @@ body.dashboard {
     padding-bottom: 88px;
 }
 
-/* ---------------------------------------------------------------------
-   Topbar
-   --------------------------------------------------------------------- */
+/* Top bar */
 .db-topbar {
     display: flex;
     align-items: center;
@@ -76,7 +73,7 @@ body.dashboard {
     gap: 12px;
 }
 
-/* Het horizontale tekstlogo, transparante achtergrond, direct op de bodega-kleur */
+/* Horizontal text logo on the bodega background. */
 .db-logo {
     height: 42px;
     width: auto;
@@ -136,9 +133,7 @@ body.dashboard {
     border: 1px solid var(--kleur-saffraan);
 }
 
-/* ---------------------------------------------------------------------
-   Subheader
-   --------------------------------------------------------------------- */
+/* Section header */
 .db-subheader {
     display: flex;
     align-items: center;
@@ -151,7 +146,6 @@ body.dashboard {
 }
 .db-subheader svg { width: 19px; height: 19px; color: var(--kleur-saffraan); }
 
-/* Decoratief streepje onder een sectiekop */
 .db-subheader::after {
     content: '';
     flex: 1;
@@ -160,9 +154,7 @@ body.dashboard {
     margin-left: 10px;
 }
 
-/* ---------------------------------------------------------------------
-   Kolommen & panelen
-   --------------------------------------------------------------------- */
+/* Columns and panels */
 .db-kolommen {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -204,9 +196,7 @@ body.dashboard {
     gap: 11px;
 }
 
-/* ---------------------------------------------------------------------
-   Papieren kaarten (tafel / order)
-   --------------------------------------------------------------------- */
+/* Table and order cards */
 .db-tafelkaart {
     background: var(--kleur-papier);
     color: var(--kleur-papier-tekst);
@@ -299,9 +289,7 @@ body.dashboard {
 .db-badge.bezig { background: var(--kleur-wijn); }
 .db-badge.nieuw { background: var(--kleur-olijf); }
 
-/* ---------------------------------------------------------------------
-   Onderste navigatiebalk
-   --------------------------------------------------------------------- */
+/* Bottom navigation */
 .db-navbar {
     position: fixed;
     bottom: 0;
@@ -340,9 +328,7 @@ body.dashboard {
 }
 .db-navitem.blauw .icoon svg { color: var(--kleur-terracotta); }
 
-/* ---------------------------------------------------------------------
-   Content-paneel (voorraad, instellingen)
-   --------------------------------------------------------------------- */
+/* Inventory and settings content */
 .db-content-paneel { padding: 18px 28px 28px 28px; }
 .db-content-paneel h2 {
     font-family: var(--font-kop);

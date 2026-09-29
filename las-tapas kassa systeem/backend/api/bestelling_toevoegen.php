@@ -2,7 +2,7 @@
 /**
  * POST api/bestelling_toevoegen.php
  *
- * Verwacht JSON body:
+ * Expects a JSON body:
  * {
  *   "tafel_id": 10,
  *   "regels": [
@@ -11,12 +11,11 @@
  *   ]
  * }
  *
- * Doet het volgende (in 1 transactie, dus alles-of-niets):
- *  1. Zoekt een openstaande bestelling voor deze tafel, of maakt er een aan.
- *  2. Controleert per gerecht of er genoeg voorraad is.
- *  3. Voegt orderregels toe.
- *  4. Verlaagt de voorraad van elk gerecht.
- *  5. Zet de tafelstatus op 'bezet'.
+ * Performs these steps in a single transaction:
+ *  1. Finds or creates an open order for the table.
+ *  2. Checks stock for each item.
+ *  3. Adds order lines and deducts stock.
+ *  4. Marks the table as occupied.
  */
 
 require_once __DIR__ . '/../lib/auth.php';
@@ -54,7 +53,7 @@ if ($aantalPersonen !== null && $aantalPersonen <= 0) {
 try {
     $pdo->beginTransaction();
 
-    // 1. Controleer of de tafel bestaat, en haal de capaciteit op
+    // 1. Check that the table exists and retrieve its capacity.
     $stmt = $pdo->prepare('SELECT id, naam, capaciteit FROM tafels WHERE id = ?');
     $stmt->execute([$tafelId]);
     $tafel = $stmt->fetch();
@@ -69,14 +68,14 @@ try {
         );
     }
 
-    // 2. Zoek open bestelling voor deze tafel, of maak nieuwe aan
+    // 2. Find or create an open order for this table.
     $stmt = $pdo->prepare("SELECT id FROM bestellingen WHERE tafel_id = ? AND status = 'open' LIMIT 1");
     $stmt->execute([$tafelId]);
     $bestelling = $stmt->fetch();
 
     if ($bestelling) {
         $bestellingId = $bestelling['id'];
-        // Als er nu alsnog een e-mailadres of aantal personen wordt meegegeven, werk het bij
+        // Update the order if an email address or party size is provided later.
         if ($klantEmail !== '') {
             $stmt = $pdo->prepare('UPDATE bestellingen SET klant_email = ? WHERE id = ?');
             $stmt->execute([$klantEmail, $bestellingId]);
@@ -93,7 +92,7 @@ try {
         $bestellingId = $pdo->lastInsertId();
     }
 
-    // 3. Verwerk elke regel: check voorraad, voeg toe, verlaag voorraad
+    // 3. Check stock, add each order line, and deduct stock.
     $stmtGerecht = $pdo->prepare('SELECT naam, prijs, voorraad FROM gerechten WHERE id = ? FOR UPDATE');
     $stmtInsertRegel = $pdo->prepare(
         'INSERT INTO orderregels (bestelling_id, gerecht_id, aantal, prijs_per_stuk, status)
@@ -120,14 +119,12 @@ try {
             throw new Exception("Onvoldoende voorraad voor '{$gerecht['naam']}' (nog {$gerecht['voorraad']} beschikbaar).");
         }
 
-        // Orderregel toevoegen (prijs wordt "bevroren" op het moment van bestellen)
+        // Store the current price so later menu changes do not affect past orders.
         $stmtInsertRegel->execute([$bestellingId, $gerechtId, $aantal, $gerecht['prijs']]);
 
-        // Voorraad automatisch verlagen
         $stmtVerlaagVoorraad->execute([$aantal, $gerechtId]);
     }
 
-    // 4. Tafel op 'bezet' zetten
     $stmt = $pdo->prepare("UPDATE tafels SET status = 'bezet' WHERE id = ?");
     $stmt->execute([$tafelId]);
 

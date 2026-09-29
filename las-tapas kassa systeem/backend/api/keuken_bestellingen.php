@@ -1,10 +1,4 @@
 <?php
-/**
- * GET api/keuken_bestellingen.php
- * Geeft alle openstaande orderregels terug voor categorie 'keuken',
- * gegroepeerd per tafel. Wordt elke paar seconden ververst door keuken.html.
- */
-
 require_once __DIR__ . '/../lib/auth.php';
 vereisIngelogd();
 header('Content-Type: application/json');

@@ -175,9 +175,9 @@ async function rekenAf() {
 }
 
 /**
- * Opent Gmail in een nieuw tabblad met ontvanger, onderwerp en berichttekst
- * al ingevuld. De PDF voegt de medewerker zelf toe als bijlage (browsers
- * mogen om veiligheidsredenen geen bestanden automatisch koppelen).
+ * Opens Gmail with the recipient, subject, and message prefilled.
+ * Staff must attach the PDF manually because browsers cannot attach files
+ * automatically for security reasons.
  */
 function openGmail(bestellingId) {
     const email = document.getElementById('mail-naar-klant').value.trim();
