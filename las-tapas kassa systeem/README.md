@@ -40,9 +40,13 @@ las-tapas/
 1. **Database aanmaken**
    Open phpMyAdmin (of de mysql command line) en importeer `database/las_tapas.sql`.
    Dit maakt de database `las_tapas` aan met tabellen én voorbeelddata (tafels en gerechten).
-   Ook de tabellen `gebruikers` en `wachtwoord_resets` worden aangemaakt. Het
+   Ook de tabellen `kassa_gebruikers` en `kassa_wachtwoord_resets` worden aangemaakt. Het
    eerste beheeraccount is `admin@lastapas.nl` met wachtwoord `LasTapas123!`.
    Wijzig dit wachtwoord direct na de eerste login via de resetfunctie.
+
+   Als de database `las_tapas` al bestaat, importeer dan eerst
+   `database/migrate_auth_tables.sql`. Deze migratie maakt aparte kassa-inlogtabellen
+   aan en laat de voorraadaccounts ongemoeid.
 
 2. **Backend configureren**
    Open `backend/db.php` en pas zo nodig `$DB_HOST`, `$DB_USER` en `$DB_PASS` aan

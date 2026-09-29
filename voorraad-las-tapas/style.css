@@ -206,9 +206,12 @@ select:focus-visible {
   border-top: 1px solid var(--line);
   background: transparent;
   color: var(--cream-text);
+  font: inherit;
+  cursor: pointer;
   text-align: left;
   text-decoration: none;
 }
+.user-chip:hover { color: var(--saffron-light); }
 
 .user-chip strong {
   display: block;
