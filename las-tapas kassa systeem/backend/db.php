@@ -1,14 +1,14 @@
 <?php
 /**
  * db.php
- * Centrale databaseverbinding (PDO) voor alle API-scripts.
- * Pas onderstaande gegevens aan op jouw lokale omgeving (bv. XAMPP/MAMP).
+ * Shared PDO database connection for all API scripts.
+ * Update these settings for your local environment (e.g. XAMPP or MAMP).
  */
 
 $DB_HOST = 'localhost';
 $DB_NAME = 'las_tapas';
 $DB_USER = 'root';
-$DB_PASS = '';        // standaard leeg bij XAMPP; vul aan indien nodig
+$DB_PASS = '';        // Empty by default in XAMPP; set this if needed.
 $DB_CHARSET = 'utf8mb4';
 
 $dsn = "mysql:host={$DB_HOST};dbname={$DB_NAME};charset={$DB_CHARSET}";

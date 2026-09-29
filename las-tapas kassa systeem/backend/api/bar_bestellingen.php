@@ -1,9 +1,4 @@
 <?php
-/**
- * GET api/bar_bestellingen.php
- * Zelfde als keuken_bestellingen.php maar dan voor categorie 'bar'.
- */
-
 require_once __DIR__ . '/../lib/auth.php';
 vereisIngelogd();
 header('Content-Type: application/json');

@@ -48,7 +48,6 @@ function renderBestellingen(regels) {
         return;
     }
 
-    // Groepeer per tafel
     const perTafel = {};
     regels.forEach(r => {
         if (!perTafel[r.tafel_id]) perTafel[r.tafel_id] = { naam: r.tafel_naam, regels: [] };
@@ -61,7 +60,7 @@ function renderBestellingen(regels) {
 
         let regelsHtml = '';
         tafel.regels.forEach(r => {
-            const badgeClass = r.status; // besteld | bereid | geserveerd
+            const badgeClass = r.status;
             regelsHtml += `
                 <div class="kaart ${r.status === 'bereid' ? 'bezig' : ''}">
                     <div class="kaart-header">

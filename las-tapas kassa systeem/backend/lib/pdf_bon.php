@@ -2,16 +2,13 @@
 /**
  * pdf_bon.php
  *
- * Genereert een echt, geldig PDF-bestand voor een kassabon — volledig met
- * pure PHP, zonder externe library (geen Composer/TCPDF/FPDF nodig).
+ * Generates a valid receipt PDF using plain PHP, without an external library.
  *
- * Werking in het kort: een PDF-bestand bestaat uit een reeks "objecten"
- * (pagina, lettertype, tekstinhoud) gevolgd door een verwijzingstabel
- * (xref) die exact bijhoudt op welke bytepositie elk object begint. Deze
- * functie bouwt die structuur programmatisch op, zodat de bytes altijd
- * kloppen.
+ * A PDF contains objects (page, fonts, and text) followed by a cross-reference
+ * table (xref) that records each object's byte offset. This function builds
+ * that structure programmatically so the offsets remain valid.
  *
- * Gebruik:
+ * Usage:
  *   $pdfBytes = genereer_bon_pdf([
  *       'tafel_naam'  => 'Tafel 10',
  *       'bestelling_id' => 7,
@@ -23,9 +20,9 @@
 
 function pdf_tekst_escapen(string $tekst): string
 {
-    // PDF-tekststrings gebruiken ( ) en \ als speciale tekens; die moeten escaped.
+    // Escape PDF string delimiters and backslashes.
     $tekst = str_replace(['\\', '(', ')'], ['\\\\', '\\(', '\\)'], $tekst);
-    // Omzetten naar WinAnsi (ondersteunt Nederlandse tekens zoals é, ë, ü)
+    // Convert to WinAnsi, which supports common Western European characters.
     $omgezet = @iconv('UTF-8', 'CP1252//TRANSLIT', $tekst);
     return $omgezet !== false ? $omgezet : $tekst;
 }
@@ -33,7 +30,7 @@ function pdf_tekst_escapen(string $tekst): string
 function genereer_bon_pdf(array $data): string
 {
     $regelHoogte = 14;
-    $regels = []; // elke regel: ['tekst' => ..., 'grootte' => 10, 'vet' => false]
+    $regels = []; // Each line contains its text, font size, and bold flag.
 
     $regels[] = ['LAS TAPAS', 13, true];
     $regels[] = ['Bar de Espana - Tapas y Vino', 9, false];
@@ -50,7 +47,7 @@ function genereer_bon_pdf(array $data): string
     foreach ($data['orderregels'] as $regel) {
         $omschrijving = $regel['aantal'] . 'x ' . $regel['gerecht_naam'];
         $bedrag = number_format((float) $regel['subtotaal'], 2, ',', '.');
-        // Rechts uitlijnen door spaties te berekenen (courier is monospace, 1 teken = vaste breedte)
+        // Courier is monospaced, so spaces can be used to align the amount.
         $regelBreedteTekens = 32;
         $vrijeRuimte = max(1, $regelBreedteTekens - mb_strlen($omschrijving) - mb_strlen('EUR' . $bedrag));
         $regels[] = [$omschrijving . str_repeat(' ', $vrijeRuimte) . 'EUR' . $bedrag, 9, false];
@@ -65,11 +62,8 @@ function genereer_bon_pdf(array $data): string
     $hoogte = 60 + (count($regels) * $regelHoogte) + 20;
     $breedte = 230;
 
-    // Contentstream (tekstopdrachten) opbouwen
-    // Belangrijk: Td in PDF is een RELATIEVE verplaatsing t.o.v. de vorige
-    // regel, geen absolute co+ordinaat. Daarom zetten we de x-positie maar
-    // één keer (bij de eerste regel) en verplaatsen we daarna steeds alleen
-    // verticaal naar beneden — zo blijft elke regel netjes uitgelijnd.
+    // Td applies a relative offset, so set the initial position once and move
+    // each subsequent line down vertically to keep the text aligned.
     $startY = $hoogte - 40;
     $content = "BT\n";
     $eersteRegel = true;
@@ -86,7 +80,6 @@ function genereer_bon_pdf(array $data): string
     }
     $content .= "ET";
 
-    // ---------- PDF-objecten opbouwen ----------
     $objecten = [];
     $objecten[1] = "<< /Type /Catalog /Pages 2 0 R >>";
     $objecten[2] = "<< /Type /Pages /Kids [3 0 R] /Count 1 >>";
@@ -96,7 +89,6 @@ function genereer_bon_pdf(array $data): string
     $objecten[5] = "<< /Type /Font /Subtype /Type1 /BaseFont /Courier-Bold /Encoding /WinAnsiEncoding >>";
     $objecten[6] = "<< /Length " . strlen($content) . " >>\nstream\n{$content}\nendstream";
 
-    // ---------- Bytes + xref-tabel opbouwen ----------
     $pdf = "%PDF-1.4\n";
     $offsets = [];
 
@@ -106,7 +98,7 @@ function genereer_bon_pdf(array $data): string
     }
 
     $xrefStart = strlen($pdf);
-    $aantalObjecten = count($objecten) + 1; // +1 voor object 0 (altijd vrij)
+    $aantalObjecten = count($objecten) + 1; // Include object 0, which is always free.
 
     $pdf .= "xref\n0 {$aantalObjecten}\n";
     $pdf .= "0000000000 65535 f \n";

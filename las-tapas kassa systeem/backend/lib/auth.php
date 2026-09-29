@@ -1,5 +1,4 @@
 <?php
-// Session-based authentication shared by all protected API endpoints.
 $https = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
 if (session_status() !== PHP_SESSION_ACTIVE) {
     session_set_cookie_params([

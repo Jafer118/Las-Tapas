@@ -3,8 +3,8 @@
  * GET api/bon_gegevens.php?tafel_id=10
  * GET api/bon_gegevens.php?bestelling_id=7
  *
- * Geeft alle gegevens terug die nodig zijn om een bonnetje te tonen op
- * bon.html (JSON-variant). Voor de echte PDF-download, zie bon_pdf.php.
+ * Returns the data needed to display a receipt in bon.html as JSON.
+ * Use bon_pdf.php to download the same receipt as a PDF.
  */
 
 require_once __DIR__ . '/../lib/auth.php';

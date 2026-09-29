@@ -1,8 +1,7 @@
 <?php
 /**
  * GET api/rekening.php?tafel_id=10
- * Geeft de openstaande orderregels + het totaalbedrag terug voor 1 tafel.
- * Wordt gebruikt door de kassapagina.
+ * Returns the open order lines and total for one table.
  */
 
 require_once __DIR__ . '/../lib/auth.php';
@@ -18,7 +17,6 @@ if ($tafelId <= 0) {
     exit;
 }
 
-// Open bestelling zoeken
 $stmt = $pdo->prepare("SELECT id, aangemaakt_op, aantal_personen FROM bestellingen WHERE tafel_id = ? AND status = 'open' LIMIT 1");
 $stmt->execute([$tafelId]);
 $bestelling = $stmt->fetch();

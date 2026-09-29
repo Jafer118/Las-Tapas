@@ -2,12 +2,11 @@
 /**
  * POST api/status_bijwerken.php
  *
- * Verwacht JSON body:
+ * Expects a JSON body:
  * { "orderregel_id": 12, "status": "bereid" }
  *
- * Toegestane statussen: besteld -> bereid -> geserveerd
- * Wordt aangeroepen vanuit keuken.html / bar.html als personeel
- * op "Gereed" of "Geserveerd" klikt.
+ * Allowed status values: 'besteld' -> 'bereid' -> 'geserveerd'.
+ * Called from kitchen.html or bar.html when staff update an order line.
  */
 
 require_once __DIR__ . '/../lib/auth.php';

@@ -26,7 +26,6 @@
 
 <main class="db-kolommen">
 
-    <!-- Kolom 1: Tafel overzicht -->
     <section class="db-paneel">
         <div class="db-paneel-titel">Tafel overzicht</div>
         <div class="db-paneel-inhoud" id="tafel-overzicht-inhoud">
@@ -35,7 +34,6 @@
         <div class="db-paneel-footer" id="tafel-overzicht-footer"></div>
     </section>
 
-    <!-- Kolom 2: Keuken bestellingen -->
     <section class="db-paneel">
         <div class="db-paneel-titel">Keuken bestellingen</div>
         <div class="db-paneel-inhoud" id="keuken-inhoud">
@@ -43,7 +41,6 @@
         </div>
     </section>
 
-    <!-- Kolom 3: Bar bestellingen -->
     <section class="db-paneel">
         <div class="db-paneel-titel">Bar bestellingen</div>
         <div class="db-paneel-inhoud" id="bar-inhoud">
@@ -78,7 +75,6 @@ async function laadDashboard() {
     await Promise.all([laadTafelOverzicht(), laadOrderKolom('keuken_bestellingen.php', 'keuken-inhoud'), laadOrderKolom('bar_bestellingen.php', 'bar-inhoud')]);
 }
 
-// ---------- Kolom 1: Tafel overzicht ----------
 async function laadTafelOverzicht() {
     const tafelData = await apiGet('tafels_ophalen.php');
     const bezetteTafels = tafelData.tafels.filter(t => t.status === 'bezet');
@@ -118,7 +114,6 @@ async function laadTafelOverzicht() {
     footer.innerHTML = `<span>${bezetteTafels.length} tafel${bezetteTafels.length === 1 ? '' : 's'} open</span><span>TOTAAL: ${formatEuro(totaalAlleTafels)}</span>`;
 }
 
-// ---------- Kolom 2 & 3: Keuken / Bar bestellingen ----------
 async function laadOrderKolom(endpoint, containerId) {
     const data = await apiGet(endpoint);
     const container = document.getElementById(containerId);
@@ -129,7 +124,6 @@ async function laadOrderKolom(endpoint, containerId) {
         return;
     }
 
-    // Groepeer per tafel
     const perTafel = {};
     regels.forEach(r => {
         if (!perTafel[r.tafel_id]) perTafel[r.tafel_id] = { naam: r.tafel_naam, regels: [] };

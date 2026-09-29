@@ -1,10 +1,10 @@
 <?php
 /**
  * POST api/afrekenen.php
- * Verwacht JSON body: { "tafel_id": 10 }
+ * Expects a JSON body: { "tafel_id": 10 }
  *
- * Sluit de openstaande bestelling van deze tafel af (status = afgerekend)
- * en zet de tafel weer op 'vrij'.
+ * Closes the table's open order (status = 'afgerekend') and sets the table
+ * back to 'vrij'.
  */
 
 require_once __DIR__ . '/../lib/auth.php';
