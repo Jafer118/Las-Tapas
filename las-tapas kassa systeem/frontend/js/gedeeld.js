@@ -2,13 +2,15 @@
 
 // Update this path if the backend directory is located elsewhere.
 const API_BASE = '../backend/api';
+const START_PAGE = '../../Las%20Tapas/Frontend/index.html';
 let csrfToken = '';
 
 function addSystemNavigation() {
     const subnav = document.querySelector('.subnav');
     if (subnav) {
         const homeLink = document.createElement('a');
-        homeLink.href = '../../index.html';
+        homeLink.href = START_PAGE;
+        homeLink.className = 'home-link';
         homeLink.textContent = '← Startpagina';
         subnav.prepend(homeLink);
 
@@ -21,8 +23,8 @@ function addSystemNavigation() {
     const dashboardNav = document.querySelector('.db-navbar');
     if (dashboardNav) {
         const homeLink = document.createElement('a');
-        homeLink.className = 'db-navitem';
-        homeLink.href = '../../index.html';
+        homeLink.className = 'db-navitem home-link';
+        homeLink.href = START_PAGE;
         homeLink.innerHTML = '<span class="icoon" aria-hidden="true">⌂</span><span>Start</span>';
         dashboardNav.prepend(homeLink);
 
@@ -55,7 +57,7 @@ async function requireAuthentication() {
                     headers: { 'X-CSRF-Token': csrfToken },
                     credentials: 'same-origin',
                 });
-                location.href = '../../index.html';
+                location.href = START_PAGE;
             }, { once: true });
         }
         if (!document.querySelector('.auth-uitloggen')) {
@@ -70,7 +72,7 @@ async function requireAuthentication() {
                     headers: { 'X-CSRF-Token': csrfToken },
                     credentials: 'same-origin',
                 });
-                location.href = '../../index.html';
+                location.href = START_PAGE;
             });
             document.body.appendChild(logoutButton);
         }

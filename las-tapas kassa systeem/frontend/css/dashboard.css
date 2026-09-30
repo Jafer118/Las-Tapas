@@ -320,6 +320,14 @@ body.dashboard {
     border-bottom: 3px solid transparent;
     transition: color 0.15s ease;
 }
+.db-navitem .icoon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 24px;
+    font-size: 1.35rem;
+    line-height: 1;
+}
 .db-navitem .icoon svg { width: 21px; height: 21px; }
 .db-navitem:hover { color: var(--kleur-saffraan); }
 .db-navitem.actief {

@@ -413,3 +413,17 @@ nav.subnav a.actief {
     color: var(--kleur-papier);
     border-color: var(--kleur-saffraan);
 }
+nav.subnav a.home-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 48px;
+    padding: 12px 22px;
+    background: var(--kleur-terracotta);
+    color: var(--kleur-papier);
+    border-color: var(--kleur-saffraan);
+    font-size: 0.95rem;
+}
+nav.subnav a.home-link:hover {
+    background: var(--kleur-wijn);
+    color: var(--kleur-papier);
+}
