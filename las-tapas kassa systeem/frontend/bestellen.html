@@ -72,183 +72,183 @@
 
 <script src="js/gedeeld.js"></script>
 <script>
-let gerechten = [];
-let tafels = [];
-let mandje = {};
-const MENUGROEPEN = ['Frías', 'Calientes', 'Especialidades', 'Postres', 'Bebidas'];
-let actieveGroep = 'Frías';
+let menuItems = [];
+let tables = [];
+let cart = {};
+const MENU_GROUPS = ['Frías', 'Calientes', 'Especialidades', 'Postres', 'Bebidas'];
+let activeMenuGroup = 'Frías';
 
-async function initialiseer() {
-    const tafelData = await apiGet('tafels_ophalen.php');
-    tafels = tafelData.tafels;
-    const select = document.getElementById('tafel-select');
-    tafels.forEach(t => {
-        const optie = document.createElement('option');
-        optie.value = t.id;
-        optie.textContent = `${t.naam} (${t.verdieping}) — max ${t.capaciteit} personen — ${t.status}`;
-        select.appendChild(optie);
+async function initializeOrderingScreen() {
+    const tableData = await apiGet('tafels_ophalen.php');
+    tables = tableData.tafels;
+    const tableSelect = document.getElementById('tafel-select');
+    tables.forEach((table) => {
+        const tableOption = document.createElement('option');
+        tableOption.value = table.id;
+        tableOption.textContent = `${table.naam} (${table.verdieping}) — max ${table.capaciteit} personen — ${table.status}`;
+        tableSelect.appendChild(tableOption);
     });
-    select.addEventListener('change', toonCapaciteitInfo);
-    toonCapaciteitInfo();
+    tableSelect.addEventListener('change', showTableCapacity);
+    showTableCapacity();
 
-    document.getElementById('aantal-personen').addEventListener('input', toonCapaciteitInfo);
+    document.getElementById('aantal-personen').addEventListener('input', showTableCapacity);
 
-    const gerechtData = await apiGet('gerechten_ophalen.php');
-    gerechten = gerechtData.gerechten;
+    const menuItemData = await apiGet('gerechten_ophalen.php');
+    menuItems = menuItemData.gerechten;
 
     renderTabs();
-    renderGerechten();
+    renderMenuItems();
 }
 
 function renderTabs() {
     const tabsContainer = document.getElementById('menu-tabs');
     tabsContainer.innerHTML = '';
-    MENUGROEPEN.forEach(groep => {
-        const tab = document.createElement('div');
-        tab.className = 'tab' + (groep === actieveGroep ? ' actief' : '');
-        tab.textContent = groep;
-        tab.addEventListener('click', () => {
-            actieveGroep = groep;
+    MENU_GROUPS.forEach((menuGroup) => {
+        const menuTab = document.createElement('div');
+        menuTab.className = 'tab' + (menuGroup === activeMenuGroup ? ' actief' : '');
+        menuTab.textContent = menuGroup;
+        menuTab.addEventListener('click', () => {
+            activeMenuGroup = menuGroup;
             renderTabs();
-            renderGerechten();
+            renderMenuItems();
         });
-        tabsContainer.appendChild(tab);
+        tabsContainer.appendChild(menuTab);
     });
 }
 
-function toonCapaciteitInfo() {
-    const tafelId = Number(document.getElementById('tafel-select').value);
-    const tafel = tafels.find(t => t.id === tafelId);
-    const aantalVeld = document.getElementById('aantal-personen');
-    const aantalPersonen = Number(aantalVeld.value) || 0;
-    const infoVeld = document.getElementById('capaciteit-info');
-    const btnVersturen = document.getElementById('btn-versturen');
+function showTableCapacity() {
+    const tableId = Number(document.getElementById('tafel-select').value);
+    const table = tables.find(t => t.id === tableId);
+    const guestCountField = document.getElementById('aantal-personen');
+    const guestCount = Number(guestCountField.value) || 0;
+    const capacityInfo = document.getElementById('capaciteit-info');
+    const submitButton = document.getElementById('btn-versturen');
 
-    if (!tafel) {
-        infoVeld.textContent = '';
+    if (!table) {
+        capacityInfo.textContent = '';
         return;
     }
 
     // Keep the number input's native spinner within the table capacity.
-    aantalVeld.max = tafel.capaciteit;
+    guestCountField.max = table.capaciteit;
 
-    if (aantalPersonen > tafel.capaciteit) {
-        infoVeld.textContent = `⚠ ${tafel.naam} heeft plaats voor maximaal ${tafel.capaciteit} personen — verlaag het aantal of kies een andere tafel.`;
-        infoVeld.style.color = '#F0C2C2';
-        btnVersturen.disabled = true;
-        btnVersturen.style.opacity = '0.5';
-        btnVersturen.style.cursor = 'not-allowed';
+    if (guestCount > table.capaciteit) {
+        capacityInfo.textContent = `⚠ ${table.naam} heeft plaats voor maximaal ${table.capaciteit} personen — verlaag het aantal of kies een andere tafel.`;
+        capacityInfo.style.color = '#F0C2C2';
+        submitButton.disabled = true;
+        submitButton.style.opacity = '0.5';
+        submitButton.style.cursor = 'not-allowed';
     } else {
-        infoVeld.textContent = `${tafel.naam} heeft plaats voor maximaal ${tafel.capaciteit} personen.`;
-        infoVeld.style.color = '#C9AC93';
-        btnVersturen.disabled = false;
-        btnVersturen.style.opacity = '1';
-        btnVersturen.style.cursor = 'pointer';
+        capacityInfo.textContent = `${table.naam} heeft plaats voor maximaal ${table.capaciteit} personen.`;
+        capacityInfo.style.color = '#C9AC93';
+        submitButton.disabled = false;
+        submitButton.style.opacity = '1';
+        submitButton.style.cursor = 'pointer';
     }
 }
 
-function renderGerechten() {
-    const container = document.getElementById('menu-lijst');
-    container.innerHTML = '';
-    const items = gerechten.filter(g => g.menugroep === actieveGroep);
+function renderMenuItems() {
+    const menuContainer = document.getElementById('menu-lijst');
+    menuContainer.innerHTML = '';
+    const itemsInGroup = menuItems.filter((menuItem) => menuItem.menugroep === activeMenuGroup);
 
-    if (items.length === 0) {
-        container.innerHTML = '<p style="color:#C9AC93;">Geen gerechten in deze categorie.</p>';
+    if (itemsInGroup.length === 0) {
+        menuContainer.innerHTML = '<p style="color:#C9AC93;">Geen gerechten in deze categorie.</p>';
         return;
     }
 
-    items.forEach(g => {
-        const rij = document.createElement('div');
-        rij.className = 'gerecht-rij';
-        rij.innerHTML = `
+    itemsInGroup.forEach((menuItem) => {
+        const menuItemRow = document.createElement('div');
+        menuItemRow.className = 'gerecht-rij';
+        menuItemRow.innerHTML = `
             <div class="naam-prijs">
-                <span>${g.naam}</span>
-                ${g.beschrijving ? `<span class="beschrijving">${g.beschrijving}</span>` : ''}
-                <span class="voorraad">${formatEuro(g.prijs)} — voorraad: ${g.voorraad}</span>
+                <span>${menuItem.naam}</span>
+                ${menuItem.beschrijving ? `<span class="beschrijving">${menuItem.beschrijving}</span>` : ''}
+                <span class="voorraad">${formatCurrency(menuItem.prijs)} — voorraad: ${menuItem.voorraad}</span>
             </div>
             <div class="aantal-controls">
-                <button onclick="wijzigAantal(${g.id}, -1)">−</button>
-                <span class="aantal-waarde" id="aantal-${g.id}">${mandje[g.id] || 0}</span>
-                <button onclick="wijzigAantal(${g.id}, 1)">+</button>
+                <button onclick="updateQuantity(${menuItem.id}, -1)">−</button>
+                <span class="aantal-waarde" id="aantal-${menuItem.id}">${cart[menuItem.id] || 0}</span>
+                <button onclick="updateQuantity(${menuItem.id}, 1)">+</button>
             </div>
         `;
-        container.appendChild(rij);
+        menuContainer.appendChild(menuItemRow);
     });
 }
 
-function wijzigAantal(gerechtId, delta) {
-    const gerecht = gerechten.find(g => g.id === gerechtId);
-    const huidig = mandje[gerechtId] || 0;
-    const nieuw = Math.max(0, Math.min(gerecht.voorraad, huidig + delta));
-    mandje[gerechtId] = nieuw;
-    if (nieuw === 0) delete mandje[gerechtId];
-    document.getElementById(`aantal-${gerechtId}`).textContent = nieuw;
-    updateSamenvatting();
+function updateQuantity(menuItemId, delta) {
+    const menuItem = menuItems.find((item) => item.id === menuItemId);
+    const currentQuantity = cart[menuItemId] || 0;
+    const nextQuantity = Math.max(0, Math.min(menuItem.voorraad, currentQuantity + delta));
+    cart[menuItemId] = nextQuantity;
+    if (nextQuantity === 0) delete cart[menuItemId];
+    document.getElementById(`aantal-${menuItemId}`).textContent = nextQuantity;
+    updateCartSummary();
 }
 
-function updateSamenvatting() {
-    let aantalItems = 0;
-    let totaal = 0;
-    for (const [gerechtId, aantal] of Object.entries(mandje)) {
-        const gerecht = gerechten.find(g => g.id == gerechtId);
-        aantalItems += aantal;
-        totaal += aantal * gerecht.prijs;
+function updateCartSummary() {
+    let itemCount = 0;
+    let cartTotal = 0;
+    for (const [menuItemId, quantity] of Object.entries(cart)) {
+        const menuItem = menuItems.find((item) => item.id == menuItemId);
+        itemCount += quantity;
+        cartTotal += quantity * menuItem.prijs;
     }
-    document.getElementById('mandje-aantal').textContent = `${aantalItems} items`;
-    document.getElementById('mandje-totaal').textContent = formatEuro(totaal);
+    document.getElementById('mandje-aantal').textContent = `${itemCount} items`;
+    document.getElementById('mandje-totaal').textContent = formatCurrency(cartTotal);
 }
 
-function toonMelding(tekst, type) {
-    const plek = document.getElementById('melding-plek');
-    plek.innerHTML = `<div class="melding ${type}">${tekst}</div>`;
-    setTimeout(() => { plek.innerHTML = ''; }, 4000);
+function showMessage(messageText, messageType) {
+    const messageContainer = document.getElementById('melding-plek');
+    messageContainer.innerHTML = `<div class="melding ${messageType}">${messageText}</div>`;
+    setTimeout(() => { messageContainer.innerHTML = ''; }, 4000);
 }
 
 document.getElementById('btn-versturen').addEventListener('click', async () => {
-    const tafelId = Number(document.getElementById('tafel-select').value);
-    const klantEmail = document.getElementById('klant-email').value.trim();
-    const aantalPersonen = Number(document.getElementById('aantal-personen').value) || 0;
-    const regels = Object.entries(mandje).map(([gerecht_id, aantal]) => ({
-        gerecht_id: Number(gerecht_id),
-        aantal: Number(aantal),
+    const tableId = Number(document.getElementById('tafel-select').value);
+    const customerEmail = document.getElementById('klant-email').value.trim();
+    const guestCount = Number(document.getElementById('aantal-personen').value) || 0;
+    const orderLines = Object.entries(cart).map(([menuItemId, quantity]) => ({
+        gerecht_id: Number(menuItemId),
+        aantal: Number(quantity),
     }));
 
-    if (regels.length === 0) {
-        toonMelding('Selecteer eerst minimaal 1 gerecht of drankje.', 'fout');
+    if (orderLines.length === 0) {
+        showMessage('Selecteer eerst minimaal 1 gerecht of drankje.', 'fout');
         return;
     }
 
-    if (aantalPersonen <= 0) {
-        toonMelding('Vul een geldig aantal personen in (minimaal 1).', 'fout');
+    if (guestCount <= 0) {
+        showMessage('Vul een geldig aantal personen in (minimaal 1).', 'fout');
         return;
     }
 
-    const tafel = tafels.find(t => t.id === tafelId);
-    if (tafel && aantalPersonen > tafel.capaciteit) {
-        toonMelding(`${tafel.naam} heeft plaats voor maximaal ${tafel.capaciteit} personen. Kies een andere tafel of verlaag het aantal.`, 'fout');
+    const table = tables.find(t => t.id === tableId);
+    if (table && guestCount > table.capaciteit) {
+        showMessage(`${table.naam} heeft plaats voor maximaal ${table.capaciteit} personen. Kies een andere tafel of verlaag het aantal.`, 'fout');
         return;
     }
 
-    const resultaat = await apiPost('bestelling_toevoegen.php', {
-        tafel_id: tafelId,
-        regels,
-        klant_email: klantEmail,
-        aantal_personen: aantalPersonen,
+    const result = await apiPost('bestelling_toevoegen.php', {
+        tafel_id: tableId,
+        regels: orderLines,
+        klant_email: customerEmail,
+        aantal_personen: guestCount,
     });
 
-    if (resultaat.succes) {
-        toonMelding('Bestelling succesvol verstuurd naar keuken/bar!', 'succes');
-        mandje = {};
-        const gerechtData = await apiGet('gerechten_ophalen.php');
-        gerechten = gerechtData.gerechten;
-        renderGerechten();
-        updateSamenvatting();
+    if (result.succes) {
+        showMessage('Bestelling succesvol verstuurd naar keuken/bar!', 'succes');
+        cart = {};
+        const menuItemData = await apiGet('gerechten_ophalen.php');
+        menuItems = menuItemData.gerechten;
+        renderMenuItems();
+        updateCartSummary();
     } else {
-        toonMelding('Fout: ' + resultaat.fout, 'fout');
+        showMessage('Fout: ' + result.fout, 'fout');
     }
 });
 
-initialiseer();
+initializeOrderingScreen();
 </script>
 </body>
 </html>

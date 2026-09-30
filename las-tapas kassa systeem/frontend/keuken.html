@@ -34,75 +34,75 @@
 
 <script src="js/gedeeld.js"></script>
 <script>
-async function laadBestellingen() {
-    const data = await apiGet('keuken_bestellingen.php');
-    renderBestellingen(data.orderregels);
+async function loadOrders() {
+    const orderData = await apiGet('keuken_bestellingen.php');
+    renderOrders(orderData.orderregels);
 }
 
-function renderBestellingen(regels) {
-    const container = document.getElementById('bestellingen-container');
-    container.innerHTML = '';
+function renderOrders(orderLines) {
+    const orderContainer = document.getElementById('bestellingen-container');
+    orderContainer.innerHTML = '';
 
-    if (regels.length === 0) {
-        container.innerHTML = '<p style="color:#a9bccb;">Geen openstaande keukenbestellingen.</p>';
+    if (orderLines.length === 0) {
+        orderContainer.innerHTML = '<p style="color:#a9bccb;">Geen openstaande keukenbestellingen.</p>';
         return;
     }
 
-    const perTafel = {};
-    regels.forEach(r => {
-        if (!perTafel[r.tafel_id]) perTafel[r.tafel_id] = { naam: r.tafel_naam, regels: [] };
-        perTafel[r.tafel_id].regels.push(r);
+    const ordersByTable = {};
+    orderLines.forEach(orderLine => {
+        if (!ordersByTable[orderLine.tafel_id]) ordersByTable[orderLine.tafel_id] = { naam: orderLine.tafel_naam, regels: [] };
+        ordersByTable[orderLine.tafel_id].regels.push(orderLine);
     });
 
-    Object.values(perTafel).forEach(tafel => {
-        const kaart = document.createElement('div');
-        kaart.className = 'paneel';
+    Object.values(ordersByTable).forEach(tableGroup => {
+        const tableCard = document.createElement('div');
+        tableCard.className = 'paneel';
 
-        let regelsHtml = '';
-        tafel.regels.forEach(r => {
-            const badgeClass = r.status;
-            regelsHtml += `
-                <div class="kaart ${r.status === 'bereid' ? 'bezig' : ''}">
+        let orderLinesHtml = '';
+        tableGroup.regels.forEach(orderLine => {
+            const badgeClass = orderLine.status;
+            orderLinesHtml += `
+                <div class="kaart ${orderLine.status === 'bereid' ? 'bezig' : ''}">
                     <div class="kaart-header">
-                        <span>${r.gerecht_naam} (${r.aantal})</span>
-                        <span class="badge ${badgeClass}">${r.status.toUpperCase()}</span>
+                        <span>${orderLine.gerecht_naam} (${orderLine.aantal})</span>
+                        <span class="badge ${badgeClass}">${orderLine.status.toUpperCase()}</span>
                     </div>
                     <div style="font-size:0.75rem;color:#5b6b78;margin-bottom:8px;">
-                        besteld om ${formatTijd(r.besteld_op)}
+                        besteld om ${formatTime(orderLine.besteld_op)}
                     </div>
-                    ${knoppenVoorStatus(r)}
+                    ${buildStatusButtons(orderLine)}
                 </div>
             `;
         });
 
-        kaart.innerHTML = `<h2>${tafel.naam}</h2>${regelsHtml}`;
-        container.appendChild(kaart);
+        tableCard.innerHTML = `<h2>${tableGroup.naam}</h2>${orderLinesHtml}`;
+        orderContainer.appendChild(tableCard);
     });
 }
 
-function knoppenVoorStatus(regel) {
-    if (regel.status === 'besteld') {
-        return `<button class="primair" onclick="zetStatus(${regel.orderregel_id}, 'bereid')">Start bereiding</button>`;
+function buildStatusButtons(orderLine) {
+    if (orderLine.status === 'besteld') {
+        return `<button class="primair" onclick="updateOrderStatus(${orderLine.orderregel_id}, 'bereid')">Start bereiding</button>`;
     }
-    if (regel.status === 'bereid') {
-        return `<button class="secundair" onclick="zetStatus(${regel.orderregel_id}, 'geserveerd')">Markeer geserveerd</button>`;
+    if (orderLine.status === 'bereid') {
+        return `<button class="secundair" onclick="updateOrderStatus(${orderLine.orderregel_id}, 'geserveerd')">Markeer geserveerd</button>`;
     }
     return '';
 }
 
-async function zetStatus(orderregelId, nieuweStatus) {
-    await apiPost('status_bijwerken.php', { orderregel_id: orderregelId, status: nieuweStatus });
-    laadBestellingen();
+async function updateOrderStatus(orderLineId, nextStatus) {
+    await apiPost('status_bijwerken.php', { orderregel_id: orderLineId, status: nextStatus });
+    loadOrders();
 }
 
-function updateKlok() {
+function updateClock() {
     document.getElementById('klok').textContent = new Date().toLocaleTimeString('nl-NL');
 }
 
-setInterval(laadBestellingen, 5000);
-setInterval(updateKlok, 1000);
-laadBestellingen();
-updateKlok();
+setInterval(loadOrders, 5000);
+setInterval(updateClock, 1000);
+loadOrders();
+updateClock();
 </script>
 </body>
 </html>

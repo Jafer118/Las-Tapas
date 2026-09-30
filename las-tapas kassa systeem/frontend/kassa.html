@@ -44,109 +44,109 @@
 
 <script src="js/gedeeld.js"></script>
 <script>
-let gekozenTafelId = null;
+let selectedTableId = null;
 
-async function laadTafels() {
-    const data = await apiGet('tafels_ophalen.php');
-    const container = document.getElementById('tafel-lijst');
-    container.innerHTML = '';
+async function loadTables() {
+    const tableData = await apiGet('tafels_ophalen.php');
+    const tableListContainer = document.getElementById('tafel-lijst');
+    tableListContainer.innerHTML = '';
 
-    const bezetteTafels = data.tafels.filter(t => t.status === 'bezet');
+    const occupiedTables = tableData.tafels.filter((table) => table.status === 'bezet');
 
-    if (bezetteTafels.length === 0) {
-        container.innerHTML = '<p style="color:#a9bccb;">Geen bezette tafels op dit moment.</p>';
+    if (occupiedTables.length === 0) {
+        tableListContainer.innerHTML = '<p style="color:#a9bccb;">Geen bezette tafels op dit moment.</p>';
         return;
     }
 
-    bezetteTafels.forEach(t => {
-        const kaart = document.createElement('div');
-        kaart.className = 'tafel-kaart';
-        kaart.style.cursor = 'pointer';
-        kaart.innerHTML = `
-            <span>${t.naam}</span>
+    occupiedTables.forEach(table => {
+        const tableCard = document.createElement('div');
+        tableCard.className = 'tafel-kaart';
+        tableCard.style.cursor = 'pointer';
+        tableCard.innerHTML = `
+            <span>${table.naam}</span>
             <span class="status-bezet">bezet</span>
         `;
-        kaart.addEventListener('click', () => toonRekening(t.id, t.naam));
-        container.appendChild(kaart);
+        tableCard.addEventListener('click', () => showBill(table.id, table.naam));
+        tableListContainer.appendChild(tableCard);
     });
 }
 
-async function toonRekening(tafelId, tafelNaam) {
-    gekozenTafelId = tafelId;
-    document.getElementById('rekening-titel').textContent = `Rekening — ${tafelNaam}`;
+async function showBill(tableId, tableName) {
+    selectedTableId = tableId;
+    document.getElementById('rekening-titel').textContent = `Rekening — ${tableName}`;
 
-    const data = await apiGet(`rekening.php?tafel_id=${tafelId}`);
-    const container = document.getElementById('rekening-details');
+    const billData = await apiGet(`rekening.php?tafel_id=${tableId}`);
+    const billContainer = document.getElementById('rekening-details');
 
-    if (!data.bestelling_id) {
-        container.innerHTML = '<p>Geen openstaande bestelling voor deze tafel.</p>';
+    if (!billData.bestelling_id) {
+        billContainer.innerHTML = '<p>Geen openstaande bestelling voor deze tafel.</p>';
         return;
     }
 
-    let html = '';
+    let billHtml = '';
 
-    if (data.aantal_personen) {
-        html += `<p style="color:#C9AC93; font-size:0.85rem; margin-top:0;">${data.aantal_personen} personen aan tafel</p>`;
+    if (billData.aantal_personen) {
+        billHtml += `<p style="color:#C9AC93; font-size:0.85rem; margin-top:0;">${billData.aantal_personen} personen aan tafel</p>`;
     }
 
-    data.orderregels.forEach(r => {
-        html += `
+    billData.orderregels.forEach(orderLine => {
+        billHtml += `
             <div class="regel-item">
-                <span>${r.gerecht_naam} × ${r.aantal}</span>
-                <span>${formatEuro(r.subtotaal)}</span>
+                <span>${orderLine.gerecht_naam} × ${orderLine.aantal}</span>
+                <span>${formatCurrency(orderLine.subtotaal)}</span>
             </div>
         `;
     });
 
-    html += `
+    billHtml += `
         <hr style="border-color:#24435e;margin:12px 0;">
         <div class="regel-item" style="font-size:1.2rem;font-weight:700;">
             <span>Totaal</span>
-            <span>${formatEuro(data.totaal)}</span>
+            <span>${formatCurrency(billData.totaal)}</span>
         </div>
         <div style="display:flex; gap:10px; margin-top:16px; flex-wrap:wrap;">
-            <button class="secundair" style="flex:1;" onclick="bekijkBon(${tafelId})">
+            <button class="secundair" style="flex:1;" onclick="openReceipt(${tableId})">
                 Bonnetje bekijken / printen
             </button>
             <a class="secundair" style="flex:1; text-align:center; padding:6px 12px; border-radius:6px; text-decoration:none; display:inline-block;"
-               href="../backend/api/bon_pdf.php?tafel_id=${tafelId}" target="_blank">
+               href="../backend/api/bon_pdf.php?tafel_id=${tableId}" target="_blank">
                 PDF downloaden
             </a>
-            <button class="primair" style="flex:1;" onclick="rekenAf()">
+            <button class="primair" style="flex:1;" onclick="checkoutOrder()">
                 Afrekenen
             </button>
         </div>
     `;
 
-    container.innerHTML = html;
+    billContainer.innerHTML = billHtml;
 }
 
-function bekijkBon(tafelId) {
-    window.open(`bon.html?tafel_id=${tafelId}`, '_blank');
+function openReceipt(tableId) {
+    window.open(`bon.html?tafel_id=${tableId}`, '_blank');
 }
 
-async function rekenAf() {
-    if (!gekozenTafelId) return;
+async function checkoutOrder() {
+    if (!selectedTableId) return;
 
-    const resultaat = await apiPost('afrekenen.php', { tafel_id: gekozenTafelId });
-    const plek = document.getElementById('melding-plek');
+    const checkoutResult = await apiPost('afrekenen.php', { tafel_id: selectedTableId });
+    const messageContainer = document.getElementById('melding-plek');
 
-    if (resultaat.succes) {
-        const bestellingId = resultaat.bestelling_id;
-        const opgeslagenEmail = resultaat.klant_email || '';
+    if (checkoutResult.succes) {
+        const orderId = checkoutResult.bestelling_id;
+        const customerEmail = checkoutResult.klant_email || '';
 
-        plek.innerHTML = `
+        messageContainer.innerHTML = `
             <div class="melding succes">
                 <div style="margin-bottom:10px;">Tafel succesvol afgerekend. Tafel is weer vrij.</div>
 
                 <div style="margin-bottom:10px;">
                     <strong>Stap 1 —</strong> download het bonnetje:
                     <a class="secundair" style="padding:6px 12px; border-radius:6px; text-decoration:none; margin-left:6px; display:inline-block;"
-                       href="../backend/api/bon_pdf.php?bestelling_id=${bestellingId}" target="_blank">
+                       href="../backend/api/bon_pdf.php?bestelling_id=${orderId}" target="_blank">
                         PDF downloaden
                     </a>
                     <a class="secundair" style="padding:6px 12px; border-radius:6px; text-decoration:none; margin-left:6px; display:inline-block;"
-                       href="bon.html?bestelling_id=${bestellingId}" target="_blank">
+                       href="bon.html?bestelling_id=${orderId}" target="_blank">
                         Bonnetje bekijken
                     </a>
                 </div>
@@ -154,9 +154,9 @@ async function rekenAf() {
                 <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
                     <strong>Stap 2 —</strong>
                     <input type="email" id="mail-naar-klant" placeholder="e-mailadres klant"
-                           value="${opgeslagenEmail}"
+                           value="${customerEmail}"
                            style="padding:6px 8px; border-radius:6px; border:1px solid #ccc; min-width:220px;">
-                    <button class="primair" onclick="openGmail(${bestellingId})">Openen in Gmail</button>
+                    <button class="primair" onclick="openGmailDraft(${orderId})">Openen in Gmail</button>
                 </div>
 
                 <div style="margin-top:8px; font-size:0.8rem; color:#c8e6d5;">
@@ -166,11 +166,11 @@ async function rekenAf() {
         `;
         document.getElementById('rekening-titel').textContent = 'Selecteer een tafel';
         document.getElementById('rekening-details').innerHTML = '';
-        gekozenTafelId = null;
-        laadTafels();
+        selectedTableId = null;
+        loadTables();
     } else {
-        plek.innerHTML = `<div class="melding fout">Fout: ${resultaat.fout}</div>`;
-        setTimeout(() => { plek.innerHTML = ''; }, 4000);
+        messageContainer.innerHTML = `<div class="melding fout">Fout: ${checkoutResult.fout}</div>`;
+        setTimeout(() => { messageContainer.innerHTML = ''; }, 4000);
     }
 }
 
@@ -179,27 +179,27 @@ async function rekenAf() {
  * Staff must attach the PDF manually because browsers cannot attach files
  * automatically for security reasons.
  */
-function openGmail(bestellingId) {
-    const email = document.getElementById('mail-naar-klant').value.trim();
+function openGmailDraft(orderId) {
+    const recipientEmail = document.getElementById('mail-naar-klant').value.trim();
 
-    const onderwerp = 'Uw bonnetje van Las Tapas';
-    const bericht =
+    const subject = 'Uw bonnetje van Las Tapas';
+    const bodyText =
         'Beste gast,\n\n' +
         'Bedankt voor uw bezoek aan Las Tapas! In de bijlage vindt u uw bonnetje ' +
-        '(bonnummer #' + String(bestellingId).padStart(5, '0') + ').\n\n' +
+        '(bonnummer #' + String(orderId).padStart(5, '0') + ').\n\n' +
         'Tot ziens!\n' +
         'Team Las Tapas';
 
     const gmailUrl = 'https://mail.google.com/mail/?view=cm&fs=1'
-        + '&to=' + encodeURIComponent(email)
-        + '&su=' + encodeURIComponent(onderwerp)
-        + '&body=' + encodeURIComponent(bericht);
+        + '&to=' + encodeURIComponent(recipientEmail)
+        + '&su=' + encodeURIComponent(subject)
+        + '&body=' + encodeURIComponent(bodyText);
 
     window.open(gmailUrl, '_blank');
 }
 
-setInterval(laadTafels, 8000);
-laadTafels();
+setInterval(loadTables, 8000);
+loadTables();
 </script>
 </body>
 </html>

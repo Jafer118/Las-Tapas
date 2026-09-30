@@ -22,10 +22,84 @@
 <form id="reset-form" class="verborgen"><label for="nieuw">Nieuw wachtwoord</label><input id="nieuw" type="password" minlength="10" required><label for="herhaal">Herhaal wachtwoord</label><input id="herhaal" type="password" minlength="10" required><button class="primair">Wachtwoord opslaan</button></form>
 <p id="melding" class="auth-melding"></p><a class="auth-link" href="login.html">Terug naar inloggen</a></section></main>
 <script>
-const endpoint='../backend/api/auth.php', melding=document.getElementById('melding'), params=new URLSearchParams(location.search), token=params.get('token');
-const aanvraag=document.getElementById('aanvraag-form'), reset=document.getElementById('reset-form');
-if(token){ aanvraag.classList.add('verborgen'); reset.classList.remove('verborgen'); document.querySelector('.auth-subtitel').textContent='Kies een nieuw wachtwoord van minimaal 10 tekens.'; }
-function toon(tekst, goed=false){melding.textContent=tekst;melding.className='auth-melding '+(goed?'goed':'fout');}
-aanvraag.addEventListener('submit',async e=>{e.preventDefault();const r=await fetch(endpoint+'?actie=reset_aanvragen',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email.value})});const d=await r.json();if(d.reset_link){toon('Resetlink aangemaakt. Open deze link om je wachtwoord te wijzigen:\n'+d.reset_link,true)}else toon(d.bericht,true)});
-reset.addEventListener('submit',async e=>{e.preventDefault();if(nieuw.value!==herhaal.value)return toon('De wachtwoorden zijn niet gelijk.');const r=await fetch(endpoint+'?actie=wachtwoord_resetten',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token,nieuw_wachtwoord:nieuw.value})});const d=await r.json();if(!d.succes)return toon(d.fout);toon(d.bericht,true);reset.reset();setTimeout(()=>location.href='login.html',1200)});
+const authEndpoint = '../backend/api/auth.php';
+const messageElement = document.getElementById('melding');
+const queryParameters = new URLSearchParams(location.search);
+const resetToken = queryParameters.get('token');
+const requestForm = document.getElementById('aanvraag-form');
+const resetForm = document.getElementById('reset-form');
+const emailInput = document.getElementById('email');
+const newPasswordInput = document.getElementById('nieuw');
+const repeatedPasswordInput = document.getElementById('herhaal');
+const csrfTokenPromise = fetch(`${authEndpoint}?actie=me`, { credentials: 'same-origin' })
+	.then((response) => response.json())
+	.then((responseData) => responseData.csrf_token || '');
+
+if (resetToken) {
+	requestForm.classList.add('verborgen');
+	resetForm.classList.remove('verborgen');
+	document.querySelector('.auth-subtitel').textContent = 'Kies een nieuw wachtwoord van minimaal 10 tekens.';
+}
+
+function showMessage(messageText, isSuccess = false) {
+	messageElement.textContent = messageText;
+	messageElement.className = `auth-melding ${isSuccess ? 'goed' : 'fout'}`;
+}
+
+async function postAuthAction(action, requestData) {
+	const csrfToken = await csrfTokenPromise;
+	const response = await fetch(`${authEndpoint}?actie=${action}`, {
+		method: 'POST',
+		credentials: 'same-origin',
+		headers: {
+			'Content-Type': 'application/json',
+			'X-CSRF-Token': csrfToken,
+		},
+		body: JSON.stringify(requestData),
+	});
+	const responseData = await response.json();
+
+	if (!response.ok) {
+		throw new Error(responseData.fout || `Aanvraag mislukt (HTTP ${response.status}).`);
+	}
+
+	return responseData;
+}
+
+requestForm.addEventListener('submit', async (event) => {
+	event.preventDefault();
+	try {
+		const responseData = await postAuthAction('reset_aanvragen', { email: emailInput.value });
+		if (responseData.reset_link) {
+			showMessage(
+				'Resetlink aangemaakt. Open deze link om je wachtwoord te wijzigen:\n' + responseData.reset_link,
+				true
+			);
+		} else {
+			showMessage(responseData.bericht, true);
+		}
+	} catch (error) {
+		showMessage(error.message);
+	}
+});
+
+resetForm.addEventListener('submit', async (event) => {
+	event.preventDefault();
+	if (newPasswordInput.value !== repeatedPasswordInput.value) {
+		showMessage('De wachtwoorden zijn niet gelijk.');
+		return;
+	}
+
+	try {
+		const responseData = await postAuthAction('wachtwoord_resetten', {
+			token: resetToken,
+			nieuw_wachtwoord: newPasswordInput.value,
+		});
+		showMessage(responseData.bericht, true);
+		resetForm.reset();
+		setTimeout(() => { location.href = 'login.html'; }, 1200);
+	} catch (error) {
+		showMessage(error.message);
+	}
+});
 </script></body></html>

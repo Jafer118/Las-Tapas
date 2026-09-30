@@ -10,29 +10,44 @@
  */
 
 require_once __DIR__ . '/../lib/auth.php';
-vereisIngelogd();
+requireAuthenticatedUser();
+requireHttpMethod('POST');
+requireValidCsrfToken();
 header('Content-Type: application/json');
 require_once __DIR__ . '/../db.php';
 
-$input = json_decode(file_get_contents('php://input'), true);
+$requestData = decodeJsonRequestBody();
 
-$geldigeStatussen = ['besteld', 'bereid', 'geserveerd'];
-
-if (
-    !$input ||
-    empty($input['orderregel_id']) ||
-    empty($input['status']) ||
-    !in_array($input['status'], $geldigeStatussen, true)
-) {
-    http_response_code(400);
-    echo json_encode(['succes' => false, 'fout' => 'Ongeldige invoer.']);
-    exit;
+$orderLineId = parsePositiveInteger($requestData['orderregel_id'] ?? null);
+$nextStatus = $requestData['status'] ?? null;
+if ($orderLineId === null || !is_string($nextStatus) || !in_array($nextStatus, ['bereid', 'geserveerd'], true)) {
+    sendJsonResponse(['succes' => false, 'fout' => 'Ongeldige invoer.'], 422);
 }
 
-$orderregelId = (int) $input['orderregel_id'];
-$nieuweStatus = $input['status'];
+try {
+    $pdo->beginTransaction();
+    $statement = $pdo->prepare('SELECT status FROM orderregels WHERE id = ? FOR UPDATE');
+    $statement->execute([$orderLineId]);
+    $currentStatus = $statement->fetchColumn();
 
-$stmt = $pdo->prepare('UPDATE orderregels SET status = ? WHERE id = ?');
-$stmt->execute([$nieuweStatus, $orderregelId]);
+    if ($currentStatus === false) {
+        $pdo->rollBack();
+        sendJsonResponse(['succes' => false, 'fout' => 'Bestelregel niet gevonden.'], 404);
+    }
 
-echo json_encode(['succes' => true]);
+    if (!isAllowedOrderStatusTransition($currentStatus, $nextStatus)) {
+        $pdo->rollBack();
+        sendJsonResponse(['succes' => false, 'fout' => 'Deze statusovergang is niet toegestaan.'], 409);
+    }
+
+    $statement = $pdo->prepare('UPDATE orderregels SET status = ? WHERE id = ?');
+    $statement->execute([$nextStatus, $orderLineId]);
+    $pdo->commit();
+    sendJsonResponse(['succes' => true]);
+} catch (Throwable $exception) {
+    if ($pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
+    error_log('Order status update failed: ' . $exception->getMessage());
+    sendJsonResponse(['succes' => false, 'fout' => 'De bestelstatus kon niet worden bijgewerkt.'], 500);
+}

@@ -1,10 +1,11 @@
 <?php
 require_once __DIR__ . '/../lib/auth.php';
-vereisIngelogd();
+requireAuthenticatedUser();
+requireHttpMethod('GET');
 header('Content-Type: application/json');
 require_once __DIR__ . '/../db.php';
 
-$stmt = $pdo->query('SELECT id, naam, capaciteit, verdieping, status FROM tafels ORDER BY id');
-$tafels = $stmt->fetchAll();
+$statement = $pdo->query('SELECT id, naam, capaciteit, verdieping, status FROM tafels ORDER BY id');
+$tables = $statement->fetchAll();
 
-echo json_encode(['succes' => true, 'tafels' => $tafels]);
+echo json_encode(['succes' => true, 'tafels' => $tables]);

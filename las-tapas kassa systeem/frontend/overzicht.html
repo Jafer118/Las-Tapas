@@ -71,97 +71,104 @@
 
 <script src="js/gedeeld.js"></script>
 <script>
-async function laadDashboard() {
-    await Promise.all([laadTafelOverzicht(), laadOrderKolom('keuken_bestellingen.php', 'keuken-inhoud'), laadOrderKolom('bar_bestellingen.php', 'bar-inhoud')]);
+async function loadDashboard() {
+    await Promise.all([
+        loadTableOverview(),
+        loadOrderColumn('keuken_bestellingen.php', 'keuken-inhoud'),
+        loadOrderColumn('bar_bestellingen.php', 'bar-inhoud'),
+    ]);
 }
 
-async function laadTafelOverzicht() {
-    const tafelData = await apiGet('tafels_ophalen.php');
-    const bezetteTafels = tafelData.tafels.filter(t => t.status === 'bezet');
-    const inhoud = document.getElementById('tafel-overzicht-inhoud');
-    const footer = document.getElementById('tafel-overzicht-footer');
+async function loadTableOverview() {
+    const tableData = await apiGet('tafels_ophalen.php');
+    const occupiedTables = tableData.tafels.filter((table) => table.status === 'bezet');
+    const overviewContent = document.getElementById('tafel-overzicht-inhoud');
+    const overviewFooter = document.getElementById('tafel-overzicht-footer');
 
-    if (bezetteTafels.length === 0) {
-        inhoud.innerHTML = '<p class="db-geen-tafels">Geen bezette tafels op dit moment.</p>';
-        footer.innerHTML = '';
+    if (occupiedTables.length === 0) {
+        overviewContent.innerHTML = '<p class="db-geen-tafels">Geen bezette tafels op dit moment.</p>';
+        overviewFooter.innerHTML = '';
         return;
     }
 
-    let totaalAlleTafels = 0;
-    let htmlKaarten = '';
+    let totalForAllTables = 0;
+    let tableCardsHtml = '';
 
-    for (const tafel of bezetteTafels) {
-        const rekening = await apiGet(`rekening.php?tafel_id=${tafel.id}`);
-        const actieveOrders = (rekening.orderregels || []).filter(r => r.status !== 'geserveerd').length;
-        totaalAlleTafels += rekening.totaal || 0;
-        const personenTekst = rekening.aantal_personen
-            ? `${rekening.aantal_personen} / ${tafel.capaciteit} personen`
-            : `max ${tafel.capaciteit} personen`;
+    for (const table of occupiedTables) {
+        const billData = await apiGet(`rekening.php?tafel_id=${table.id}`);
+        const activeOrderCount = (billData.orderregels || [])
+            .filter((orderLine) => orderLine.status !== 'geserveerd').length;
+        totalForAllTables += billData.totaal || 0;
+        const guestCountText = billData.aantal_personen
+            ? `${billData.aantal_personen} / ${table.capaciteit} personen`
+            : `max ${table.capaciteit} personen`;
 
-        htmlKaarten += `
+        tableCardsHtml += `
             <div class="db-tafelkaart">
-                <div class="naam">${tafel.naam}</div>
-                <div class="actief-label">${actieveOrders} actieve order${actieveOrders === 1 ? '' : 's'} — ${personenTekst}</div>
+                <div class="naam">${table.naam}</div>
+                <div class="actief-label">${activeOrderCount} actieve order${activeOrderCount === 1 ? '' : 's'} — ${guestCountText}</div>
                 <div class="regel">
                     <span>Openstaand bedrag</span>
-                    <span>${formatEuro(rekening.totaal || 0)}</span>
+                    <span>${formatCurrency(billData.totaal || 0)}</span>
                 </div>
             </div>
         `;
     }
 
-    inhoud.innerHTML = htmlKaarten;
-    footer.innerHTML = `<span>${bezetteTafels.length} tafel${bezetteTafels.length === 1 ? '' : 's'} open</span><span>TOTAAL: ${formatEuro(totaalAlleTafels)}</span>`;
+    overviewContent.innerHTML = tableCardsHtml;
+    overviewFooter.innerHTML = `<span>${occupiedTables.length} tafel${occupiedTables.length === 1 ? '' : 's'} open</span><span>TOTAAL: ${formatCurrency(totalForAllTables)}</span>`;
 }
 
-async function laadOrderKolom(endpoint, containerId) {
-    const data = await apiGet(endpoint);
-    const container = document.getElementById(containerId);
-    const regels = data.orderregels || [];
+async function loadOrderColumn(endpointPath, containerId) {
+    const orderData = await apiGet(endpointPath);
+    const orderContainer = document.getElementById(containerId);
+    const orderLines = orderData.orderregels || [];
 
-    if (regels.length === 0) {
-        container.innerHTML = '<p class="db-geen-tafels">Geen openstaande bestellingen.</p>';
+    if (orderLines.length === 0) {
+        orderContainer.innerHTML = '<p class="db-geen-tafels">Geen openstaande bestellingen.</p>';
         return;
     }
 
-    const perTafel = {};
-    regels.forEach(r => {
-        if (!perTafel[r.tafel_id]) perTafel[r.tafel_id] = { naam: r.tafel_naam, regels: [] };
-        perTafel[r.tafel_id].regels.push(r);
+    const ordersByTable = {};
+    orderLines.forEach((orderLine) => {
+        if (!ordersByTable[orderLine.tafel_id]) {
+            ordersByTable[orderLine.tafel_id] = { naam: orderLine.tafel_naam, regels: [] };
+        }
+        ordersByTable[orderLine.tafel_id].regels.push(orderLine);
     });
 
-    let html = '';
-    Object.values(perTafel).forEach(tafel => {
-        const laatsteTijd = tafel.regels[tafel.regels.length - 1].besteld_op;
-        let regelsHtml = '';
-        tafel.regels.forEach(r => {
-            const badge = r.status === 'bereid'
+    let orderCardsHtml = '';
+    Object.values(ordersByTable).forEach((tableGroup) => {
+        const lastOrderTime = tableGroup.regels[tableGroup.regels.length - 1].besteld_op;
+        let orderLinesHtml = '';
+        tableGroup.regels.forEach((orderLine) => {
+            const statusBadge = orderLine.status === 'bereid'
                 ? '<span class="db-badge bezig">BEZIG</span>'
                 : '<span class="db-badge nieuw">NIEUW</span>';
-            regelsHtml += `
+            orderLinesHtml += `
                 <div class="db-orderregel">
-                    <span>${r.gerecht_naam} (${r.aantal})</span>
-                    ${badge}
+                    <span>${orderLine.gerecht_naam} (${orderLine.aantal})</span>
+                    ${statusBadge}
                 </div>
             `;
         });
 
-        html += `
+        orderCardsHtml += `
             <div class="db-orderkaart">
                 <div class="kop">
-                    <span>${tafel.naam}</span>
-                    <span class="tijd">${formatTijd(laatsteTijd)}</span>
+                    <span>${tableGroup.naam}</span>
+                    <span class="tijd">${formatTime(lastOrderTime)}</span>
                 </div>
-                ${regelsHtml}
+                ${orderLinesHtml}
             </div>
         `;
     });
 
-    container.innerHTML = html;
+    orderContainer.innerHTML = orderCardsHtml;
 }
 
-setInterval(laadDashboard, 5000);
-laadDashboard();
+setInterval(loadDashboard, 5000);
+loadDashboard();
 </script>
 </body>
 </html>

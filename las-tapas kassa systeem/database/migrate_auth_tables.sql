@@ -19,5 +19,14 @@ CREATE TABLE IF NOT EXISTS kassa_wachtwoord_resets (
     FOREIGN KEY (gebruiker_id) REFERENCES kassa_gebruikers(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
+CREATE TABLE IF NOT EXISTS kassa_api_rate_limits (
+    scope VARCHAR(40) NOT NULL,
+    client_hash CHAR(64) NOT NULL,
+    attempts INT UNSIGNED NOT NULL DEFAULT 0,
+    window_started_at DATETIME NOT NULL,
+    PRIMARY KEY (scope, client_hash),
+    INDEX idx_kassa_api_rate_limits_window (window_started_at)
+) ENGINE=InnoDB;
+
 INSERT IGNORE INTO kassa_gebruikers (email, naam, wachtwoord_hash, rol)
 VALUES ('admin@lastapas.nl', 'Beheerder', '$2y$10$zTfGEoiG2GiLQfbOiaXsnuhjmphBgPFkPHH3NHqVPUozIFOtKm4pS', 'beheerder');

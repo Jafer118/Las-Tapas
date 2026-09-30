@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../lib/auth.php';
-vereisIngelogd();
+requireAuthenticatedUser();
+requireHttpMethod('GET');
 header('Content-Type: application/json');
 require_once __DIR__ . '/../db.php';
 
@@ -23,7 +24,7 @@ $sql = "
     ORDER BY o.besteld_op ASC
 ";
 
-$stmt = $pdo->query($sql);
-$regels = $stmt->fetchAll();
+$statement = $pdo->query($sql);
+$lines = $statement->fetchAll();
 
-echo json_encode(['succes' => true, 'orderregels' => $regels]);
+echo json_encode(['succes' => true, 'orderregels' => $lines]);

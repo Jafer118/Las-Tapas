@@ -8,46 +8,58 @@
  */
 
 require_once __DIR__ . '/../lib/auth.php';
-vereisIngelogd();
+requireAuthenticatedUser();
+requireHttpMethod('POST');
+requireValidCsrfToken();
 header('Content-Type: application/json');
 require_once __DIR__ . '/../db.php';
 
-$input = json_decode(file_get_contents('php://input'), true);
+$requestData = decodeJsonRequestBody();
 
-if (!$input || empty($input['tafel_id'])) {
-    http_response_code(400);
-    echo json_encode(['succes' => false, 'fout' => 'tafel_id is verplicht.']);
-    exit;
+$tableId = parsePositiveInteger($requestData['tafel_id'] ?? null);
+if ($tableId === null) {
+    sendJsonResponse(['succes' => false, 'fout' => 'Een geldig tafel_id is verplicht.'], 422);
 }
-
-$tafelId = (int) $input['tafel_id'];
 
 try {
     $pdo->beginTransaction();
 
-    $stmt = $pdo->prepare("SELECT id, klant_email FROM bestellingen WHERE tafel_id = ? AND status = 'open' LIMIT 1");
-    $stmt->execute([$tafelId]);
-    $bestelling = $stmt->fetch();
-
-    if (!$bestelling) {
-        throw new Exception('Geen openstaande bestelling gevonden voor deze tafel.');
+    $statement = $pdo->prepare('SELECT id FROM tafels WHERE id = ? FOR UPDATE');
+    $statement->execute([$tableId]);
+    if (!$statement->fetch()) {
+        throw new InvalidArgumentException('Tafel bestaat niet.');
     }
 
-    $stmt = $pdo->prepare("UPDATE bestellingen SET status = 'afgerekend' WHERE id = ?");
-    $stmt->execute([$bestelling['id']]);
+    $statement = $pdo->prepare("SELECT id, klant_email FROM bestellingen WHERE tafel_id = ? AND status = 'open' LIMIT 1 FOR UPDATE");
+    $statement->execute([$tableId]);
+    $order = $statement->fetch();
 
-    $stmt = $pdo->prepare("UPDATE tafels SET status = 'vrij' WHERE id = ?");
-    $stmt->execute([$tafelId]);
+    if (!$order) {
+        throw new InvalidArgumentException('Geen openstaande bestelling gevonden voor deze tafel.');
+    }
+
+    $statement = $pdo->prepare("UPDATE bestellingen SET status = 'afgerekend' WHERE id = ?");
+    $statement->execute([$order['id']]);
+
+    $statement = $pdo->prepare("UPDATE tafels SET status = 'vrij' WHERE id = ?");
+    $statement->execute([$tableId]);
 
     $pdo->commit();
 
-    echo json_encode([
+    sendJsonResponse([
         'succes'        => true,
-        'bestelling_id' => $bestelling['id'],
-        'klant_email'   => $bestelling['klant_email'],
+        'bestelling_id' => $order['id'],
+        'klant_email'   => $order['klant_email'],
     ]);
-} catch (Exception $e) {
-    $pdo->rollBack();
-    http_response_code(400);
-    echo json_encode(['succes' => false, 'fout' => $e->getMessage()]);
+} catch (InvalidArgumentException $exception) {
+    if ($pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
+    sendJsonResponse(['succes' => false, 'fout' => $exception->getMessage()], 404);
+} catch (Throwable $exception) {
+    if ($pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
+    error_log('Checkout failed: ' . $exception->getMessage());
+    sendJsonResponse(['succes' => false, 'fout' => 'Afrekenen is mislukt. Probeer het later opnieuw.'], 500);
 }

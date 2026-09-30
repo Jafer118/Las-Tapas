@@ -5,26 +5,25 @@
  */
 
 require_once __DIR__ . '/../lib/auth.php';
-vereisIngelogd();
+requireAuthenticatedUser();
+requireHttpMethod('GET');
 header('Content-Type: application/json');
 require_once __DIR__ . '/../db.php';
 
-$tafelId = isset($_GET['tafel_id']) ? (int) $_GET['tafel_id'] : 0;
+$tableId = parsePositiveInteger($_GET['tafel_id'] ?? null);
 
-if ($tafelId <= 0) {
-    http_response_code(400);
-    echo json_encode(['succes' => false, 'fout' => 'tafel_id is verplicht.']);
-    exit;
+if ($tableId === null) {
+    sendJsonResponse(['succes' => false, 'fout' => 'Een geldige tafel_id is verplicht.'], 422);
 }
 
-$stmt = $pdo->prepare("SELECT id, aangemaakt_op, aantal_personen FROM bestellingen WHERE tafel_id = ? AND status = 'open' LIMIT 1");
-$stmt->execute([$tafelId]);
-$bestelling = $stmt->fetch();
+$statement = $pdo->prepare("SELECT id, aangemaakt_op, aantal_personen FROM bestellingen WHERE tafel_id = ? AND status = 'open' LIMIT 1");
+$statement->execute([$tableId]);
+$order = $statement->fetch();
 
-if (!$bestelling) {
+if (!$order) {
     echo json_encode([
         'succes'      => true,
-        'tafel_id'    => $tafelId,
+        'tafel_id'    => $tableId,
         'bestelling'  => null,
         'orderregels' => [],
         'totaal'      => 0,
@@ -32,7 +31,7 @@ if (!$bestelling) {
     exit;
 }
 
-$stmt = $pdo->prepare(
+$statement = $pdo->prepare(
     'SELECT g.naam AS gerecht_naam, o.aantal, o.prijs_per_stuk,
             (o.aantal * o.prijs_per_stuk) AS subtotaal, o.status
      FROM orderregels o
@@ -40,19 +39,19 @@ $stmt = $pdo->prepare(
      WHERE o.bestelling_id = ?
      ORDER BY o.besteld_op ASC'
 );
-$stmt->execute([$bestelling['id']]);
-$regels = $stmt->fetchAll();
+$statement->execute([$order['id']]);
+$lines = $statement->fetchAll();
 
-$totaal = 0;
-foreach ($regels as $regel) {
-    $totaal += $regel['subtotaal'];
+$total = 0;
+foreach ($lines as $row) {
+    $total += $row['subtotaal'];
 }
 
 echo json_encode([
     'succes'          => true,
-    'tafel_id'        => $tafelId,
-    'bestelling_id'   => $bestelling['id'],
-    'aantal_personen' => $bestelling['aantal_personen'],
-    'orderregels'     => $regels,
-    'totaal'          => round($totaal, 2),
+    'tafel_id'        => $tableId,
+    'bestelling_id'   => $order['id'],
+    'aantal_personen' => $order['aantal_personen'],
+    'orderregels'     => $lines,
+    'totaal'          => round($total, 2),
 ]);

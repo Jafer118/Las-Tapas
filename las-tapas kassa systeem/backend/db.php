@@ -5,10 +5,11 @@
  * Update these settings for your local environment (e.g. XAMPP or MAMP).
  */
 
-$DB_HOST = 'localhost';
-$DB_NAME = 'las_tapas';
-$DB_USER = 'root';
-$DB_PASS = '';        // Empty by default in XAMPP; set this if needed.
+$DB_HOST = getenv('LAS_TAPAS_DB_HOST') ?: 'localhost';
+$DB_NAME = getenv('LAS_TAPAS_DB_NAME') ?: 'las_tapas';
+$DB_USER = getenv('LAS_TAPAS_DB_USER') ?: 'root';
+$DB_PASS = getenv('LAS_TAPAS_DB_PASS');
+$DB_PASS = $DB_PASS === false ? '' : $DB_PASS;
 $DB_CHARSET = 'utf8mb4';
 
 $dsn = "mysql:host={$DB_HOST};dbname={$DB_NAME};charset={$DB_CHARSET}";
@@ -21,8 +22,8 @@ $options = [
 
 try {
     $pdo = new PDO($dsn, $DB_USER, $DB_PASS, $options);
-} catch (PDOException $e) {
-    error_log('Database connection failed: ' . $e->getMessage());
+} catch (PDOException $exception) {
+    error_log('Database connection failed: ' . $exception->getMessage());
     http_response_code(500);
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode(['succes' => false, 'fout' => 'The service is temporarily unavailable.']);

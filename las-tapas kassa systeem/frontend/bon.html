@@ -196,63 +196,63 @@
 
 <script src="js/gedeeld.js"></script>
 <script>
-function toonMelding(tekst) {
+function showMessage(messageText) {
     document.getElementById('melding').style.display = 'block';
-    document.getElementById('melding').textContent = tekst;
+    document.getElementById('melding').textContent = messageText;
 }
 
-let huidigeQuery = '';
+let receiptQuery = '';
 
-async function laadBon() {
-    const params = new URLSearchParams(window.location.search);
-    const tafelId = params.get('tafel_id');
-    const bestellingId = params.get('bestelling_id');
+async function loadReceipt() {
+    const queryParameters = new URLSearchParams(window.location.search);
+    const tableId = queryParameters.get('tafel_id');
+    const orderId = queryParameters.get('bestelling_id');
 
-    if (!tafelId && !bestellingId) {
-        toonMelding('Geen tafel of bestelling opgegeven. Open dit bonnetje vanaf de kassapagina.');
+    if (!tableId && !orderId) {
+        showMessage('Geen tafel of bestelling opgegeven. Open dit bonnetje vanaf de kassapagina.');
         return;
     }
 
-    huidigeQuery = bestellingId ? `bestelling_id=${bestellingId}` : `tafel_id=${tafelId}`;
-    const data = await apiGet(`bon_gegevens.php?${huidigeQuery}`);
+    receiptQuery = orderId ? `bestelling_id=${orderId}` : `tafel_id=${tableId}`;
+    const receiptData = await apiGet(`bon_gegevens.php?${receiptQuery}`);
 
-    if (!data.succes) {
-        toonMelding(data.fout || 'Geen bonnetje gevonden voor deze bestelling.');
+    if (!receiptData.succes) {
+        showMessage(receiptData.fout || 'Geen bonnetje gevonden voor deze bestelling.');
         return;
     }
 
-    document.title = `Bon — ${data.tafel_naam}`;
-    document.getElementById('bon-tafel').textContent = data.tafel_naam;
-    document.getElementById('bon-datum').textContent = new Date(data.datum_tijd.replace(' ', 'T'))
+    document.title = `Bon — ${receiptData.tafel_naam}`;
+    document.getElementById('bon-tafel').textContent = receiptData.tafel_naam;
+    document.getElementById('bon-datum').textContent = new Date(receiptData.datum_tijd.replace(' ', 'T'))
         .toLocaleString('nl-NL', { dateStyle: 'short', timeStyle: 'short' });
-    document.getElementById('bon-nummer').textContent = `#${String(data.bestelling_id).padStart(5, '0')}`;
+    document.getElementById('bon-nummer').textContent = `#${String(receiptData.bestelling_id).padStart(5, '0')}`;
 
-    if (data.aantal_personen) {
+    if (receiptData.aantal_personen) {
         document.getElementById('bon-personen-rij').style.display = 'flex';
-        document.getElementById('bon-personen').textContent = data.aantal_personen;
+        document.getElementById('bon-personen').textContent = receiptData.aantal_personen;
     }
 
-    const regelsContainer = document.getElementById('bon-regels');
-    regelsContainer.innerHTML = '';
-    data.orderregels.forEach(r => {
-        const rij = document.createElement('div');
-        rij.className = 'bon-regel';
-        rij.innerHTML = `
-            <span class="naam-aantal">${r.aantal}× ${r.gerecht_naam}</span>
-            <span>${formatEuro(r.subtotaal)}</span>
+    const orderLinesContainer = document.getElementById('bon-regels');
+    orderLinesContainer.innerHTML = '';
+    receiptData.orderregels.forEach(orderLine => {
+        const lineElement = document.createElement('div');
+        lineElement.className = 'bon-regel';
+        lineElement.innerHTML = `
+            <span class="naam-aantal">${orderLine.aantal}× ${orderLine.gerecht_naam}</span>
+            <span>${formatCurrency(orderLine.subtotaal)}</span>
         `;
-        regelsContainer.appendChild(rij);
+        orderLinesContainer.appendChild(lineElement);
     });
 
-    document.getElementById('bon-totaal').textContent = formatEuro(data.totaal);
+    document.getElementById('bon-totaal').textContent = formatCurrency(receiptData.totaal);
     document.getElementById('bon-inhoud').style.display = 'block';
 }
 
 function downloadPdf() {
-    window.open(`${API_BASIS}/bon_pdf.php?${huidigeQuery}`, '_blank');
+    window.open(`${API_BASE}/bon_pdf.php?${receiptQuery}`, '_blank');
 }
 
-laadBon();
+loadReceipt();
 </script>
 </body>
 </html>

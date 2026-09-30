@@ -40,25 +40,48 @@
 <a class="auth-link" href="resetten.html">Wachtwoord vergeten?</a>
 </section></main>
 <script>
-const api = '../backend/api/auth.php';
-const melding = document.getElementById('melding');
-const emailVeld = document.getElementById('email');
-const wachtwoordVeld = document.getElementById('wachtwoord');
-document.getElementById('login-form').addEventListener('submit', async (event) => {
+const authEndpoint = '../backend/api/auth.php';
+const messageElement = document.getElementById('melding');
+const emailInput = document.getElementById('email');
+const passwordInput = document.getElementById('wachtwoord');
+const loginForm = document.getElementById('login-form');
+const csrfTokenPromise = fetch(`${authEndpoint}?actie=me`, { credentials: 'same-origin' })
+    .then((response) => response.json())
+    .then((responseData) => responseData.csrf_token || '');
+
+function showLoginMessage(messageText, messageType = '') {
+    messageElement.className = `auth-melding ${messageType}`.trim();
+    messageElement.textContent = messageText;
+}
+
+loginForm.addEventListener('submit', async (event) => {
     event.preventDefault();
-    melding.className = 'auth-melding'; melding.textContent = 'Bezig met inloggen…';
-    const ingevoerdEmail = emailVeld.value.trim().toLowerCase();
-    const email = ingevoerdEmail === 'admin' ? 'admin@lastapas.nl' : ingevoerdEmail;
+    showLoginMessage('Bezig met inloggen…');
+
+    const enteredEmail = emailInput.value.trim().toLowerCase();
+    const email = enteredEmail === 'admin' ? 'admin@lastapas.nl' : enteredEmail;
     try {
-        const response = await fetch(`${api}?actie=login`, { method: 'POST', credentials: 'same-origin', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({email, wachtwoord: wachtwoordVeld.value}) });
-        const data = await response.json();
-        if (!response.ok || !data.succes) { melding.className = 'auth-melding fout'; melding.textContent = data.fout || `Inloggen mislukt (HTTP ${response.status}).`; return; }
+        const csrfToken = await csrfTokenPromise;
+        const response = await fetch(`${authEndpoint}?actie=login`, {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
+            body: JSON.stringify({ email, wachtwoord: passwordInput.value }),
+        });
+        const responseData = await response.json();
+        if (!response.ok || !responseData.succes) {
+            showLoginMessage(responseData.fout || `Inloggen mislukt (HTTP ${response.status}).`, 'fout');
+            return;
+        }
+
         const requestedNext = new URLSearchParams(location.search).get('next') || 'overzicht.html';
         const next = /^[a-z0-9_-]+\.html(?:\?.*)?$/i.test(requestedNext) ? requestedNext : 'overzicht.html';
         location.href = next;
     } catch (error) {
-        melding.className = 'auth-melding fout';
-        melding.textContent = 'De server kan niet worden bereikt. Open deze pagina via localhost/WAMP en niet als lokaal bestand.';
+        showLoginMessage(
+            'De server kan niet worden bereikt. Open deze pagina via localhost/WAMP en niet als lokaal bestand.',
+            'fout'
+        );
     }
 });
 </script>
