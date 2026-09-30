@@ -20,14 +20,11 @@ compatibility with the current frontend and stored data.
 
 ## Local Setup
 
-1. Import `database/las_tapas.sql` into MySQL using phpMyAdmin or the MySQL CLI.
-2. Configure the connection values in `backend/db.php` for the local WAMP/XAMPP
-   installation. The defaults target a local MySQL server with the `root` user
-   and an empty password.
-3. Place this project directory under the web server document root.
-4. Open `http://localhost/las-tapas/frontend/login.html` and sign in with the
-   sample account `admin@lastapas.nl` / `LasTapas123!`. Change the sample
-   password immediately. Never use sample credentials in production.
+1. Import `database/las_tapas.sql` into MySQL using phpMyAdmin or the MySQL CLI. This creates the `las_tapas` database with tables and example data (tables and dishes). It also creates the `kassa_gebruikers` and `kassa_wachtwoord_resets` tables.
+2. If the `las_tapas` database already exists, import `database/migrate_auth_tables.sql` first. This creates the separate cashier login tables while leaving the stock accounts unchanged.
+3. Configure the connection values in `backend/db.php` for your local WAMP/XAMPP installation. The defaults target a local MySQL server with the `root` user and an empty password.
+4. Place this project directory under the web server document root.
+5. Open `http://localhost/las-tapas/frontend/login.html` and sign in with the sample admin account `admin@lastapas.nl` / `LasTapas123!`. Change the sample password immediately after the first login via the reset flow. Never use sample credentials in production.
 
 ## Main Workflows
 

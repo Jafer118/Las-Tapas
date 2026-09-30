@@ -26,7 +26,7 @@ if ($actie === 'login') {
         antwoord(['succes' => false, 'fout' => 'Vul een geldig e-mailadres en wachtwoord in.'], 422);
     }
 
-    $stmt = $pdo->prepare('SELECT id, email, naam, rol, wachtwoord_hash FROM gebruikers WHERE email = ? AND actief = 1 LIMIT 1');
+    $stmt = $pdo->prepare('SELECT id, email, naam, rol, wachtwoord_hash FROM kassa_gebruikers WHERE email = ? AND actief = 1 LIMIT 1');
     $stmt->execute([$email]);
     $gebruiker = $stmt->fetch();
     if (!$gebruiker || !password_verify($wachtwoord, $gebruiker['wachtwoord_hash'])) {
@@ -45,14 +45,14 @@ if ($actie === 'login') {
 
 if ($actie === 'reset_aanvragen') {
     $email = strtolower(trim((string) ($input['email'] ?? '')));
-    $stmt = $pdo->prepare('SELECT id FROM gebruikers WHERE email = ? AND actief = 1 LIMIT 1');
+    $stmt = $pdo->prepare('SELECT id FROM kassa_gebruikers WHERE email = ? AND actief = 1 LIMIT 1');
     $stmt->execute([$email]);
     $gebruiker = $stmt->fetch();
     $resultaat = ['succes' => true, 'bericht' => 'Als dit e-mailadres bestaat, is een resetlink aangemaakt.'];
 
     if ($gebruiker) {
         $token = bin2hex(random_bytes(32));
-        $stmt = $pdo->prepare('INSERT INTO wachtwoord_resets (gebruiker_id, token_hash, verloopt_op) VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 60 MINUTE))');
+        $stmt = $pdo->prepare('INSERT INTO kassa_wachtwoord_resets (gebruiker_id, token_hash, verloopt_op) VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 60 MINUTE))');
         $stmt->execute([$gebruiker['id'], hash('sha256', $token)]);
         $resultaat['reset_link'] = 'resetten.html?token=' . urlencode($token);
     }
@@ -66,7 +66,7 @@ if ($actie === 'wachtwoord_resetten') {
         antwoord(['succes' => false, 'fout' => 'Gebruik minimaal 10 tekens voor het nieuwe wachtwoord.'], 422);
     }
 
-    $stmt = $pdo->prepare('SELECT id, gebruiker_id FROM wachtwoord_resets WHERE token_hash = ? AND gebruikt_op IS NULL AND verloopt_op > NOW() LIMIT 1');
+    $stmt = $pdo->prepare('SELECT id, gebruiker_id FROM kassa_wachtwoord_resets WHERE token_hash = ? AND gebruikt_op IS NULL AND verloopt_op > NOW() LIMIT 1');
     $stmt->execute([hash('sha256', $token)]);
     $reset = $stmt->fetch();
     if (!$reset) {
@@ -74,9 +74,9 @@ if ($actie === 'wachtwoord_resetten') {
     }
 
     $pdo->beginTransaction();
-    $stmt = $pdo->prepare('UPDATE gebruikers SET wachtwoord_hash = ? WHERE id = ?');
+    $stmt = $pdo->prepare('UPDATE kassa_gebruikers SET wachtwoord_hash = ? WHERE id = ?');
     $stmt->execute([password_hash($nieuw, PASSWORD_DEFAULT), $reset['gebruiker_id']]);
-    $stmt = $pdo->prepare('UPDATE wachtwoord_resets SET gebruikt_op = NOW() WHERE id = ?');
+    $stmt = $pdo->prepare('UPDATE kassa_wachtwoord_resets SET gebruikt_op = NOW() WHERE id = ?');
     $stmt->execute([$reset['id']]);
     $pdo->commit();
     antwoord(['succes' => true, 'bericht' => 'Je wachtwoord is gewijzigd. Je kunt nu inloggen.']);

@@ -126,6 +126,19 @@ document.querySelectorAll('.filter-button').forEach(button => button.addEventLis
 }));
 
 document.querySelector('#refresh-button').addEventListener('click', () => loadItems(true));
+document.querySelector('#logout-button').addEventListener('click', async event => {
+    const button = event.currentTarget;
+    button.disabled = true;
+    try {
+        const response = await fetch('logout.php', { method: 'POST', credentials: 'same-origin', headers: { 'Accept': 'application/json' } });
+        if (!response.ok) throw new Error('Uitloggen is mislukt.');
+        window.location.href = '../index.html';
+    } catch (error) {
+        button.disabled = false;
+        showToast(error.message);
+    }
+});
+
 const backdrop = document.querySelector('#modal-backdrop');
 function toggleModal(open) { backdrop.hidden = !open; if (open) backdrop.querySelector('input').focus(); }
 document.querySelector('#open-add').addEventListener('click', () => toggleModal(true));

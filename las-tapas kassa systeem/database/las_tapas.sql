@@ -10,7 +10,7 @@ USE las_tapas;
 -- ---------------------------------------------------------------------
 -- Table: users and password resets
 -- ---------------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS gebruikers (
+CREATE TABLE IF NOT EXISTS kassa_gebruikers (
     id INT AUTO_INCREMENT PRIMARY KEY,
     email VARCHAR(255) NOT NULL UNIQUE,
     naam VARCHAR(120) NOT NULL,
@@ -20,16 +20,16 @@ CREATE TABLE IF NOT EXISTS gebruikers (
     aangemaakt_op DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
-CREATE TABLE IF NOT EXISTS wachtwoord_resets (
+CREATE TABLE IF NOT EXISTS kassa_wachtwoord_resets (
     id INT AUTO_INCREMENT PRIMARY KEY,
     gebruiker_id INT NOT NULL,
     token_hash CHAR(64) NOT NULL UNIQUE,
     verloopt_op DATETIME NOT NULL,
     gebruikt_op DATETIME NULL,
-    FOREIGN KEY (gebruiker_id) REFERENCES gebruikers(id) ON DELETE CASCADE
+    FOREIGN KEY (gebruiker_id) REFERENCES kassa_gebruikers(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
-INSERT IGNORE INTO gebruikers (email, naam, wachtwoord_hash, rol)
+INSERT IGNORE INTO kassa_gebruikers (email, naam, wachtwoord_hash, rol)
 VALUES ('admin@lastapas.nl', 'Beheerder', '$2y$10$zTfGEoiG2GiLQfbOiaXsnuhjmphBgPFkPHH3NHqVPUozIFOtKm4pS', 'beheerder');
 
 -- ---------------------------------------------------------------------

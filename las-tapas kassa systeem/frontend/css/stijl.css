@@ -93,7 +93,23 @@ header.topbar .status {
     font-family: var(--font-tekst);
 }
 
+<<<<<<< HEAD
+.portal-header-link {
+    padding: 8px 12px;
+    border: 1px solid var(--kleur-saffraan);
+    border-radius: var(--rond-klein);
+    color: var(--kleur-tekst);
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-decoration: none;
+}
+.portal-header-link:hover { background: var(--kleur-paneel); }
+.portal-page-header { position: sticky; top: 0; z-index: 20; }
+
+/* ---------- Hoofdinhoud ---------- */
+=======
 /* Main content */
+>>>>>>> d8c37539271b9bb1c258f6bf1b8d42a211ab0a9c
 main {
     padding: 26px;
     max-width: 1400px;
@@ -366,10 +382,14 @@ footer.privacy-footer a { color: var(--kleur-saffraan); }
 
 /* Subnavigation */
 nav.subnav {
+    position: sticky;
+    top: 0;
+    z-index: 20;
     display: flex;
     gap: 8px;
     padding: 0 26px;
     margin-top: 16px;
+    background: var(--kleur-bodega);
     flex-wrap: wrap;
 }
 nav.subnav a {

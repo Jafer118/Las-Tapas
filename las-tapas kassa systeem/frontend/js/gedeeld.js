@@ -3,6 +3,38 @@
 // Update this path if the backend directory is located elsewhere.
 const API_BASIS = '../backend/api';
 
+function voegSysteemnavigatieToe() {
+    const subnav = document.querySelector('.subnav');
+    if (subnav) {
+        const homeLink = document.createElement('a');
+        homeLink.href = '../../index.html';
+        homeLink.textContent = '← Startpagina';
+        subnav.prepend(homeLink);
+
+        const stockLink = document.createElement('a');
+        stockLink.href = '../../voorraad-las-tapas/index.html';
+        stockLink.textContent = 'Voorraadbeheer';
+        subnav.appendChild(stockLink);
+    }
+
+    const dashboardNav = document.querySelector('.db-navbar');
+    if (dashboardNav) {
+        const homeLink = document.createElement('a');
+        homeLink.className = 'db-navitem';
+        homeLink.href = '../../index.html';
+        homeLink.innerHTML = '<span class="icoon" aria-hidden="true">⌂</span><span>Start</span>';
+        dashboardNav.prepend(homeLink);
+
+        const stockLink = document.createElement('a');
+        stockLink.className = 'db-navitem';
+        stockLink.href = '../../voorraad-las-tapas/index.html';
+        stockLink.innerHTML = '<span class="icoon" aria-hidden="true">▤</span><span>Voorraad</span>';
+        dashboardNav.appendChild(stockLink);
+    }
+}
+
+voegSysteemnavigatieToe();
+
 async function authGuard() {
     const response = await fetch(`${API_BASIS}/auth.php?actie=me`, { credentials: 'same-origin' });
     const data = await response.json();
@@ -17,7 +49,7 @@ async function authGuard() {
             avatar.style.cursor = 'pointer';
             avatar.addEventListener('click', async () => {
                 await fetch(`${API_BASIS}/auth.php?actie=logout`, { method: 'POST', credentials: 'same-origin' });
-                location.href = 'login.html';
+                location.href = '../../index.html';
             }, { once: true });
         }
         if (!document.querySelector('.auth-uitloggen')) {
@@ -28,7 +60,7 @@ async function authGuard() {
             knop.style.cssText = 'position:fixed;right:18px;bottom:18px;z-index:20;padding:9px 14px;background:var(--kleur-wijn);color:var(--kleur-tekst);border:0;border-radius:6px;font:700 0.85rem var(--font-tekst);cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.28)';
             knop.addEventListener('click', async () => {
                 await fetch(`${API_BASIS}/auth.php?actie=logout`, { method: 'POST', credentials: 'same-origin' });
-                location.href = 'login.html';
+                location.href = '../../index.html';
             });
             document.body.appendChild(knop);
         }
