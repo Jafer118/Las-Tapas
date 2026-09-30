@@ -20,76 +20,110 @@
 
 require_once __DIR__ . '/../lib/auth.php';
 vereisIngelogd();
-header('Content-Type: application/json');
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header('Allow: POST');
+    antwoord(['succes' => false, 'fout' => 'Alleen POST-verzoeken zijn toegestaan.'], 405);
+}
+
 require_once __DIR__ . '/../db.php';
 
-$input = json_decode(file_get_contents('php://input'), true);
+$rawInput = file_get_contents('php://input');
+$requestData = json_decode($rawInput, true);
 
-if (!$input || empty($input['tafel_id']) || empty($input['regels']) || !is_array($input['regels'])) {
-    http_response_code(400);
-    echo json_encode(['succes' => false, 'fout' => 'Ongeldige invoer: tafel_id en regels zijn verplicht.']);
-    exit;
+if (json_last_error() !== JSON_ERROR_NONE || !is_array($requestData)) {
+    antwoord(['succes' => false, 'fout' => 'De JSON-invoer is ongeldig.'], 400);
 }
 
-$tafelId = (int) $input['tafel_id'];
-$regels  = $input['regels'];
-$klantEmail = isset($input['klant_email']) ? trim($input['klant_email']) : '';
-$aantalPersonen = isset($input['aantal_personen']) && $input['aantal_personen'] !== ''
-    ? (int) $input['aantal_personen']
+if (!isset($requestData['tafel_id']) || filter_var($requestData['tafel_id'], FILTER_VALIDATE_INT) === false) {
+    antwoord(['succes' => false, 'fout' => 'Een geldig tafel_id is verplicht.'], 422);
+}
+
+$tableId = (int) $requestData['tafel_id'];
+$orderLines = $requestData['regels'] ?? null;
+$orderLinesAreList = is_array($orderLines)
+    && array_keys($orderLines) === range(0, count($orderLines) - 1);
+$customerEmailIsString = !isset($requestData['klant_email']) || is_string($requestData['klant_email']);
+$customerEmail = $customerEmailIsString && isset($requestData['klant_email'])
+    ? trim($requestData['klant_email'])
+    : '';
+$guestCount = isset($requestData['aantal_personen']) && $requestData['aantal_personen'] !== ''
+    ? (is_scalar($requestData['aantal_personen'])
+        ? filter_var($requestData['aantal_personen'], FILTER_VALIDATE_INT)
+        : false)
     : null;
 
-if ($klantEmail !== '' && !filter_var($klantEmail, FILTER_VALIDATE_EMAIL)) {
-    http_response_code(400);
-    echo json_encode(['succes' => false, 'fout' => 'Het opgegeven e-mailadres is ongeldig.']);
-    exit;
+if ($tableId <= 0 || !$orderLinesAreList || count($orderLines) === 0 || count($orderLines) > 100) {
+    antwoord(['succes' => false, 'fout' => 'Een geldige tafel en 1 tot 100 bestelregels zijn verplicht.'], 422);
 }
 
-if ($aantalPersonen !== null && $aantalPersonen <= 0) {
-    http_response_code(400);
-    echo json_encode(['succes' => false, 'fout' => 'Aantal personen moet minimaal 1 zijn.']);
-    exit;
+if (!$customerEmailIsString) {
+    antwoord(['succes' => false, 'fout' => 'Het opgegeven e-mailadres is ongeldig.'], 422);
+}
+
+if ($customerEmail !== '' && (strlen($customerEmail) > 254 || !filter_var($customerEmail, FILTER_VALIDATE_EMAIL))) {
+    antwoord(['succes' => false, 'fout' => 'Het opgegeven e-mailadres is ongeldig.'], 422);
+}
+
+if ($guestCount !== null && ($guestCount === false || $guestCount <= 0)) {
+    antwoord(['succes' => false, 'fout' => 'Aantal personen moet minimaal 1 zijn.'], 422);
+}
+
+foreach ($orderLines as $orderLine) {
+    if (!is_array($orderLine)
+        || !isset($orderLine['gerecht_id'], $orderLine['aantal'])
+        || !is_scalar($orderLine['gerecht_id'])
+        || !is_scalar($orderLine['aantal'])
+        || filter_var($orderLine['gerecht_id'], FILTER_VALIDATE_INT) === false
+        || filter_var($orderLine['aantal'], FILTER_VALIDATE_INT) === false
+        || (int) $orderLine['gerecht_id'] <= 0
+        || (int) $orderLine['aantal'] <= 0
+        || (int) $orderLine['aantal'] > 99
+    ) {
+        antwoord(['succes' => false, 'fout' => 'Elke bestelregel vereist een geldig gerecht_id en een aantal van 1 tot 99.'], 422);
+    }
 }
 
 try {
     $pdo->beginTransaction();
 
     // 1. Check that the table exists and retrieve its capacity.
-    $stmt = $pdo->prepare('SELECT id, naam, capaciteit FROM tafels WHERE id = ?');
-    $stmt->execute([$tafelId]);
-    $tafel = $stmt->fetch();
-    if (!$tafel) {
-        throw new Exception('Tafel bestaat niet.');
+    $stmt = $pdo->prepare('SELECT id, naam, capaciteit FROM tafels WHERE id = ? FOR UPDATE');
+    $stmt->execute([$tableId]);
+    $table = $stmt->fetch();
+    if (!$table) {
+        throw new InvalidArgumentException('Tafel bestaat niet.');
     }
 
-    if ($aantalPersonen !== null && $aantalPersonen > $tafel['capaciteit']) {
-        throw new Exception(
-            "{$tafel['naam']} heeft plaats voor maximaal {$tafel['capaciteit']} personen "
-            . "(opgegeven: {$aantalPersonen})."
+    if ($guestCount !== null && $guestCount > $table['capaciteit']) {
+        throw new InvalidArgumentException(
+            "{$table['naam']} heeft plaats voor maximaal {$table['capaciteit']} personen "
+            . "(opgegeven: {$guestCount})."
         );
     }
 
     // 2. Find or create an open order for this table.
     $stmt = $pdo->prepare("SELECT id FROM bestellingen WHERE tafel_id = ? AND status = 'open' LIMIT 1");
-    $stmt->execute([$tafelId]);
-    $bestelling = $stmt->fetch();
+    $stmt->execute([$tableId]);
+    $order = $stmt->fetch();
 
-    if ($bestelling) {
-        $bestellingId = $bestelling['id'];
+    if ($order) {
+        $orderId = $order['id'];
         // Update the order if an email address or party size is provided later.
-        if ($klantEmail !== '') {
+        if ($customerEmail !== '') {
             $stmt = $pdo->prepare('UPDATE bestellingen SET klant_email = ? WHERE id = ?');
-            $stmt->execute([$klantEmail, $bestellingId]);
+            $stmt->execute([$customerEmail, $orderId]);
         }
-        if ($aantalPersonen !== null) {
+        if ($guestCount !== null) {
             $stmt = $pdo->prepare('UPDATE bestellingen SET aantal_personen = ? WHERE id = ?');
-            $stmt->execute([$aantalPersonen, $bestellingId]);
+            $stmt->execute([$guestCount, $orderId]);
         }
     } else {
         $stmt = $pdo->prepare(
             'INSERT INTO bestellingen (tafel_id, klant_email, aantal_personen, status) VALUES (?, ?, ?, "open")'
         );
-        $stmt->execute([$tafelId, $klantEmail !== '' ? $klantEmail : null, $aantalPersonen]);
-        $bestellingId = $pdo->lastInsertId();
+        $stmt->execute([$tableId, $customerEmail !== '' ? $customerEmail : null, $guestCount]);
+        $orderId = $pdo->lastInsertId();
     }
 
     // 3. Check stock, add each order line, and deduct stock.
@@ -100,39 +134,42 @@ try {
     );
     $stmtVerlaagVoorraad = $pdo->prepare('UPDATE gerechten SET voorraad = voorraad - ? WHERE id = ?');
 
-    foreach ($regels as $regel) {
-        $gerechtId = (int) ($regel['gerecht_id'] ?? 0);
-        $aantal    = (int) ($regel['aantal'] ?? 0);
+    foreach ($orderLines as $orderLine) {
+        $menuItemId = (int) $orderLine['gerecht_id'];
+        $quantity = (int) $orderLine['aantal'];
 
-        if ($gerechtId <= 0 || $aantal <= 0) {
-            throw new Exception('Ongeldige regel: gerecht_id en aantal moeten positief zijn.');
+        $stmtGerecht->execute([$menuItemId]);
+        $menuItem = $stmtGerecht->fetch();
+
+        if (!$menuItem) {
+            throw new InvalidArgumentException("Gerecht met id {$menuItemId} bestaat niet.");
         }
 
-        $stmtGerecht->execute([$gerechtId]);
-        $gerecht = $stmtGerecht->fetch();
-
-        if (!$gerecht) {
-            throw new Exception("Gerecht met id {$gerechtId} bestaat niet.");
-        }
-
-        if ($gerecht['voorraad'] < $aantal) {
-            throw new Exception("Onvoldoende voorraad voor '{$gerecht['naam']}' (nog {$gerecht['voorraad']} beschikbaar).");
+        if ($menuItem['voorraad'] < $quantity) {
+            throw new InvalidArgumentException("Onvoldoende voorraad voor '{$menuItem['naam']}' (nog {$menuItem['voorraad']} beschikbaar).");
         }
 
         // Store the current price so later menu changes do not affect past orders.
-        $stmtInsertRegel->execute([$bestellingId, $gerechtId, $aantal, $gerecht['prijs']]);
+        $stmtInsertRegel->execute([$orderId, $menuItemId, $quantity, $menuItem['prijs']]);
 
-        $stmtVerlaagVoorraad->execute([$aantal, $gerechtId]);
+        $stmtVerlaagVoorraad->execute([$quantity, $menuItemId]);
     }
 
     $stmt = $pdo->prepare("UPDATE tafels SET status = 'bezet' WHERE id = ?");
-    $stmt->execute([$tafelId]);
+    $stmt->execute([$tableId]);
 
     $pdo->commit();
 
-    echo json_encode(['succes' => true, 'bestelling_id' => $bestellingId]);
-} catch (Exception $e) {
-    $pdo->rollBack();
-    http_response_code(400);
-    echo json_encode(['succes' => false, 'fout' => $e->getMessage()]);
+    antwoord(['succes' => true, 'bestelling_id' => $orderId]);
+} catch (InvalidArgumentException $exception) {
+    if ($pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
+    antwoord(['succes' => false, 'fout' => $exception->getMessage()], 422);
+} catch (Throwable $exception) {
+    if ($pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
+    error_log('Order creation failed: ' . $exception->getMessage());
+    antwoord(['succes' => false, 'fout' => 'Bestelling kon niet worden opgeslagen. Probeer het later opnieuw.'], 500);
 }

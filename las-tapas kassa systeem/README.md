@@ -1,181 +1,101 @@
-# Las Tapas — Digitaal bestel- en kassasysteem (prototype)
+# Las Tapas: Digital Ordering and Point-of-Sale System
 
-Opdracht: Gilde DevOps Solutions — MBO4 Software Development
-Opdrachtgever: Maria & Marcus, restaurant Las Tapas
+Prototype developed for Gilde DevOps Solutions, MBO 4 Software Development.
+The system replaces paper order slips with a digital ordering, kitchen, bar,
+and cash-register workflow.
 
-Dit is een werkend prototype dat papieren bestelbonnetjes vervangt door een
-digitaal bestel-, keuken/bar- en kassasysteem.
+## Project Structure
 
-## Mapstructuur
-
-```
-las-tapas/
-├── database/
-│   └── las_tapas.sql          -> databaseschema + voorbeelddata
-├── backend/
-│   ├── db.php                 -> databaseverbinding (PDO)
-│   └── api/
-│       ├── gerechten_ophalen.php
-│       ├── tafels_ophalen.php
-│       ├── bestelling_toevoegen.php   -> bestelling opslaan + voorraad verlagen
-│       ├── keuken_bestellingen.php    -> live data voor keukenscherm
-│       ├── bar_bestellingen.php       -> live data voor barscherm
-│       ├── status_bijwerken.php       -> orderregel status wijzigen
-│       ├── rekening.php               -> totaalrekening per tafel
-│       └── afrekenen.php              -> tafel afrekenen/sluiten
-└── frontend/
-    ├── css/stijl.css
-    ├── js/gedeeld.js
-    ├── bestellen.html          -> bestelscherm (kies tafel + gerechten)
-    ├── keuken.html              -> live keukenscherm
-    ├── bar.html                 -> live barscherm
-    ├── kassa.html                -> kassascherm (rekening + afrekenen)
-   ├── privacy.html               -> AVG/privacy-pagina
-   ├── login.html                 -> medewerkerslogin
-   └── resetten.html              -> wachtwoord vergeten/resetten
+```text
+database/       MySQL schema, migrations, and sample data
+backend/        PHP API endpoints, shared authentication, and PDO connection
+frontend/       HTML screens, CSS, and shared JavaScript
 ```
 
-## Installatie (lokaal testen, bv. met XAMPP/MAMP)
+The frontend handles presentation and user interaction. The PHP backend is the
+authority for authentication, input validation, stock changes, order state,
+and payment operations. Database changes belong in the SQL schema or a
+documented migration. Existing API and database field names are retained for
+compatibility with the current frontend and stored data.
 
-1. **Database aanmaken**
-   Open phpMyAdmin (of de mysql command line) en importeer `database/las_tapas.sql`.
-   Dit maakt de database `las_tapas` aan met tabellen én voorbeelddata (tafels en gerechten).
-   Ook de tabellen `gebruikers` en `wachtwoord_resets` worden aangemaakt. Het
-   eerste beheeraccount is `admin@lastapas.nl` met wachtwoord `LasTapas123!`.
-   Wijzig dit wachtwoord direct na de eerste login via de resetfunctie.
+## Local Setup
 
-2. **Backend configureren**
-   Open `backend/db.php` en pas zo nodig `$DB_HOST`, `$DB_USER` en `$DB_PASS` aan
-   voor jouw lokale omgeving (bij standaard XAMPP is dit meestal al goed: user
-   `root`, wachtwoord leeg).
+1. Import `database/las_tapas.sql` into MySQL using phpMyAdmin or the MySQL CLI.
+2. Configure the connection values in `backend/db.php` for the local WAMP/XAMPP
+   installation. The defaults target a local MySQL server with the `root` user
+   and an empty password.
+3. Place this project directory under the web server document root.
+4. Open `http://localhost/las-tapas/frontend/login.html` and sign in with the
+   sample account `admin@lastapas.nl` / `LasTapas123!`. Change the sample
+   password immediately. Never use sample credentials in production.
 
-3. **Bestanden op de webserver zetten**
-   Zet de hele map `las-tapas/` in de `htdocs`-map van XAMPP (of `www` bij MAMP).
+## Main Workflows
 
-4. **Openen in de browser**
-   - Login: `http://localhost/las-tapas/frontend/login.html`
-   - Bestellen: `http://localhost/las-tapas/frontend/bestellen.html`
-   - Keukenscherm: `http://localhost/las-tapas/frontend/keuken.html`
-   - Barscherm: `http://localhost/las-tapas/frontend/bar.html`
-   - Kassa: `http://localhost/las-tapas/frontend/kassa.html`
-   - AVG/Privacy: `http://localhost/las-tapas/frontend/privacy.html`
+- The ordering screen submits table, guest-count, optional email, and menu-item
+  data. The API validates the request, checks table capacity and stock, saves
+  order lines, and deducts inventory in one database transaction.
+- Kitchen and bar screens poll for outstanding items every five seconds and
+  allow staff to advance their preparation status.
+- The cash-register screen displays the bill and closes the order. Receipts can
+  be printed or downloaded as PDF. The Gmail handoff pre-fills the message;
+  staff attach the downloaded PDF themselves because browsers cannot attach
+  local files automatically.
+- The menu contains 55 sample items across five menu groups. The floor plan has
+  26 tables. Prices are placeholders and must be checked before real use.
 
-## Werking in het kort
+## Engineering Conventions
 
-1. Op **bestellen.html** kies je een tafel en klik je gerechten/drankjes bij elkaar.
-   Bij versturen slaat `bestelling_toevoegen.php` de orderregels op **en**
-   verlaagt automatisch de voorraad (binnen één databasetransactie, dus het
-   gaat altijd samen goed of samen fout — nooit half).
-2. **keuken.html** en **bar.html** halen elke 5 seconden de openstaande
-   orderregels op (gefilterd op categorie) en tonen ze per tafel. Personeel
-   kan een regel op "bereid" en daarna "geserveerd" zetten.
-3. **kassa.html** toont alle bezette tafels. Bij het kiezen van een tafel wordt
-   de rekening opgebouwd uit de orderregels (`rekening.php`) en kan de
-   bestelling worden afgesloten met **Afrekenen** (`afrekenen.php`), waarna de
-   tafel weer vrij komt.
-4. **Bonnetje (PDF)**: op de kassapagina kun je altijd op **"Bonnetje bekijken
-   / printen"** klikken. Dit opent `bon.html` — een nette, smalle kassabon-lay-out.
-   Klik daar op **"Print / opslaan als PDF"**: in het printvenster van de
-   browser kies je als "printer" de optie **"Opslaan als PDF"** (Chrome/Edge)
-   of **"Microsoft Print to PDF"** (Windows), en je krijgt een echt
-   `.pdf`-bestand van het bonnetje. Dit werkt zowel vóór het afrekenen
-   (tussentijds bonnetje, via `bon.html?tafel_id=X`) als erna (definitief
-   bonnetje van een afgesloten rekening, via `bon.html?bestelling_id=X`).
+- Write source comments and new internal identifiers in English. Dutch is kept
+  for user-facing interface text and existing API/database names until those
+  public contracts can be migrated together.
+- Keep presentation in `frontend/`, request handling in `backend/api/`, shared
+  authentication and response helpers in `backend/lib/`, and persistence
+  definitions in `database/`.
+- Use prepared PDO statements for values, validate untrusted input on the
+  server, and use transactions when a workflow changes related records.
+- Keep functions focused, use descriptive camelCase names for PHP variables and
+  functions, and add comments only to explain non-obvious decisions.
+- Return deliberate client errors for invalid input. Log unexpected server
+  errors and return generic messages without database or stack details.
 
-5. **Echte PDF-download (zonder printdialoog)**: naast de printknop is er nu
-   ook een knop **"PDF downloaden"**. Deze roept `backend/api/bon_pdf.php`
-   aan, dat met pure PHP (geen externe library!) een écht `.pdf`-bestand
-   genereert en direct teruggeeft als download.
+## Validation and Error Handling
 
-6. **Bonnetje naar de klant sturen** (via Gmail, in 2 stappen):
-   - Bij het **bestellen** (`bestellen.html`) kan de klant optioneel een
-     e-mailadres invullen — dit wordt opgeslagen bij de bestelling en na het
-     afrekenen automatisch ingevuld in het mailveld.
-   - Na het **afrekenen** (`kassa.html`) verschijnt een blokje met 2 stappen:
-     1. **PDF downloaden** — genereert en downloadt het bonnetje als
-        `.pdf`-bestand.
-     2. **Openen in Gmail** — opent Gmail in een nieuw tabblad met de
-        ontvanger, het onderwerp en de berichttekst al ingevuld. Je sleept
-        daar de gedownloade PDF in als bijlage en klikt op Verzenden.
+Browser validation improves usability but is not a security boundary. The API
+must independently validate request methods, JSON shape, identifiers, email
+addresses, numeric ranges, and business rules. Order creation rolls back all
+related writes when a table, menu item, or stock check fails. Unexpected
+failures are logged by the server and return a generic response to the client.
 
-   **Waarom niet volledig automatisch?** Browsers mogen om
-   veiligheidsredenen geen bestanden van je computer automatisch aan een
-   e-mail koppelen — anders zou elke website ongemerkt je bestanden kunnen
-   versturen. Volledig automatisch verzenden zou een mailserver of
-   SMTP-account vereisen (met opgeslagen wachtwoord in de code). Voor een
-   restaurant-kassasysteem is deze aanpak prima werkbaar: het scheelt de
-   medewerker het handmatig overtypen van adres, onderwerp en tekst.
+Run PHP's syntax checker after changing backend files:
 
-7. **Aantal personen & tafelcapaciteit**:
-   - Elke tafel heeft nu een vaste **capaciteit** (max. aantal personen),
-     ingesteld in de database (kolom `capaciteit` in `tafels`).
-   - Bij het **bestellen** (`bestellen.html`) kies je eerst een tafel — het
-     maximumaantal personen wordt er meteen bij getoond — en vul je het
-     **aantal personen** in. Vul je meer personen in dan de tafel aankan,
-     dan krijg je direct een waarschuwing en weigert de server het
-     versturen van de bestelling (dubbele controle: in de browser én in
-     `backend/api/bestelling_toevoegen.php`).
-   - Het aantal personen wordt opgeslagen bij de bestelling en is zichtbaar
-     op `overzicht.html` (tafelkaart), `kassa.html` (rekening) en op het
-     bonnetje (`bon.html` + PDF).
-
-   **Migratie (alleen als je de database al eerder importeerde):** voer de
-   twee ALTER-regels onderaan `las_tapas.sql` uit (kolom `capaciteit` bij
-   `tafels`, kolom `aantal_personen` bij `bestellingen`), en pas daarna
-   optioneel de capaciteit per tafel aan met de voorbeeld-UPDATE-regels.
-
-## Authenticatie
-
-Alle operationele schermen en API's vereisen een PHP-sessie. Wachtwoorden
-worden met `password_hash` opgeslagen en resetlinks zijn eenmalig en 60 minuten
-geldig. Op een lokale WAMP-installatie toont `resetten.html` de resetlink direct
-op het scherm. Voor productie moet `backend/api/auth.php` worden gekoppeld aan
-een SMTP-provider en mag de link niet meer in de API-response staan.
-
-## Mogelijke uitbreidingen (voor een hogere score / doorontwikkeling)
-
-- Extra kassafunctie: rekening splitsen of kortingen toepassen.
-- Notificatie/geluid op het keuken-/barscherm bij een nieuwe bestelling
-  (bijv. met WebSockets i.p.v. elke 5 sec. verversen).
-- Voorraadwaarschuwing wanneer een gerecht bijna op is.
-- Exporteren van de dagomzet (bijv. naar CSV) voor de administratie.
-
-## AVG & Privacy
-
-Zie `frontend/privacy.html` voor de privacyverklaring die hoort bij dit
-systeem. Deze legt uit welke gegevens worden opgeslagen (uitsluitend
-operationele bestelgegevens, geen persoonsgegevens van gasten), hoe lang deze
-bewaard worden en hoe de toegang beveiligd is geregeld.
-
-## Officiële menukaart & plattegrond (belangrijke update)
-
-De database is bijgewerkt met de **officiële menukaart** (55 gerechten in 5
-categorieën: Frías, Calientes, Especialidades, Postres, Bebidas) en de
-**officiële plattegrond** (26 tafels: 10 op de begane grond, 16 op de eerste
-verdieping, elk met plaats voor 4 personen).
-
-**Let op — prijzen zijn nog placeholders.** De aangeleverde menukaart bevatte
-geen prijzen. Er staan nu realistische standaardprijzen in (gebaseerd op
-gangbare tapasbar-prijzen), zodat het systeem meteen te testen is. Pas de
-echte prijzen aan via phpMyAdmin → tabel `gerechten` → kolom `prijs`, of met
-een UPDATE-query, bijvoorbeeld:
-```sql
-UPDATE gerechten SET prijs = 6.95 WHERE naam = 'Gambas al ajillo';
+```powershell
+Get-ChildItem backend -Recurse -Filter *.php | ForEach-Object { php -l $_.FullName }
 ```
 
-**Twee soorten indeling, niet met elkaar te verwarren:**
-- `categorie` (keuken/bar) bepaalt **wie het bereidt** — stuurt het gerecht
-  naar `keuken.html` of `bar.html`.
-- `menugroep` (Frías/Calientes/Especialidades/Postres/Bebidas) bepaalt **waar
-  het op de menukaart staat** — gebruikt door de tabbladen op
-  `bestellen.html`.
+The project currently has no automated integration-test suite. Exercise login,
+invalid order payloads, insufficient stock, successful ordering, and checkout
+against a disposable local database before deployment.
 
-**Nieuw op de bestelpagina:** de menukaart is nu opgedeeld in tabbladen per
-categorie (net als op een echte kaart), met een korte beschrijving per
-gerecht.
+## Security and Deployment Notes
 
-**Migreren van een bestaande database:** de nieuwste ALTER-regels staan
-onderaan `las_tapas.sql`. Omdat de menukaart en plattegrond zo grondig
-veranderd zijn, is het meestal simpeler om de hele database te droppen en
-`las_tapas.sql` in zijn geheel opnieuw te importeren — zie de instructie
-onderaan dat bestand.
+- Passwords use PHP's `password_hash` and `password_verify`; the login flow
+  regenerates the session ID, and session cookies use HttpOnly and SameSite
+  settings.
+- Reset tokens are random, stored as SHA-256 hashes, expire after 60 minutes,
+  and are marked as used after a successful reset.
+- The local prototype returns a reset URL in the API response so it can be
+  tested without email. This exposes a valid reset link and is not suitable for
+  production. Connect a mail provider, remove the token from API responses, and
+  add abuse rate limiting before deployment.
+- Use HTTPS in production, set a dedicated database account with least
+  privilege, replace the sample admin credentials, and keep secrets outside
+  version control. Do not expose PHP errors to clients.
+- Review `frontend/privacy.html` and the data-retention policy before collecting
+  real customer information.
+
+## Database Changes
+
+The SQL file includes the initial schema, sample menu, floor plan, and commented
+migration examples. For an existing database, inspect the current schema and
+apply only migrations that have not already run. Dropping the database deletes
+all stored orders and should only be done with disposable data and a backup.
