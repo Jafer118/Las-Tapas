@@ -81,7 +81,8 @@ async function loadDashboard() {
 
 async function loadTableOverview() {
     const tableData = await apiGet('tafels_ophalen.php');
-    const occupiedTables = tableData.tafels.filter((table) => table.status === 'bezet');
+    const occupiedTables = (Array.isArray(tableData.tafels) ? tableData.tafels : [])
+        .filter((table) => table.status === 'bezet');
     const overviewContent = document.getElementById('tafel-overzicht-inhoud');
     const overviewFooter = document.getElementById('tafel-overzicht-footer');
 
@@ -105,8 +106,8 @@ async function loadTableOverview() {
 
         tableCardsHtml += `
             <div class="db-tafelkaart">
-                <div class="naam">${table.naam}</div>
-                <div class="actief-label">${activeOrderCount} actieve order${activeOrderCount === 1 ? '' : 's'} — ${guestCountText}</div>
+                <div class="naam">${escapeHtml(table.naam)}</div>
+                <div class="actief-label">${activeOrderCount} actieve order${activeOrderCount === 1 ? '' : 's'} — ${escapeHtml(guestCountText)}</div>
                 <div class="regel">
                     <span>Openstaand bedrag</span>
                     <span>${formatCurrency(billData.totaal || 0)}</span>
@@ -147,7 +148,7 @@ async function loadOrderColumn(endpointPath, containerId) {
                 : '<span class="db-badge nieuw">NIEUW</span>';
             orderLinesHtml += `
                 <div class="db-orderregel">
-                    <span>${orderLine.gerecht_naam} (${orderLine.aantal})</span>
+                    <span>${escapeHtml(orderLine.gerecht_naam)} (${escapeHtml(orderLine.aantal)})</span>
                     ${statusBadge}
                 </div>
             `;
@@ -156,7 +157,7 @@ async function loadOrderColumn(endpointPath, containerId) {
         orderCardsHtml += `
             <div class="db-orderkaart">
                 <div class="kop">
-                    <span>${tableGroup.naam}</span>
+                    <span>${escapeHtml(tableGroup.naam)}</span>
                     <span class="tijd">${formatTime(lastOrderTime)}</span>
                 </div>
                 ${orderLinesHtml}

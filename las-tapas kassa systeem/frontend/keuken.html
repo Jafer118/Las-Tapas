@@ -36,7 +36,7 @@
 <script>
 async function loadOrders() {
     const orderData = await apiGet('keuken_bestellingen.php');
-    renderOrders(orderData.orderregels);
+    renderOrders(Array.isArray(orderData.orderregels) ? orderData.orderregels : []);
 }
 
 function renderOrders(orderLines) {
@@ -60,12 +60,14 @@ function renderOrders(orderLines) {
 
         let orderLinesHtml = '';
         tableGroup.regels.forEach(orderLine => {
-            const badgeClass = orderLine.status;
+            const badgeClass = ['besteld', 'bereid', 'geserveerd'].includes(orderLine.status)
+                ? orderLine.status
+                : 'besteld';
             orderLinesHtml += `
                 <div class="kaart ${orderLine.status === 'bereid' ? 'bezig' : ''}">
                     <div class="kaart-header">
-                        <span>${orderLine.gerecht_naam} (${orderLine.aantal})</span>
-                        <span class="badge ${badgeClass}">${orderLine.status.toUpperCase()}</span>
+                        <span>${escapeHtml(orderLine.gerecht_naam)} (${escapeHtml(orderLine.aantal)})</span>
+                        <span class="badge ${badgeClass}">${escapeHtml(String(orderLine.status).toUpperCase())}</span>
                     </div>
                     <div style="font-size:0.75rem;color:#5b6b78;margin-bottom:8px;">
                         besteld om ${formatTime(orderLine.besteld_op)}
@@ -75,17 +77,20 @@ function renderOrders(orderLines) {
             `;
         });
 
-        tableCard.innerHTML = `<h2>${tableGroup.naam}</h2>${orderLinesHtml}`;
+        tableCard.innerHTML = `<h2>${escapeHtml(tableGroup.naam)}</h2>${orderLinesHtml}`;
         orderContainer.appendChild(tableCard);
     });
 }
 
 function buildStatusButtons(orderLine) {
+    const orderLineId = Number(orderLine.orderregel_id);
+    if (!Number.isSafeInteger(orderLineId) || orderLineId <= 0) return '';
+
     if (orderLine.status === 'besteld') {
-        return `<button class="primair" onclick="updateOrderStatus(${orderLine.orderregel_id}, 'bereid')">Start bereiding</button>`;
+        return `<button class="primair" onclick="updateOrderStatus(${orderLineId}, 'bereid')">Start bereiding</button>`;
     }
     if (orderLine.status === 'bereid') {
-        return `<button class="secundair" onclick="updateOrderStatus(${orderLine.orderregel_id}, 'geserveerd')">Markeer geserveerd</button>`;
+        return `<button class="secundair" onclick="updateOrderStatus(${orderLineId}, 'geserveerd')">Markeer geserveerd</button>`;
     }
     return '';
 }

@@ -220,6 +220,10 @@ async function loadReceipt() {
         showMessage(receiptData.fout || 'Geen bonnetje gevonden voor deze bestelling.');
         return;
     }
+    if (!Array.isArray(receiptData.orderregels)) {
+        showMessage('De bestelregels konden niet worden geladen.');
+        return;
+    }
 
     document.title = `Bon — ${receiptData.tafel_naam}`;
     document.getElementById('bon-tafel').textContent = receiptData.tafel_naam;
@@ -238,7 +242,7 @@ async function loadReceipt() {
         const lineElement = document.createElement('div');
         lineElement.className = 'bon-regel';
         lineElement.innerHTML = `
-            <span class="naam-aantal">${orderLine.aantal}× ${orderLine.gerecht_naam}</span>
+            <span class="naam-aantal">${escapeHtml(orderLine.aantal)}× ${escapeHtml(orderLine.gerecht_naam)}</span>
             <span>${formatCurrency(orderLine.subtotaal)}</span>
         `;
         orderLinesContainer.appendChild(lineElement);

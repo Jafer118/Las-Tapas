@@ -51,7 +51,8 @@ async function loadTables() {
     const tableListContainer = document.getElementById('tafel-lijst');
     tableListContainer.innerHTML = '';
 
-    const occupiedTables = tableData.tafels.filter((table) => table.status === 'bezet');
+    const occupiedTables = (Array.isArray(tableData.tafels) ? tableData.tafels : [])
+        .filter((table) => table.status === 'bezet');
 
     if (occupiedTables.length === 0) {
         tableListContainer.innerHTML = '<p style="color:#a9bccb;">Geen bezette tafels op dit moment.</p>';
@@ -62,11 +63,13 @@ async function loadTables() {
         const tableCard = document.createElement('div');
         tableCard.className = 'tafel-kaart';
         tableCard.style.cursor = 'pointer';
+        const tableId = Number(table.id);
+        if (!Number.isSafeInteger(tableId) || tableId <= 0) return;
         tableCard.innerHTML = `
-            <span>${table.naam}</span>
+            <span>${escapeHtml(table.naam)}</span>
             <span class="status-bezet">bezet</span>
         `;
-        tableCard.addEventListener('click', () => showBill(table.id, table.naam));
+        tableCard.addEventListener('click', () => showBill(tableId, table.naam));
         tableListContainer.appendChild(tableCard);
     });
 }
@@ -92,7 +95,7 @@ async function showBill(tableId, tableName) {
     billData.orderregels.forEach(orderLine => {
         billHtml += `
             <div class="regel-item">
-                <span>${orderLine.gerecht_naam} × ${orderLine.aantal}</span>
+                <span>${escapeHtml(orderLine.gerecht_naam)} × ${escapeHtml(orderLine.aantal)}</span>
                 <span>${formatCurrency(orderLine.subtotaal)}</span>
             </div>
         `;
@@ -154,7 +157,7 @@ async function checkoutOrder() {
                 <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
                     <strong>Stap 2 —</strong>
                     <input type="email" id="mail-naar-klant" placeholder="e-mailadres klant"
-                           value="${customerEmail}"
+                           value="${escapeHtml(customerEmail)}"
                            style="padding:6px 8px; border-radius:6px; border:1px solid #ccc; min-width:220px;">
                     <button class="primair" onclick="openGmailDraft(${orderId})">Openen in Gmail</button>
                 </div>
@@ -169,7 +172,7 @@ async function checkoutOrder() {
         selectedTableId = null;
         loadTables();
     } else {
-        messageContainer.innerHTML = `<div class="melding fout">Fout: ${checkoutResult.fout}</div>`;
+        messageContainer.innerHTML = `<div class="melding fout">Fout: ${escapeHtml(checkoutResult.fout)}</div>`;
         setTimeout(() => { messageContainer.innerHTML = ''; }, 4000);
     }
 }

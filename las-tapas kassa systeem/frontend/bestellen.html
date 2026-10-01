@@ -80,7 +80,7 @@ let activeMenuGroup = 'Frías';
 
 async function initializeOrderingScreen() {
     const tableData = await apiGet('tafels_ophalen.php');
-    tables = tableData.tafels;
+    tables = Array.isArray(tableData.tafels) ? tableData.tafels : [];
     const tableSelect = document.getElementById('tafel-select');
     tables.forEach((table) => {
         const tableOption = document.createElement('option');
@@ -94,7 +94,7 @@ async function initializeOrderingScreen() {
     document.getElementById('aantal-personen').addEventListener('input', showTableCapacity);
 
     const menuItemData = await apiGet('gerechten_ophalen.php');
-    menuItems = menuItemData.gerechten;
+    menuItems = Array.isArray(menuItemData.gerechten) ? menuItemData.gerechten : [];
 
     renderTabs();
     renderMenuItems();
@@ -158,18 +158,21 @@ function renderMenuItems() {
     }
 
     itemsInGroup.forEach((menuItem) => {
+        const menuItemId = Number(menuItem.id);
+        if (!Number.isSafeInteger(menuItemId) || menuItemId <= 0) return;
+
         const menuItemRow = document.createElement('div');
         menuItemRow.className = 'gerecht-rij';
         menuItemRow.innerHTML = `
             <div class="naam-prijs">
-                <span>${menuItem.naam}</span>
-                ${menuItem.beschrijving ? `<span class="beschrijving">${menuItem.beschrijving}</span>` : ''}
-                <span class="voorraad">${formatCurrency(menuItem.prijs)} — voorraad: ${menuItem.voorraad}</span>
+                <span>${escapeHtml(menuItem.naam)}</span>
+                ${menuItem.beschrijving ? `<span class="beschrijving">${escapeHtml(menuItem.beschrijving)}</span>` : ''}
+                <span class="voorraad">${formatCurrency(menuItem.prijs)} — voorraad: ${escapeHtml(menuItem.voorraad)}</span>
             </div>
             <div class="aantal-controls">
-                <button onclick="updateQuantity(${menuItem.id}, -1)">−</button>
-                <span class="aantal-waarde" id="aantal-${menuItem.id}">${cart[menuItem.id] || 0}</span>
-                <button onclick="updateQuantity(${menuItem.id}, 1)">+</button>
+                <button onclick="updateQuantity(${menuItemId}, -1)">−</button>
+                <span class="aantal-waarde" id="aantal-${menuItemId}">${escapeHtml(cart[menuItemId] || 0)}</span>
+                <button onclick="updateQuantity(${menuItemId}, 1)">+</button>
             </div>
         `;
         menuContainer.appendChild(menuItemRow);
@@ -200,8 +203,11 @@ function updateCartSummary() {
 
 function showMessage(messageText, messageType) {
     const messageContainer = document.getElementById('melding-plek');
-    messageContainer.innerHTML = `<div class="melding ${messageType}">${messageText}</div>`;
-    setTimeout(() => { messageContainer.innerHTML = ''; }, 4000);
+    const message = document.createElement('div');
+    message.className = `melding ${messageType === 'succes' ? 'succes' : 'fout'}`;
+    message.textContent = messageText;
+    messageContainer.replaceChildren(message);
+    setTimeout(() => message.remove(), 4000);
 }
 
 document.getElementById('btn-versturen').addEventListener('click', async () => {
@@ -240,7 +246,7 @@ document.getElementById('btn-versturen').addEventListener('click', async () => {
         showMessage('Bestelling succesvol verstuurd naar keuken/bar!', 'succes');
         cart = {};
         const menuItemData = await apiGet('gerechten_ophalen.php');
-        menuItems = menuItemData.gerechten;
+        menuItems = Array.isArray(menuItemData.gerechten) ? menuItemData.gerechten : [];
         renderMenuItems();
         updateCartSummary();
     } else {

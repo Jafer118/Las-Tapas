@@ -5,6 +5,31 @@ const API_BASE = '../backend/api';
 const START_PAGE = '../../Las%20Tapas/Frontend/index.html';
 let csrfToken = '';
 
+function escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, (character) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;',
+    })[character]);
+}
+
+function showApiError(message) {
+    const main = document.querySelector('main');
+    if (!main) return;
+
+    let errorBanner = document.getElementById('api-error-banner');
+    if (!errorBanner) {
+        errorBanner = document.createElement('div');
+        errorBanner.id = 'api-error-banner';
+        errorBanner.className = 'melding fout';
+        errorBanner.setAttribute('role', 'alert');
+        main.prepend(errorBanner);
+    }
+    errorBanner.textContent = message;
+}
+
 function addSystemNavigation() {
     const subnav = document.querySelector('.subnav');
     if (subnav) {
@@ -81,20 +106,36 @@ async function requireAuthentication() {
 }
 
 async function apiGet(endpointPath) {
-    const response = await fetch(`${API_BASE}/${endpointPath}`, { credentials: 'same-origin' });
-    if (response.status === 401) { await requireAuthentication(); return { succes: false }; }
-    return response.json();
+    return requestJson(endpointPath, { credentials: 'same-origin' });
 }
 
 async function apiPost(endpointPath, data) {
-    const response = await fetch(`${API_BASE}/${endpointPath}`, {
+    return requestJson(endpointPath, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
         credentials: 'same-origin',
         body: JSON.stringify(data),
     });
-    if (response.status === 401) { await requireAuthentication(); return { succes: false }; }
-    return response.json();
+}
+
+async function requestJson(endpointPath, options) {
+    try {
+        const response = await fetch(`${API_BASE}/${endpointPath}`, options);
+        if (response.status === 401) {
+            await requireAuthentication();
+            return { succes: false, fout: 'Inloggen is vereist.' };
+        }
+
+        const responseData = await response.json();
+        if (!response.ok && !responseData.fout) {
+            responseData.fout = 'De aanvraag kon niet worden verwerkt.';
+        }
+        document.getElementById('api-error-banner')?.remove();
+        return responseData;
+    } catch (error) {
+        showApiError('Verbinding met de server mislukt. Controleer de verbinding en probeer opnieuw.');
+        return { succes: false, fout: 'De server is tijdelijk niet bereikbaar.' };
+    }
 }
 
 requireAuthentication();
