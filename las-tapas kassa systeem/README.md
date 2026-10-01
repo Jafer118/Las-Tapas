@@ -57,6 +57,8 @@ compatibility with the current frontend and stored data.
   definitions in `database/`.
 - Use prepared PDO statements for values, validate untrusted input on the
   server, and use transactions when a workflow changes related records.
+- Render API or database text with `textContent` or context-appropriate HTML
+  escaping. Validate numeric identifiers before using them in UI actions.
 - Use four spaces and UTF-8. PHP uses LF; HTML, JavaScript, CSS, SQL, and Markdown
   use CRLF. These rules and final newlines are configured in `.editorconfig`.
   Keep functions focused and use descriptive camelCase names.
@@ -72,7 +74,9 @@ independently validates request methods, JSON shape, identifiers, email
 addresses, numeric ranges, legal order-state transitions, and business rules.
 Order creation and checkout use transactions and row locks so related state
 changes are committed together. Unexpected exceptions are logged server-side
-and return a generic response to the client.
+and return a generic response to the client. Shared frontend API helpers handle
+network failures and invalid JSON responses; workflows display validation and
+business-rule errors returned by the API.
 
 Run PHP's syntax checker after changing backend files:
 

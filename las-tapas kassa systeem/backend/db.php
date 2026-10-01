@@ -5,14 +5,14 @@
  * Update these settings for your local environment (e.g. XAMPP or MAMP).
  */
 
-$DB_HOST = getenv('LAS_TAPAS_DB_HOST') ?: 'localhost';
-$DB_NAME = getenv('LAS_TAPAS_DB_NAME') ?: 'las_tapas';
-$DB_USER = getenv('LAS_TAPAS_DB_USER') ?: 'root';
-$DB_PASS = getenv('LAS_TAPAS_DB_PASS');
-$DB_PASS = $DB_PASS === false ? '' : $DB_PASS;
-$DB_CHARSET = 'utf8mb4';
+$databaseHost = getenv('LAS_TAPAS_DB_HOST') ?: 'localhost';
+$databaseName = getenv('LAS_TAPAS_DB_NAME') ?: 'las_tapas';
+$databaseUser = getenv('LAS_TAPAS_DB_USER') ?: 'root';
+$databasePassword = getenv('LAS_TAPAS_DB_PASS');
+$databasePassword = $databasePassword === false ? '' : $databasePassword;
+$databaseCharset = 'utf8mb4';
 
-$dsn = "mysql:host={$DB_HOST};dbname={$DB_NAME};charset={$DB_CHARSET}";
+$dsn = "mysql:host={$databaseHost};dbname={$databaseName};charset={$databaseCharset}";
 
 $options = [
     PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
@@ -21,7 +21,7 @@ $options = [
 ];
 
 try {
-    $pdo = new PDO($dsn, $DB_USER, $DB_PASS, $options);
+    $pdo = new PDO($dsn, $databaseUser, $databasePassword, $options);
 } catch (PDOException $exception) {
     error_log('Database connection failed: ' . $exception->getMessage());
     http_response_code(500);

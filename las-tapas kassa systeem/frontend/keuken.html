@@ -96,7 +96,11 @@ function buildStatusButtons(orderLine) {
 }
 
 async function updateOrderStatus(orderLineId, nextStatus) {
-    await apiPost('status_bijwerken.php', { orderregel_id: orderLineId, status: nextStatus });
+    const result = await apiPost('status_bijwerken.php', { orderregel_id: orderLineId, status: nextStatus });
+    if (!result.succes) {
+        showApiError(result.fout || 'De bestelstatus kon niet worden bijgewerkt.');
+        return;
+    }
     loadOrders();
 }
 

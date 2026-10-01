@@ -118,7 +118,7 @@ function renderTabs() {
 
 function showTableCapacity() {
     const tableId = Number(document.getElementById('tafel-select').value);
-    const table = tables.find(t => t.id === tableId);
+    const table = tables.find((table) => table.id === tableId);
     const guestCountField = document.getElementById('aantal-personen');
     const guestCount = Number(guestCountField.value) || 0;
     const capacityInfo = document.getElementById('capaciteit-info');
@@ -193,7 +193,7 @@ function updateCartSummary() {
     let itemCount = 0;
     let cartTotal = 0;
     for (const [menuItemId, quantity] of Object.entries(cart)) {
-        const menuItem = menuItems.find((item) => item.id == menuItemId);
+        const menuItem = menuItems.find((item) => Number(item.id) === Number(menuItemId));
         itemCount += quantity;
         cartTotal += quantity * menuItem.prijs;
     }
@@ -229,7 +229,7 @@ document.getElementById('btn-versturen').addEventListener('click', async () => {
         return;
     }
 
-    const table = tables.find(t => t.id === tableId);
+    const table = tables.find((table) => table.id === tableId);
     if (table && guestCount > table.capaciteit) {
         showMessage(`${table.naam} heeft plaats voor maximaal ${table.capaciteit} personen. Kies een andere tafel of verlaag het aantal.`, 'fout');
         return;

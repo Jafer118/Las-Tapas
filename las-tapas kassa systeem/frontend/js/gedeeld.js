@@ -127,12 +127,19 @@ async function requestJson(endpointPath, options) {
         }
 
         const responseData = await response.json();
+        if (!responseData || typeof responseData !== 'object' || Array.isArray(responseData)) {
+            throw new Error('The API returned an invalid response.');
+        }
         if (!response.ok && !responseData.fout) {
             responseData.fout = 'De aanvraag kon niet worden verwerkt.';
         }
-        document.getElementById('api-error-banner')?.remove();
+        if (response.ok) {
+            document.getElementById('api-error-banner')?.remove();
+        } else if (response.status >= 500) {
+            showApiError(responseData.fout);
+        }
         return responseData;
-    } catch (error) {
+    } catch {
         showApiError('Verbinding met de server mislukt. Controleer de verbinding en probeer opnieuw.');
         return { succes: false, fout: 'De server is tijdelijk niet bereikbaar.' };
     }
