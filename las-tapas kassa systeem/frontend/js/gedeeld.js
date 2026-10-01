@@ -2,7 +2,7 @@
 
 // Update this path if the backend directory is located elsewhere.
 const API_BASE = '../backend/api';
-const START_PAGE = '../../Las%20Tapas klanten systeem/Frontend/index.html';
+const START_PAGE = '../../Las%20Tapas/Frontend/index.html';
 let csrfToken = '';
 
 function escapeHtml(value) {
