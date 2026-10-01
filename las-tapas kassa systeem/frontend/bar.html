@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<title>Barscherm</title>
+<link rel="stylesheet" href="css/stijl.css">
+</head>
+<body>
+
+<header class="topbar">
+    <div class="titel">
+        <img src="img/logo-las-tapas.png" alt="Las Tapas — Smaak & Beleving" class="logo">
+        <span class="restaurant">Barscherm</span>
+    </div>
+    <div class="status" id="klok"></div>
+</header>
+
+<nav class="subnav">
+    <a href="overzicht.html">Overzicht</a>
+    <a href="bestellen.html">Bestellen</a>
+    <a href="keuken.html">Keukenscherm</a>
+    <a href="bar.html" class="actief">Barscherm</a>
+    <a href="kassa.html">Kassa</a>
+</nav>
+
+<main>
+    <h2>Openstaande barbestellingen (live, ververst elke 5 sec.)</h2>
+    <div id="bestellingen-container" class="kolommen"></div>
+</main>
+
+<script src="js/gedeeld.js"></script>
+<script>
+async function loadOrders() {
+    const orderData = await apiGet('bar_bestellingen.php');
+    renderOrders(Array.isArray(orderData.orderregels) ? orderData.orderregels : []);
+}
+
+function renderOrders(orderLines) {
+    const orderContainer = document.getElementById('bestellingen-container');
+    orderContainer.innerHTML = '';
+
+    if (orderLines.length === 0) {
+        orderContainer.innerHTML = '<p style="color:#a9bccb;">Geen openstaande barbestellingen.</p>';
+        return;
+    }
+
+    const ordersByTable = {};
+    orderLines.forEach(orderLine => {
+        if (!ordersByTable[orderLine.tafel_id]) ordersByTable[orderLine.tafel_id] = { naam: orderLine.tafel_naam, regels: [] };
+        ordersByTable[orderLine.tafel_id].regels.push(orderLine);
+    });
+
+    Object.values(ordersByTable).forEach(tableGroup => {
+        const tableCard = document.createElement('div');
+        tableCard.className = 'paneel';
+
+        let orderLinesHtml = '';
+        tableGroup.regels.forEach(orderLine => {
+            const badgeClass = ['besteld', 'bereid', 'geserveerd'].includes(orderLine.status)
+                ? orderLine.status
+                : 'besteld';
+            orderLinesHtml += `
+                <div class="kaart ${orderLine.status === 'bereid' ? 'bezig' : ''}">
+                    <div class="kaart-header">
+                        <span>${escapeHtml(orderLine.gerecht_naam)} (${escapeHtml(orderLine.aantal)})</span>
+                        <span class="badge ${badgeClass}">${escapeHtml(String(orderLine.status).toUpperCase())}</span>
+                    </div>
+                    <div style="font-size:0.75rem;color:#5b6b78;margin-bottom:8px;">
+                        besteld om ${formatTime(orderLine.besteld_op)}
+                    </div>
+                    ${buildStatusButtons(orderLine)}
+                </div>
+            `;
+        });
+
+        tableCard.innerHTML = `<h2>${escapeHtml(tableGroup.naam)}</h2>${orderLinesHtml}`;
+        orderContainer.appendChild(tableCard);
+    });
+}
+
+function buildStatusButtons(orderLine) {
+    const orderLineId = Number(orderLine.orderregel_id);
+    if (!Number.isSafeInteger(orderLineId) || orderLineId <= 0) return '';
+
+    if (orderLine.status === 'besteld') {
+        return `<button class="primair" onclick="updateOrderStatus(${orderLineId}, 'bereid')">Start bereiding</button>`;
+    }
+    if (orderLine.status === 'bereid') {
+        return `<button class="secundair" onclick="updateOrderStatus(${orderLineId}, 'geserveerd')">Markeer geserveerd</button>`;
+    }
+    return '';
+}
+
+async function updateOrderStatus(orderLineId, nextStatus) {
+    const result = await apiPost('status_bijwerken.php', { orderregel_id: orderLineId, status: nextStatus });
+    if (!result.succes) {
+        showApiError(result.fout || 'De bestelstatus kon niet worden bijgewerkt.');
+        return;
+    }
+    loadOrders();
+}
+
+function updateClock() {
+    document.getElementById('klok').textContent = new Date().toLocaleTimeString('nl-NL');
+}
+
+setInterval(loadOrders, 5000);
+setInterval(updateClock, 1000);
+loadOrders();
+updateClock();
+</script>
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<title>Kassa</title>
+<link rel="stylesheet" href="css/stijl.css">
+</head>
+<body>
+
+<header class="topbar">
+    <div class="titel">
+        <img src="img/logo-las-tapas.png" alt="Las Tapas — Smaak & Beleving" class="logo">
+        <span class="restaurant">Kassa</span>
+    </div>
+</header>
+
+<nav class="subnav">
+    <a href="overzicht.html">Overzicht</a>
+    <a href="bestellen.html">Bestellen</a>
+    <a href="keuken.html">Keukenscherm</a>
+    <a href="bar.html">Barscherm</a>
+    <a href="kassa.html" class="actief">Kassa</a>
+</nav>
+
+<main>
+    <div id="melding-plek"></div>
+
+    <div class="kolommen">
+        <div class="paneel">
+            <h2>Bezette tafels</h2>
+            <div id="tafel-lijst"></div>
+        </div>
+
+        <div class="paneel">
+            <h2 id="rekening-titel">Selecteer een tafel</h2>
+            <div id="rekening-details"></div>
+        </div>
+    </div>
+</main>
+
+<script src="js/gedeeld.js"></script>
+<script>
+let selectedTableId = null;
+
+async function loadTables() {
+    const tableData = await apiGet('tafels_ophalen.php');
+    const tableListContainer = document.getElementById('tafel-lijst');
+    tableListContainer.innerHTML = '';
+
+    const occupiedTables = (Array.isArray(tableData.tafels) ? tableData.tafels : [])
+        .filter((table) => table.status === 'bezet');
+
+    if (occupiedTables.length === 0) {
+        tableListContainer.innerHTML = '<p style="color:#a9bccb;">Geen bezette tafels op dit moment.</p>';
+        return;
+    }
+
+    occupiedTables.forEach(table => {
+        const tableCard = document.createElement('div');
+        tableCard.className = 'tafel-kaart';
+        tableCard.style.cursor = 'pointer';
+        const tableId = Number(table.id);
+        if (!Number.isSafeInteger(tableId) || tableId <= 0) return;
+        tableCard.innerHTML = `
+            <span>${escapeHtml(table.naam)}</span>
+            <span class="status-bezet">bezet</span>
+        `;
+        tableCard.addEventListener('click', () => showBill(tableId, table.naam));
+        tableListContainer.appendChild(tableCard);
+    });
+}
+
+async function showBill(tableId, tableName) {
+    selectedTableId = tableId;
+    document.getElementById('rekening-titel').textContent = `Rekening — ${tableName}`;
+
+    const billData = await apiGet(`rekening.php?tafel_id=${tableId}`);
+    const billContainer = document.getElementById('rekening-details');
+
+    if (!billData.bestelling_id) {
+        billContainer.innerHTML = '<p>Geen openstaande bestelling voor deze tafel.</p>';
+        return;
+    }
+
+    let billHtml = '';
+
+    if (billData.aantal_personen) {
+        billHtml += `<p style="color:#C9AC93; font-size:0.85rem; margin-top:0;">${billData.aantal_personen} personen aan tafel</p>`;
+    }
+
+    billData.orderregels.forEach(orderLine => {
+        billHtml += `
+            <div class="regel-item">
+                <span>${escapeHtml(orderLine.gerecht_naam)} × ${escapeHtml(orderLine.aantal)}</span>
+                <span>${formatCurrency(orderLine.subtotaal)}</span>
+            </div>
+        `;
+    });
+
+    billHtml += `
+        <hr style="border-color:#24435e;margin:12px 0;">
+        <div class="regel-item" style="font-size:1.2rem;font-weight:700;">
+            <span>Totaal</span>
+            <span>${formatCurrency(billData.totaal)}</span>
+        </div>
+        <div style="display:flex; gap:10px; margin-top:16px; flex-wrap:wrap;">
+            <button class="secundair" style="flex:1;" onclick="openReceipt(${tableId})">
+                Bonnetje bekijken / printen
+            </button>
+            <a class="secundair" style="flex:1; text-align:center; padding:6px 12px; border-radius:6px; text-decoration:none; display:inline-block;"
+               href="../backend/api/bon_pdf.php?tafel_id=${tableId}" target="_blank">
+                PDF downloaden
+            </a>
+            <button class="primair" style="flex:1;" onclick="checkoutOrder()">
+                Afrekenen
+            </button>
+        </div>
+    `;
+
+    billContainer.innerHTML = billHtml;
+}
+
+function openReceipt(tableId) {
+    window.open(`bon.html?tafel_id=${tableId}`, '_blank');
+}
+
+async function checkoutOrder() {
+    if (!selectedTableId) return;
+
+    const checkoutResult = await apiPost('afrekenen.php', { tafel_id: selectedTableId });
+    const messageContainer = document.getElementById('melding-plek');
+
+    if (checkoutResult.succes) {
+        const orderId = checkoutResult.bestelling_id;
+        const customerEmail = checkoutResult.klant_email || '';
+
+        messageContainer.innerHTML = `
+            <div class="melding succes">
+                <div style="margin-bottom:10px;">Tafel succesvol afgerekend. Tafel is weer vrij.</div>
+
+                <div style="margin-bottom:10px;">
+                    <strong>Stap 1 —</strong> download het bonnetje:
+                    <a class="secundair" style="padding:6px 12px; border-radius:6px; text-decoration:none; margin-left:6px; display:inline-block;"
+                       href="../backend/api/bon_pdf.php?bestelling_id=${orderId}" target="_blank">
+                        PDF downloaden
+                    </a>
+                    <a class="secundair" style="padding:6px 12px; border-radius:6px; text-decoration:none; margin-left:6px; display:inline-block;"
+                       href="bon.html?bestelling_id=${orderId}" target="_blank">
+                        Bonnetje bekijken
+                    </a>
+                </div>
+
+                <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+                    <strong>Stap 2 —</strong>
+                    <input type="email" id="mail-naar-klant" placeholder="e-mailadres klant"
+                           value="${escapeHtml(customerEmail)}"
+                           style="padding:6px 8px; border-radius:6px; border:1px solid #ccc; min-width:220px;">
+                    <button class="primair" onclick="openGmailDraft(${orderId})">Openen in Gmail</button>
+                </div>
+
+                <div style="margin-top:8px; font-size:0.8rem; color:#c8e6d5;">
+                    Gmail opent met de e-mail al ingevuld. Voeg daar de gedownloade PDF toe als bijlage en verstuur.
+                </div>
+            </div>
+        `;
+        document.getElementById('rekening-titel').textContent = 'Selecteer een tafel';
+        document.getElementById('rekening-details').innerHTML = '';
+        selectedTableId = null;
+        loadTables();
+    } else {
+        messageContainer.innerHTML = `<div class="melding fout">Fout: ${escapeHtml(checkoutResult.fout)}</div>`;
+        setTimeout(() => { messageContainer.innerHTML = ''; }, 4000);
+    }
+}
+
+/**
+ * Opens Gmail with the recipient, subject, and message prefilled.
+ * Staff must attach the PDF manually because browsers cannot attach files
+ * automatically for security reasons.
+ */
+function openGmailDraft(orderId) {
+    const recipientEmail = document.getElementById('mail-naar-klant').value.trim();
+
+    const subject = 'Uw bonnetje van Las Tapas';
+    const bodyText =
+        'Beste gast,\n\n' +
+        'Bedankt voor uw bezoek aan Las Tapas! In de bijlage vindt u uw bonnetje ' +
+        '(bonnummer #' + String(orderId).padStart(5, '0') + ').\n\n' +
+        'Tot ziens!\n' +
+        'Team Las Tapas';
+
+    const gmailUrl = 'https://mail.google.com/mail/?view=cm&fs=1'
+        + '&to=' + encodeURIComponent(recipientEmail)
+        + '&su=' + encodeURIComponent(subject)
+        + '&body=' + encodeURIComponent(bodyText);
+
+    window.open(gmailUrl, '_blank');
+}
+
+setInterval(loadTables, 8000);
+loadTables();
+</script>
+</body>
+</html>

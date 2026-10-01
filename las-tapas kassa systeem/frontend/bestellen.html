@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<title>Bestellen</title>
+<link rel="stylesheet" href="css/stijl.css">
+</head>
+<body>
+
+<header class="topbar">
+    <div class="titel">
+        <img src="img/logo-las-tapas.png" alt="Las Tapas — Smaak & Beleving" class="logo">
+        <span class="restaurant">Bestellen</span>
+    </div>
+</header>
+
+<nav class="subnav">
+    <a href="overzicht.html">Overzicht</a>
+    <a href="bestellen.html" class="actief">Bestellen</a>
+    <a href="keuken.html">Keukenscherm</a>
+    <a href="bar.html">Barscherm</a>
+    <a href="kassa.html">Kassa</a>
+</nav>
+
+<main>
+    <div id="melding-plek"></div>
+
+    <div class="paneel" style="margin-bottom:20px;">
+        <h2>Kies een tafel</h2>
+        <select id="tafel-select"></select>
+        <p id="capaciteit-info" style="color:#C9AC93; font-size:0.85rem; margin:8px 0 0 0;"></p>
+    </div>
+
+    <div class="paneel" style="margin-bottom:20px;">
+        <h2>Aantal personen</h2>
+        <p style="color:#C9AC93; font-size:0.85rem; margin-top:-4px;">
+            Moet passen binnen de capaciteit van de gekozen tafel.
+        </p>
+        <input type="number" id="aantal-personen" min="1" value="2" style="width:100px;">
+    </div>
+
+    <div class="paneel" style="margin-bottom:20px;">
+        <h2>E-mailadres klant (optioneel)</h2>
+        <p style="color:#C9AC93; font-size:0.85rem; margin-top:-4px;">
+            Invullen als de klant het bonnetje per e-mail wil ontvangen. Mag ook leeg blijven.
+        </p>
+        <input type="email" id="klant-email" placeholder="naam@voorbeeld.nl" style="width:100%; max-width:320px;">
+    </div>
+
+    <div class="paneel" style="margin-bottom:20px;">
+        <h2 style="margin-bottom:14px;">Menukaart</h2>
+        <div class="menu-tabs" id="menu-tabs"></div>
+        <div id="menu-lijst"></div>
+    </div>
+
+    <div class="mandje-samenvatting">
+        <div>
+            <strong id="mandje-aantal">0 items</strong> geselecteerd —
+            totaal: <strong id="mandje-totaal">€0,00</strong>
+        </div>
+        <button class="primair" id="btn-versturen">Bestelling versturen</button>
+    </div>
+</main>
+
+<footer class="privacy-footer">
+    Zie <a href="privacy.html" style="color:#a9bccb;">AVG &amp; Privacy</a> voor informatie over gegevensverwerking.
+</footer>
+
+<script src="js/gedeeld.js"></script>
+<script>
+let menuItems = [];
+let tables = [];
+let cart = {};
+const MENU_GROUPS = ['Frías', 'Calientes', 'Especialidades', 'Postres', 'Bebidas'];
+let activeMenuGroup = 'Frías';
+
+async function initializeOrderingScreen() {
+    const tableData = await apiGet('tafels_ophalen.php');
+    tables = Array.isArray(tableData.tafels) ? tableData.tafels : [];
+    const tableSelect = document.getElementById('tafel-select');
+    tables.forEach((table) => {
+        const tableOption = document.createElement('option');
+        tableOption.value = table.id;
+        tableOption.textContent = `${table.naam} (${table.verdieping}) — max ${table.capaciteit} personen — ${table.status}`;
+        tableSelect.appendChild(tableOption);
+    });
+    tableSelect.addEventListener('change', showTableCapacity);
+    showTableCapacity();
+
+    document.getElementById('aantal-personen').addEventListener('input', showTableCapacity);
+
+    const menuItemData = await apiGet('gerechten_ophalen.php');
+    menuItems = Array.isArray(menuItemData.gerechten) ? menuItemData.gerechten : [];
+
+    renderTabs();
+    renderMenuItems();
+}
+
+function renderTabs() {
+    const tabsContainer = document.getElementById('menu-tabs');
+    tabsContainer.innerHTML = '';
+    MENU_GROUPS.forEach((menuGroup) => {
+        const menuTab = document.createElement('div');
+        menuTab.className = 'tab' + (menuGroup === activeMenuGroup ? ' actief' : '');
+        menuTab.textContent = menuGroup;
+        menuTab.addEventListener('click', () => {
+            activeMenuGroup = menuGroup;
+            renderTabs();
+            renderMenuItems();
+        });
+        tabsContainer.appendChild(menuTab);
+    });
+}
+
+function showTableCapacity() {
+    const tableId = Number(document.getElementById('tafel-select').value);
+    const table = tables.find((table) => table.id === tableId);
+    const guestCountField = document.getElementById('aantal-personen');
+    const guestCount = Number(guestCountField.value) || 0;
+    const capacityInfo = document.getElementById('capaciteit-info');
+    const submitButton = document.getElementById('btn-versturen');
+
+    if (!table) {
+        capacityInfo.textContent = '';
+        return;
+    }
+
+    // Keep the number input's native spinner within the table capacity.
+    guestCountField.max = table.capaciteit;
+
+    if (guestCount > table.capaciteit) {
+        capacityInfo.textContent = `⚠ ${table.naam} heeft plaats voor maximaal ${table.capaciteit} personen — verlaag het aantal of kies een andere tafel.`;
+        capacityInfo.style.color = '#F0C2C2';
+        submitButton.disabled = true;
+        submitButton.style.opacity = '0.5';
+        submitButton.style.cursor = 'not-allowed';
+    } else {
+        capacityInfo.textContent = `${table.naam} heeft plaats voor maximaal ${table.capaciteit} personen.`;
+        capacityInfo.style.color = '#C9AC93';
+        submitButton.disabled = false;
+        submitButton.style.opacity = '1';
+        submitButton.style.cursor = 'pointer';
+    }
+}
+
+function renderMenuItems() {
+    const menuContainer = document.getElementById('menu-lijst');
+    menuContainer.innerHTML = '';
+    const itemsInGroup = menuItems.filter((menuItem) => menuItem.menugroep === activeMenuGroup);
+
+    if (itemsInGroup.length === 0) {
+        menuContainer.innerHTML = '<p style="color:#C9AC93;">Geen gerechten in deze categorie.</p>';
+        return;
+    }
+
+    itemsInGroup.forEach((menuItem) => {
+        const menuItemId = Number(menuItem.id);
+        if (!Number.isSafeInteger(menuItemId) || menuItemId <= 0) return;
+
+        const menuItemRow = document.createElement('div');
+        menuItemRow.className = 'gerecht-rij';
+        menuItemRow.innerHTML = `
+            <div class="naam-prijs">
+                <span>${escapeHtml(menuItem.naam)}</span>
+                ${menuItem.beschrijving ? `<span class="beschrijving">${escapeHtml(menuItem.beschrijving)}</span>` : ''}
+                <span class="voorraad">${formatCurrency(menuItem.prijs)} — voorraad: ${escapeHtml(menuItem.voorraad)}</span>
+            </div>
+            <div class="aantal-controls">
+                <button onclick="updateQuantity(${menuItemId}, -1)">−</button>
+                <span class="aantal-waarde" id="aantal-${menuItemId}">${escapeHtml(cart[menuItemId] || 0)}</span>
+                <button onclick="updateQuantity(${menuItemId}, 1)">+</button>
+            </div>
+        `;
+        menuContainer.appendChild(menuItemRow);
+    });
+}
+
+function updateQuantity(menuItemId, delta) {
+    const menuItem = menuItems.find((item) => item.id === menuItemId);
+    const currentQuantity = cart[menuItemId] || 0;
+    const nextQuantity = Math.max(0, Math.min(menuItem.voorraad, currentQuantity + delta));
+    cart[menuItemId] = nextQuantity;
+    if (nextQuantity === 0) delete cart[menuItemId];
+    document.getElementById(`aantal-${menuItemId}`).textContent = nextQuantity;
+    updateCartSummary();
+}
+
+function updateCartSummary() {
+    let itemCount = 0;
+    let cartTotal = 0;
+    for (const [menuItemId, quantity] of Object.entries(cart)) {
+        const menuItem = menuItems.find((item) => Number(item.id) === Number(menuItemId));
+        itemCount += quantity;
+        cartTotal += quantity * menuItem.prijs;
+    }
+    document.getElementById('mandje-aantal').textContent = `${itemCount} items`;
+    document.getElementById('mandje-totaal').textContent = formatCurrency(cartTotal);
+}
+
+function showMessage(messageText, messageType) {
+    const messageContainer = document.getElementById('melding-plek');
+    const message = document.createElement('div');
+    message.className = `melding ${messageType === 'succes' ? 'succes' : 'fout'}`;
+    message.textContent = messageText;
+    messageContainer.replaceChildren(message);
+    setTimeout(() => message.remove(), 4000);
+}
+
+document.getElementById('btn-versturen').addEventListener('click', async () => {
+    const tableId = Number(document.getElementById('tafel-select').value);
+    const customerEmail = document.getElementById('klant-email').value.trim();
+    const guestCount = Number(document.getElementById('aantal-personen').value) || 0;
+    const orderLines = Object.entries(cart).map(([menuItemId, quantity]) => ({
+        gerecht_id: Number(menuItemId),
+        aantal: Number(quantity),
+    }));
+
+    if (orderLines.length === 0) {
+        showMessage('Selecteer eerst minimaal 1 gerecht of drankje.', 'fout');
+        return;
+    }
+
+    if (guestCount <= 0) {
+        showMessage('Vul een geldig aantal personen in (minimaal 1).', 'fout');
+        return;
+    }
+
+    const table = tables.find((table) => table.id === tableId);
+    if (table && guestCount > table.capaciteit) {
+        showMessage(`${table.naam} heeft plaats voor maximaal ${table.capaciteit} personen. Kies een andere tafel of verlaag het aantal.`, 'fout');
+        return;
+    }
+
+    const result = await apiPost('bestelling_toevoegen.php', {
+        tafel_id: tableId,
+        regels: orderLines,
+        klant_email: customerEmail,
+        aantal_personen: guestCount,
+    });
+
+    if (result.succes) {
+        showMessage('Bestelling succesvol verstuurd naar keuken/bar!', 'succes');
+        cart = {};
+        const menuItemData = await apiGet('gerechten_ophalen.php');
+        menuItems = Array.isArray(menuItemData.gerechten) ? menuItemData.gerechten : [];
+        renderMenuItems();
+        updateCartSummary();
+    } else {
+        showMessage('Fout: ' + result.fout, 'fout');
+    }
+});
+
+initializeOrderingScreen();
+</script>
+</body>
+</html>

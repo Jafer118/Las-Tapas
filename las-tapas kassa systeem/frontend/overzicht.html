@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<title>Las Tapas — Overzicht</title>
+<link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body class="dashboard">
+
+<header class="db-topbar">
+    <div class="db-brand">
+        <img src="img/logo-las-tapas.png" alt="Las Tapas — Smaak & Beleving" class="db-logo">
+    </div>
+
+    <div class="db-avatar">M&amp;M</div>
+</header>
+
+<div class="db-subheader">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="4" rx="1"/><path d="M5 10v8M19 10v8"/></svg>
+    <span>Actieve tafels</span>
+</div>
+
+<main class="db-kolommen">
+
+    <section class="db-paneel">
+        <div class="db-paneel-titel">Tafel overzicht</div>
+        <div class="db-paneel-inhoud" id="tafel-overzicht-inhoud">
+            <p class="db-geen-tafels">Laden…</p>
+        </div>
+        <div class="db-paneel-footer" id="tafel-overzicht-footer"></div>
+    </section>
+
+    <section class="db-paneel">
+        <div class="db-paneel-titel">Keuken bestellingen</div>
+        <div class="db-paneel-inhoud" id="keuken-inhoud">
+            <p class="db-geen-tafels">Laden…</p>
+        </div>
+    </section>
+
+    <section class="db-paneel">
+        <div class="db-paneel-titel">Bar bestellingen</div>
+        <div class="db-paneel-inhoud" id="bar-inhoud">
+            <p class="db-geen-tafels">Laden…</p>
+        </div>
+    </section>
+
+</main>
+
+<nav class="db-navbar">
+    <a href="overzicht.html" class="db-navitem blauw">
+        <span class="icoon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9 21v-6h6v6"/></svg></span>
+        <span>Home</span>
+    </a>
+    <a href="bestellen.html" class="db-navitem">
+        <span class="icoon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/><path d="M9 10h6M9 13h6M9 16h4"/></svg></span>
+        <span>Bestellingen</span>
+    </a>
+    <a href="overzicht.html" class="db-navitem actief">
+        <span class="icoon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="4" rx="1"/><path d="M5 10v8M19 10v8"/></svg></span>
+        <span>Tafels</span>
+    </a>
+    <a href="instellingen.html" class="db-navitem">
+        <span class="icoon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06A2 2 0 1 1 7.04 4.29l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.32 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
+        <span>Instellingen</span>
+    </a>
+</nav>
+
+<script src="js/gedeeld.js"></script>
+<script>
+async function loadDashboard() {
+    await Promise.all([
+        loadTableOverview(),
+        loadOrderColumn('keuken_bestellingen.php', 'keuken-inhoud'),
+        loadOrderColumn('bar_bestellingen.php', 'bar-inhoud'),
+    ]);
+}
+
+async function loadTableOverview() {
+    const tableData = await apiGet('tafels_ophalen.php');
+    const occupiedTables = (Array.isArray(tableData.tafels) ? tableData.tafels : [])
+        .filter((table) => table.status === 'bezet');
+    const overviewContent = document.getElementById('tafel-overzicht-inhoud');
+    const overviewFooter = document.getElementById('tafel-overzicht-footer');
+
+    if (occupiedTables.length === 0) {
+        overviewContent.innerHTML = '<p class="db-geen-tafels">Geen bezette tafels op dit moment.</p>';
+        overviewFooter.innerHTML = '';
+        return;
+    }
+
+    let totalForAllTables = 0;
+    let tableCardsHtml = '';
+
+    for (const table of occupiedTables) {
+        const billData = await apiGet(`rekening.php?tafel_id=${table.id}`);
+        const activeOrderCount = (billData.orderregels || [])
+            .filter((orderLine) => orderLine.status !== 'geserveerd').length;
+        totalForAllTables += billData.totaal || 0;
+        const guestCountText = billData.aantal_personen
+            ? `${billData.aantal_personen} / ${table.capaciteit} personen`
+            : `max ${table.capaciteit} personen`;
+
+        tableCardsHtml += `
+            <div class="db-tafelkaart">
+                <div class="naam">${escapeHtml(table.naam)}</div>
+                <div class="actief-label">${activeOrderCount} actieve order${activeOrderCount === 1 ? '' : 's'} — ${escapeHtml(guestCountText)}</div>
+                <div class="regel">
+                    <span>Openstaand bedrag</span>
+                    <span>${formatCurrency(billData.totaal || 0)}</span>
+                </div>
+            </div>
+        `;
+    }
+
+    overviewContent.innerHTML = tableCardsHtml;
+    overviewFooter.innerHTML = `<span>${occupiedTables.length} tafel${occupiedTables.length === 1 ? '' : 's'} open</span><span>TOTAAL: ${formatCurrency(totalForAllTables)}</span>`;
+}
+
+async function loadOrderColumn(endpointPath, containerId) {
+    const orderData = await apiGet(endpointPath);
+    const orderContainer = document.getElementById(containerId);
+    const orderLines = orderData.orderregels || [];
+
+    if (orderLines.length === 0) {
+        orderContainer.innerHTML = '<p class="db-geen-tafels">Geen openstaande bestellingen.</p>';
+        return;
+    }
+
+    const ordersByTable = {};
+    orderLines.forEach((orderLine) => {
+        if (!ordersByTable[orderLine.tafel_id]) {
+            ordersByTable[orderLine.tafel_id] = { naam: orderLine.tafel_naam, regels: [] };
+        }
+        ordersByTable[orderLine.tafel_id].regels.push(orderLine);
+    });
+
+    let orderCardsHtml = '';
+    Object.values(ordersByTable).forEach((tableGroup) => {
+        const lastOrderTime = tableGroup.regels[tableGroup.regels.length - 1].besteld_op;
+        let orderLinesHtml = '';
+        tableGroup.regels.forEach((orderLine) => {
+            const statusBadge = orderLine.status === 'bereid'
+                ? '<span class="db-badge bezig">BEZIG</span>'
+                : '<span class="db-badge nieuw">NIEUW</span>';
+            orderLinesHtml += `
+                <div class="db-orderregel">
+                    <span>${escapeHtml(orderLine.gerecht_naam)} (${escapeHtml(orderLine.aantal)})</span>
+                    ${statusBadge}
+                </div>
+            `;
+        });
+
+        orderCardsHtml += `
+            <div class="db-orderkaart">
+                <div class="kop">
+                    <span>${escapeHtml(tableGroup.naam)}</span>
+                    <span class="tijd">${formatTime(lastOrderTime)}</span>
+                </div>
+                ${orderLinesHtml}
+            </div>
+        `;
+    });
+
+    orderContainer.innerHTML = orderCardsHtml;
+}
+
+setInterval(loadDashboard, 5000);
+loadDashboard();
+</script>
+</body>
+</html>
