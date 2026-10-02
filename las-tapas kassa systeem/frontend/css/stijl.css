@@ -93,7 +93,6 @@ header.topbar .status {
     font-family: var(--font-tekst);
 }
 
-<<<<<<< HEAD
 .portal-header-link {
     padding: 8px 12px;
     border: 1px solid var(--kleur-saffraan);
@@ -107,9 +106,6 @@ header.topbar .status {
 .portal-page-header { position: sticky; top: 0; z-index: 20; }
 
 /* ---------- Hoofdinhoud ---------- */
-=======
-/* Main content */
->>>>>>> d8c37539271b9bb1c258f6bf1b8d42a211ab0a9c
 main {
     padding: 26px;
     max-width: 1400px;
