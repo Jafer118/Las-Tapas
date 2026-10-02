@@ -76,7 +76,6 @@ function render() {
             <td><span class="minimum-value">${item.minimum} stuks</span></td>
             <td><span class="status-pill ${isLow(item) ? 'low' : 'good'}"><i></i>${isLow(item) ? 'Bijvullen' : 'Op niveau'}</span></td>
             <td class="value-cell">${formatMoney(item.stock * item.price)}</td>
-            <td><button class="row-menu" data-action="archive" type="button" title="Artikel archiveren" aria-label="${escapeHtml(item.name)} archiveren">•••</button></td>
         </tr>`).join('');
     document.querySelector('#result-count').textContent = `${filtered.length} ${filtered.length === 1 ? 'artikel' : 'artikelen'}`;
     document.querySelector('#empty-state').hidden = filtered.length > 0;
@@ -106,15 +105,6 @@ document.querySelector('#inventory-body').addEventListener('click', async event 
     const id = Number(row.dataset.id);
     if (button.dataset.action === 'increase') await changeStock(id, 1);
     if (button.dataset.action === 'decrease') await changeStock(id, -1);
-    if (button.dataset.action === 'archive') {
-        try {
-            await apiRequest('DELETE', { id });
-            await loadItems();
-            showToast('Artikel is gearchiveerd.');
-        } catch (error) {
-            showToast(error.message);
-        }
-    }
 });
 
 document.querySelector('#search-input').addEventListener('input', render);
