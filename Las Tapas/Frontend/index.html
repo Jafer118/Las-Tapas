@@ -1,11 +1,10 @@
-```html
 <!DOCTYPE html>
 <html lang="nl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Las Tapas – Spanse Tapas in Marbella</title>
+  <title>Las Tapas – Spaanse Tapas in Marbella</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,35 +16,16 @@
 
 <body>
 
+<!-- =====================================================
+     NAVIGATIE
+===================================================== -->
+
 <header class="site">
+
   <div class="nav-inner">
 
     <button class="brand" data-page="home" aria-label="Ga naar home">
-      <svg viewBox="0 0 460 110" height="50" width="210" xmlns="http://www.w3.org/2000/svg">
-        <g fill="none" stroke="#D98B45" stroke-width="4">
-          <path d="M12 82 C45 18, 90 12, 125 30"/>
-          <path d="M335 30 C370 12, 415 18, 448 82"/>
-          <ellipse cx="230" cy="91" rx="145" ry="7"/>
-        </g>
-
-        <text x="230" y="58" text-anchor="middle"
-          fill="#F5EAD9"
-          font-family="Fraunces, serif"
-          font-size="45"
-          font-weight="700"
-          letter-spacing="2">
-          LAS TAPAS
-        </text>
-
-        <text x="230" y="78" text-anchor="middle"
-          fill="#E9AE72"
-          font-family="Work Sans, sans-serif"
-          font-size="9"
-          font-weight="600"
-          letter-spacing="4">
-          SMAAK &amp; BELEVING
-        </text>
-      </svg>
+      <img src="images/logo.png" alt="Las Tapas">
     </button>
 
     <nav class="links" id="nav-links">
@@ -54,17 +34,24 @@
       <button data-page="contact">Reserveren</button>
     </nav>
 
-    <button class="nav-toggle" id="nav-toggle" aria-expanded="false">
+    <button
+      class="nav-toggle"
+      id="nav-toggle"
+      aria-expanded="false"
+      aria-label="Menu openen">
       ☰
     </button>
 
   </div>
+
 </header>
 
 
 <main>
 
-<!-- ================= HOME ================= -->
+<!-- =====================================================
+     HOME
+===================================================== -->
 
 <section class="page active" id="page-home">
 
@@ -73,8 +60,9 @@
     <div class="wrap hero-grid">
 
       <div>
+
         <p class="eyebrow-plain">
-          Spaanse keuken, gedeeld aan tafel
+          Spaanse keuken · Marbella
         </p>
 
         <h1>
@@ -83,26 +71,30 @@
         </h1>
 
         <p class="lede">
-          Las Tapas brengt de sfeer van een Andalusische bodega
-          naar Marbella — verse tapas, Spaanse wijnen en een tafel
-          die nooit leeg raakt.
+          Ontdek de sfeer van een echte Spaanse avond.
+          Verse tapas, Spaanse specialiteiten, heerlijke
+          drankjes en gezellig tafelen met vrienden en familie.
         </p>
 
         <div class="hero-actions">
+
           <button class="btn btn-primary" data-page="menu">
-            Bekijk de kaart
+            Bekijk de menukaart
           </button>
 
           <button class="btn btn-ghost" data-page="contact">
-            Tafel reserveren
+            Reserveer een tafel
           </button>
+
         </div>
 
         <div class="hours-strip">
 
           <div class="item">
-            <strong>Vandaag geopend</strong>
-            <span id="today-hours">17:00 – 22:30</span>
+            <strong>Vandaag</strong>
+            <span id="today-hours">
+              17:00 – 22:30
+            </span>
           </div>
 
           <div class="item">
@@ -111,52 +103,25 @@
           </div>
 
           <div class="item">
-            <strong>Reserveren</strong>
+            <strong>Telefoon</strong>
             +34 952 86 47 21
           </div>
 
         </div>
+
       </div>
 
 
-      <div class="hero-tile">
+      <div class="hero-image">
 
-        <svg viewBox="0 0 500 620"
-          xmlns="http://www.w3.org/2000/svg"
-          width="100%"
-          height="100%"
-          preserveAspectRatio="xMidYMid slice">
+        <img
+          src="images/logo.png"
+          alt="Las Tapas logo">
 
-          <rect width="500" height="620" fill="#4A1420"/>
-          <circle cx="250" cy="310" r="190" fill="#E0A23F"/>
-          <circle cx="250" cy="310" r="165" fill="#F3E7D8"/>
-          <circle cx="250" cy="310" r="135" fill="#6B1E2A"/>
-          <circle cx="250" cy="310" r="115" fill="#F3E7D8"/>
-
-          <circle cx="195" cy="270" r="35" fill="#D9A44A"/>
-          <circle cx="300" cy="250" r="30" fill="#C23B2E"/>
-          <circle cx="330" cy="330" r="32" fill="#6E7B4A"/>
-          <circle cx="205" cy="360" r="28" fill="#C23B2E"/>
-          <circle cx="270" cy="370" r="30" fill="#D9A44A"/>
-
-          <text x="250" y="470"
-            text-anchor="middle"
-            fill="#F3E7D8"
-            font-family="Fraunces, serif"
-            font-size="28">
-            Tapas &amp; Tradición
-          </text>
-
-          <text x="250" y="500"
-            text-anchor="middle"
-            fill="#E0A23F"
-            font-family="Work Sans, sans-serif"
-            font-size="13"
-            letter-spacing="3">
-            MARBELLA
-          </text>
-
-        </svg>
+        <div class="hero-image-text">
+          <span>RESTAURANTE ESPAÑOL</span>
+          <strong>Tapas · Vino · Ambiente</strong>
+        </div>
 
       </div>
 
@@ -165,79 +130,83 @@
   </section>
 
 
-  <section id="over">
+  <!-- OVER LAS TAPAS -->
+
+  <section class="about-section">
 
     <div class="wrap about-grid">
 
       <div>
 
         <div class="section-head">
-          <span class="num">01</span>
+
+          <span class="num">
+            01
+          </span>
 
           <div>
-            <h2>Over Las Tapas</h2>
+
+            <h2>
+              Over Las Tapas
+            </h2>
+
             <div class="rule"></div>
+
           </div>
+
         </div>
 
         <p>
           Bij Las Tapas draait alles om samen genieten.
-          Onze keuken brengt traditionele Spaanse smaken
-          samen met een moderne uitstraling.
+          Onze keuken combineert traditionele Spaanse
+          gerechten met een moderne restaurantbeleving.
         </p>
 
         <p>
-          Van kleine gerechtjes om te delen tot heerlijke
-          desserts en Spaanse drankjes.
+          Bestel verschillende kleine gerechten,
+          deel ze met elkaar en ontdek de smaken van Spanje.
         </p>
 
         <div class="hero-actions">
-          <button class="btn btn-primary" data-page="menu">
+
+          <button
+            class="btn btn-primary"
+            data-page="menu">
             Bekijk menukaart
           </button>
 
-          <button class="btn btn-ghost" data-page="contact">
-            Reserveer een tafel
+          <button
+            class="btn btn-ghost"
+            data-page="contact">
+            Reserveer
           </button>
+
         </div>
 
       </div>
 
 
-      <div class="tile-pattern">
+      <div class="about-card">
 
-        <svg viewBox="0 0 500 500" width="100%" height="100%"
-          xmlns="http://www.w3.org/2000/svg">
+        <div class="about-card-icon">
+          🍷
+        </div>
 
-          <rect width="500" height="500" fill="#451A26"/>
+        <h3>
+          Spaanse sfeer
+        </h3>
 
-          <g fill="none" stroke="#D98B45" stroke-width="3">
-            <path d="M0 100 H500"/>
-            <path d="M0 200 H500"/>
-            <path d="M0 300 H500"/>
-            <path d="M0 400 H500"/>
-            <path d="M100 0 V500"/>
-            <path d="M200 0 V500"/>
-            <path d="M300 0 V500"/>
-            <path d="M400 0 V500"/>
-          </g>
+        <p>
+          Een warme sfeer, Spaanse muziek,
+          tapas om te delen en een uitgebreide
+          selectie Spaanse drankjes.
+        </p>
 
-          <g fill="#6E7B4A">
-            <circle cx="50" cy="50" r="20"/>
-            <circle cx="150" cy="150" r="20"/>
-            <circle cx="250" cy="250" r="20"/>
-            <circle cx="350" cy="350" r="20"/>
-            <circle cx="450" cy="450" r="20"/>
-          </g>
+        <div class="about-card-line"></div>
 
-          <g fill="#D98B45">
-            <circle cx="450" cy="50" r="20"/>
-            <circle cx="350" cy="150" r="20"/>
-            <circle cx="250" cy="350" r="20"/>
-            <circle cx="150" cy="450" r="20"/>
-          </g>
-
-        </svg>
+        <span>
+          MARBELLA · ESPAÑA
+        </span>
 
       </div>
 
@@ -246,42 +215,112 @@
   </section>
 
 
-  <section id="weekend-live">
+  <!-- LIVE MUZIEK -->
+
+  <section class="weekend-section" id="weekend-live">
 
     <div class="wrap">
 
       <div class="section-head">
-        <span class="num">02</span>
+
+        <span class="num">
+          02
+        </span>
 
         <div>
-          <h2>Weekend Live</h2>
+
+          <h2>
+            Weekend Live
+          </h2>
 
           <p>
-            Geniet in het weekend van live Spaanse muziek.
+            Iedere week Spaanse live muziek.
           </p>
 
           <div class="rule"></div>
+
         </div>
+
       </div>
 
-      <div class="formula-grid">
 
-        <article class="formula-card">
-          <span class="formula-duur">Zaterdag</span>
-          <h3>Lucía García</h3>
-          <p class="formula-desc">Flamenco &amp; Spaanse Pop</p>
+      <div class="artist-grid">
+
+        <article class="artist-card">
+
+          <span class="artist-day">
+            VRIJDAG
+          </span>
+
+          <div class="artist-icon">
+            🎸
+          </div>
+
+          <h3>
+            Diego Morales
+          </h3>
+
+          <p>
+            Flamenco gitarist met traditionele
+            Spaanse muziek en moderne Andalusische sounds.
+          </p>
+
+          <strong>
+            20:30 – 22:30
+          </strong>
+
         </article>
 
-        <article class="formula-card featured">
-          <span class="formula-duur">Zaterdag</span>
-          <h3>Carlos Romero</h3>
-          <p class="formula-desc">Guitarra Española</p>
+
+        <article class="artist-card featured">
+
+          <span class="artist-day">
+            ZATERDAG
+          </span>
+
+          <div class="artist-icon">
+            🎤
+          </div>
+
+          <h3>
+            Lucia Martínez
+          </h3>
+
+          <p>
+            Spaanse live zangeres met Spaanse classics,
+            flamenco-pop en Latin invloeden.
+          </p>
+
+          <strong>
+            21:00 – 23:00
+          </strong>
+
         </article>
 
-        <article class="formula-card">
-          <span class="formula-duur">Zondag</span>
-          <h3>Alba Martínez</h3>
-          <p class="formula-desc">Latin &amp; Flamenco</p>
+
+        <article class="artist-card">
+
+          <span class="artist-day">
+            ZONDAG
+          </span>
+
+          <div class="artist-icon">
+            🎶
+          </div>
+
+          <h3>
+            Duo Sol
+          </h3>
+
+          <p>
+            Spaans en Latin duo met gitaar,
+            vocals en bekende klassiekers.
+          </p>
+
+          <strong>
+            18:00 – 20:00
+          </strong>
+
         </article>
 
       </div>
@@ -293,34 +332,46 @@
 </section>
 
 
-<!-- ================= MENU ================= -->
+<!-- =====================================================
+     MENU
+===================================================== -->
 
 <section class="page" id="page-menu">
 
-  <section id="menu" style="background:var(--parchment-warm); padding-top:120px;">
+  <section class="menu-page">
 
     <div class="wrap">
 
       <div class="section-head">
-        <span class="num">03</span>
+
+        <span class="num">
+          03
+        </span>
 
         <div>
-          <h2>Onze menukaart</h2>
+
+          <h2>
+            Onze menukaart
+          </h2>
 
           <p>
-            Spaanse klassiekers om samen te delen.
+            Kies een formule en geniet onbeperkt van onze tapas.
           </p>
 
           <div class="rule"></div>
+
         </div>
+
       </div>
 
 
-      <!-- AYCE KEUZES -->
+      <!-- FORMULES -->
 
       <div class="ayce-grid">
 
-        <button class="ayce-card"
+        <button
+          type="button"
+          class="ayce-card"
           data-formula="2 uur tafelen"
           data-price="29.50">
 
@@ -328,15 +379,18 @@
             2 UUR
           </span>
 
-          <h3>2 uur tafelen</h3>
+          <h3>
+            2 uur tafelen
+          </h3>
 
           <p>
-            Onbeperkt genieten van onze
-            geselecteerde tapas.
+            Twee uur onbeperkt genieten van
+            onze geselecteerde tapas.
           </p>
 
           <strong>
-            €29,50 <small>p.p.</small>
+            €29,50
+            <small>p.p.</small>
           </strong>
 
           <span class="choose-formula">
@@ -346,7 +400,9 @@
         </button>
 
 
-        <button class="ayce-card selected"
+        <button
+          type="button"
+          class="ayce-card selected"
           data-formula="3 uur tafelen"
           data-price="36.50">
 
@@ -358,7 +414,9 @@
             3 UUR
           </span>
 
-          <h3>3 uur tafelen</h3>
+          <h3>
+            3 uur tafelen
+          </h3>
 
           <p>
             Drie uur onbeperkt tapas eten
@@ -366,7 +424,8 @@
           </p>
 
           <strong>
-            €36,50 <small>p.p.</small>
+            €36,50
+            <small>p.p.</small>
           </strong>
 
           <span class="choose-formula">
@@ -376,7 +435,9 @@
         </button>
 
 
-        <button class="ayce-card"
+        <button
+          type="button"
+          class="ayce-card"
           data-formula="3 uur Spaans genieten met drinken"
           data-price="49.50">
 
@@ -384,7 +445,9 @@
             3 UUR + DRINKEN
           </span>
 
-          <h3>3 uur Spaans genieten</h3>
+          <h3>
+            3 uur + drinken
+          </h3>
 
           <p>
             Onbeperkt tapas met een selectie
@@ -392,7 +455,8 @@
           </p>
 
           <strong>
-            €49,50 <small>p.p.</small>
+            €49,50
+            <small>p.p.</small>
           </strong>
 
           <span class="choose-formula">
@@ -408,84 +472,248 @@
 
       <div class="menu-tabs">
 
-        <button data-target="fria" aria-selected="true">
+        <button
+          class="active"
+          data-target="fria">
           Frías
         </button>
 
-        <button data-target="caliente" aria-selected="false">
+        <button data-target="caliente">
           Calientes
         </button>
 
-        <button data-target="especialidades" aria-selected="false">
+        <button data-target="especialidades">
           Especialidades
         </button>
 
-        <button data-target="postre" aria-selected="false">
+        <button data-target="postre">
           Postres
         </button>
 
-        <button data-target="bebidas" aria-selected="false">
+        <button data-target="bebidas">
           Bebidas
         </button>
 
       </div>
 
 
+      <!-- GERECHTEN -->
+
       <div class="menu-panel active" id="fria">
 
         <div class="dish-list">
 
-          <div class="dish">
-            <h3 class="dish-name">Aceitunas marinadas</h3>
-            <p class="dish-desc">Gemarineerde Spaanse olijven</p>
-          </div>
+          <article class="dish"
+            data-name="Aceitunas marinadas">
 
-          <div class="dish">
-            <h3 class="dish-name">Pan con tomate</h3>
-            <p class="dish-desc">Geroosterd brood met tomaat en olijfolie</p>
-          </div>
+            <img
+              src="https://loremflickr.com/700/500/olives,food"
+              alt="Aceitunas marinadas">
 
-          <div class="dish">
-            <h3 class="dish-name">Tabla de quesos españoles</h3>
-            <p class="dish-desc">Selectie van Spaanse kazen</p>
-          </div>
+            <div class="dish-content">
 
-          <div class="dish">
-            <h3 class="dish-name">Jamón serrano</h3>
-            <p class="dish-desc">Dun gesneden Spaanse serranoham</p>
-          </div>
+              <h3 class="dish-name">
+                Aceitunas marinadas
+              </h3>
 
-          <div class="dish">
-            <h3 class="dish-name">Ensalada de atún</h3>
-            <p class="dish-desc">Frisse salade met tonijn</p>
-          </div>
+              <p class="dish-desc">
+                Gemarineerde Spaanse olijven met kruiden.
+              </p>
 
-          <div class="dish">
-            <h3 class="dish-name">Gazpacho</h3>
-            <p class="dish-desc">Koude Andalusische tomatensoep</p>
-          </div>
+              <div class="dish-bottom">
 
-          <div class="dish">
-            <h3 class="dish-name">Salmorejo</h3>
-            <p class="dish-desc">Romige koude tomatensoep</p>
-          </div>
+                <span>
+                  Tapas
+                </span>
 
-          <div class="dish">
-            <h3 class="dish-name">Ensalada mixta</h3>
-            <p class="dish-desc">Gemengde Spaanse salade</p>
-          </div>
+                <div class="quantity-control">
 
-          <div class="dish">
-            <h3 class="dish-name">Boquerones en vinagre</h3>
-            <p class="dish-desc">Ansjovis gemarineerd in azijn</p>
-          </div>
+                  <button
+                    type="button"
+                    class="minus">
+                    −
+                  </button>
 
-          <div class="dish">
-            <h3 class="dish-name">Cóctel de gambas</h3>
-            <p class="dish-desc">Garnalencocktail</p>
-          </div>
+                  <strong>
+                    0
+                  </strong>
+
+                  <button
+                    type="button"
+                    class="plus">
+                    +
+                  </button>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </article>
+
+
+          <article class="dish"
+            data-name="Pan con tomate">
+
+            <img
+              src="https://loremflickr.com/700/500/bread,tomato"
+              alt="Pan con tomate">
+
+            <div class="dish-content">
+
+              <h3 class="dish-name">
+                Pan con tomate
+              </h3>
+
+              <p class="dish-desc">
+                Geroosterd brood met tomaat en olijfolie.
+              </p>
+
+              <div class="dish-bottom">
+                <span>Tapas</span>
+
+                <div class="quantity-control">
+                  <button type="button" class="minus">−</button>
+                  <strong>0</strong>
+                  <button type="button" class="plus">+</button>
+                </div>
+              </div>
+
+            </div>
+
+          </article>
+
+
+          <article class="dish"
+            data-name="Tabla de quesos españoles">
+
+            <img
+              src="https://loremflickr.com/700/500/spanish,cheese"
+              alt="Spaanse kazen">
+
+            <div class="dish-content">
+
+              <h3 class="dish-name">
+                Tabla de quesos españoles
+              </h3>
+
+              <p class="dish-desc">
+                Selectie van Spaanse kazen.
+              </p>
+
+              <div class="dish-bottom">
+                <span>Tapas</span>
+
+                <div class="quantity-control">
+                  <button type="button" class="minus">−</button>
+                  <strong>0</strong>
+                  <button type="button" class="plus">+</button>
+                </div>
+              </div>
+
+            </div>
+
+          </article>
+
+
+          <article class="dish"
+            data-name="Jamón serrano">
+
+            <img
+              src="https://loremflickr.com/700/500/ham,spanish"
+              alt="Jamón serrano">
+
+            <div class="dish-content">
+
+              <h3 class="dish-name">
+                Jamón serrano
+              </h3>
+
+              <p class="dish-desc">
+                Dun gesneden Spaanse serranoham.
+              </p>
+
+              <div class="dish-bottom">
+                <span>Tapas</span>
+
+                <div class="quantity-control">
+                  <button type="button" class="minus">−</button>
+                  <strong>0</strong>
+                  <button type="button" class="plus">+</button>
+                </div>
+              </div>
+
+            </div>
+
+          </article>
+
+
+          <article class="dish"
+            data-name="Ensalada de atún">
+
+            <img
+              src="https://loremflickr.com/700/500/tuna,salad"
+              alt="Ensalada de atún">
+
+            <div class="dish-content">
+
+              <h3 class="dish-name">
+                Ensalada de atún
+              </h3>
+
+              <p class="dish-desc">
+                Frisse salade met tonijn en groenten.
+              </p>
+
+              <div class="dish-bottom">
+                <span>Tapas</span>
+
+                <div class="quantity-control">
+                  <button type="button" class="minus">−</button>
+                  <strong>0</strong>
+                  <button type="button" class="plus">+</button>
+                </div>
+              </div>
+
+            </div>
+
+          </article>
+
+
+          <article class="dish"
+            data-name="Gazpacho">
+
+            <img
+              src="https://loremflickr.com/700/500/gazpacho"
+              alt="Gazpacho">
+
+            <div class="dish-content">
+
+              <h3 class="dish-name">
+                Gazpacho
+              </h3>
+
+              <p class="dish-desc">
+                Koude Andalusische tomatensoep.
+              </p>
+
+              <div class="dish-bottom">
+                <span>Tapas</span>
+
+                <div class="quantity-control">
+                  <button type="button" class="minus">−</button>
+                  <strong>0</strong>
+                  <button type="button" class="plus">+</button>
+                </div>
+              </div>
+
+            </div>
+
+          </article>
 
         </div>
+
       </div>
 
 
@@ -493,67 +721,143 @@
 
         <div class="dish-list">
 
-          <div class="dish">
-            <h3 class="dish-name">Patatas bravas</h3>
-            <p class="dish-desc">Krokante aardappelen met pittige saus</p>
-          </div>
+          <article class="dish" data-name="Patatas bravas">
+            <img src="https://loremflickr.com/700/500/patatas,bravas" alt="Patatas bravas">
+            <div class="dish-content">
+              <h3 class="dish-name">Patatas bravas</h3>
+              <p class="dish-desc">Krokante aardappelen met pittige saus.</p>
+              <div class="dish-bottom">
+                <span>Tapas</span>
+                <div class="quantity-control">
+                  <button type="button" class="minus">−</button>
+                  <strong>0</strong>
+                  <button type="button" class="plus">+</button>
+                </div>
+              </div>
+            </div>
+          </article>
 
-          <div class="dish">
-            <h3 class="dish-name">Patatas alioli</h3>
-            <p class="dish-desc">Aardappelen met knoflooksaus</p>
-          </div>
 
-          <div class="dish">
-            <h3 class="dish-name">Gambas al ajillo</h3>
-            <p class="dish-desc">Garnalen met knoflook en olijfolie</p>
-          </div>
+          <article class="dish" data-name="Gambas al ajillo">
+            <img src="https://loremflickr.com/700/500/shrimp,garlic" alt="Gambas al ajillo">
+            <div class="dish-content">
+              <h3 class="dish-name">Gambas al ajillo</h3>
+              <p class="dish-desc">Garnalen met knoflook en olijfolie.</p>
+              <div class="dish-bottom">
+                <span>Tapas</span>
+                <div class="quantity-control">
+                  <button type="button" class="minus">−</button>
+                  <strong>0</strong>
+                  <button type="button" class="plus">+</button>
+                </div>
+              </div>
+            </div>
+          </article>
 
-          <div class="dish">
-            <h3 class="dish-name">Calamares fritos</h3>
-            <p class="dish-desc">Krokant gebakken inktvis</p>
-          </div>
 
-          <div class="dish">
-            <h3 class="dish-name">Croquetas</h3>
-            <p class="dish-desc">Spaanse huisgemaakte kroketjes</p>
-          </div>
+          <article class="dish" data-name="Calamares fritos">
+            <img src="https://loremflickr.com/700/500/calamari,fried" alt="Calamares fritos">
+            <div class="dish-content">
+              <h3 class="dish-name">Calamares fritos</h3>
+              <p class="dish-desc">Krokant gebakken inktvis.</p>
+              <div class="dish-bottom">
+                <span>Tapas</span>
+                <div class="quantity-control">
+                  <button type="button" class="minus">−</button>
+                  <strong>0</strong>
+                  <button type="button" class="plus">+</button>
+                </div>
+              </div>
+            </div>
+          </article>
 
-          <div class="dish">
-            <h3 class="dish-name">Dátiles con bacon</h3>
-            <p class="dish-desc">Dadels omwikkeld met bacon</p>
-          </div>
 
-          <div class="dish">
-            <h3 class="dish-name">Alitas de pollo</h3>
-            <p class="dish-desc">Krokante kipvleugels</p>
-          </div>
+          <article class="dish" data-name="Croquetas">
+            <img src="https://loremflickr.com/700/500/croquettes,food" alt="Croquetas">
+            <div class="dish-content">
+              <h3 class="dish-name">Croquetas</h3>
+              <p class="dish-desc">Spaanse huisgemaakte kroketjes.</p>
+              <div class="dish-bottom">
+                <span>Tapas</span>
+                <div class="quantity-control">
+                  <button type="button" class="minus">−</button>
+                  <strong>0</strong>
+                  <button type="button" class="plus">+</button>
+                </div>
+              </div>
+            </div>
+          </article>
 
-          <div class="dish">
-            <h3 class="dish-name">Pollo al ajillo</h3>
-            <p class="dish-desc">Kip met knoflook</p>
-          </div>
 
-          <div class="dish">
-            <h3 class="dish-name">Chorizo a la sidra</h3>
-            <p class="dish-desc">Chorizo gestoofd in cider</p>
-          </div>
+          <article class="dish" data-name="Dátiles con bacon">
+            <img src="https://loremflickr.com/700/500/bacon,dates,food" alt="Dátiles con bacon">
+            <div class="dish-content">
+              <h3 class="dish-name">Dátiles con bacon</h3>
+              <p class="dish-desc">Dadels omwikkeld met bacon.</p>
+              <div class="dish-bottom">
+                <span>Tapas</span>
+                <div class="quantity-control">
+                  <button type="button" class="minus">−</button>
+                  <strong>0</strong>
+                  <button type="button" class="plus">+</button>
+                </div>
+              </div>
+            </div>
+          </article>
 
-          <div class="dish">
-            <h3 class="dish-name">Chorizo al vino</h3>
-            <p class="dish-desc">Chorizo in Spaanse wijn</p>
-          </div>
 
-          <div class="dish">
-            <h3 class="dish-name">Pimientos de padrón</h3>
-            <p class="dish-desc">Gebakken Spaanse pepers</p>
-          </div>
+          <article class="dish" data-name="Pollo al ajillo">
+            <img src="https://loremflickr.com/700/500/chicken,garlic" alt="Pollo al ajillo">
+            <div class="dish-content">
+              <h3 class="dish-name">Pollo al ajillo</h3>
+              <p class="dish-desc">Kip met knoflook en Spaanse kruiden.</p>
+              <div class="dish-bottom">
+                <span>Tapas</span>
+                <div class="quantity-control">
+                  <button type="button" class="minus">−</button>
+                  <strong>0</strong>
+                  <button type="button" class="plus">+</button>
+                </div>
+              </div>
+            </div>
+          </article>
 
-          <div class="dish">
-            <h3 class="dish-name">Champiñones al ajillo</h3>
-            <p class="dish-desc">Champignons met knoflook</p>
-          </div>
+
+          <article class="dish" data-name="Chorizo al vino">
+            <img src="https://loremflickr.com/700/500/chorizo,spanish" alt="Chorizo al vino">
+            <div class="dish-content">
+              <h3 class="dish-name">Chorizo al vino</h3>
+              <p class="dish-desc">Chorizo bereid in Spaanse wijn.</p>
+              <div class="dish-bottom">
+                <span>Tapas</span>
+                <div class="quantity-control">
+                  <button type="button" class="minus">−</button>
+                  <strong>0</strong>
+                  <button type="button" class="plus">+</button>
+                </div>
+              </div>
+            </div>
+          </article>
+
+
+          <article class="dish" data-name="Pimientos de padrón">
+            <img src="https://loremflickr.com/700/500/green,peppers,food" alt="Pimientos de padrón">
+            <div class="dish-content">
+              <h3 class="dish-name">Pimientos de padrón</h3>
+              <p class="dish-desc">Gebakken Spaanse groene pepers.</p>
+              <div class="dish-bottom">
+                <span>Tapas</span>
+                <div class="quantity-control">
+                  <button type="button" class="minus">−</button>
+                  <strong>0</strong>
+                  <button type="button" class="plus">+</button>
+                </div>
+              </div>
+            </div>
+          </article>
 
         </div>
+
       </div>
 
 
@@ -561,57 +865,109 @@
 
         <div class="dish-list">
 
-          <div class="dish">
-            <h3 class="dish-name">Tortilla española</h3>
-            <p class="dish-desc">Traditionele Spaanse aardappelomelet</p>
-          </div>
+          <article class="dish" data-name="Tortilla española">
+            <img src="https://loremflickr.com/700/500/spanish,omelette" alt="Tortilla española">
+            <div class="dish-content">
+              <h3 class="dish-name">Tortilla española</h3>
+              <p class="dish-desc">Traditionele Spaanse aardappelomelet.</p>
+              <div class="dish-bottom">
+                <span>Specialiteit</span>
+                <div class="quantity-control">
+                  <button type="button" class="minus">−</button>
+                  <strong>0</strong>
+                  <button type="button" class="plus">+</button>
+                </div>
+              </div>
+            </div>
+          </article>
 
-          <div class="dish">
-            <h3 class="dish-name">Huevos rotos</h3>
-            <p class="dish-desc">Aardappelen met gebroken eieren</p>
-          </div>
 
-          <div class="dish">
-            <h3 class="dish-name">Pinchos morunos</h3>
-            <p class="dish-desc">Spaanse gekruide vleesspiesjes</p>
-          </div>
+          <article class="dish" data-name="Huevos rotos">
+            <img src="https://loremflickr.com/700/500/eggs,potatoes" alt="Huevos rotos">
+            <div class="dish-content">
+              <h3 class="dish-name">Huevos rotos</h3>
+              <p class="dish-desc">Aardappelen met gebroken eieren.</p>
+              <div class="dish-bottom">
+                <span>Specialiteit</span>
+                <div class="quantity-control">
+                  <button type="button" class="minus">−</button>
+                  <strong>0</strong>
+                  <button type="button" class="plus">+</button>
+                </div>
+              </div>
+            </div>
+          </article>
 
-          <div class="dish">
-            <h3 class="dish-name">Pulpo a la gallega</h3>
-            <p class="dish-desc">Octopus met aardappel en paprika</p>
-          </div>
 
-          <div class="dish">
-            <h3 class="dish-name">Mini paella de mariscos</h3>
-            <p class="dish-desc">Kleine paella met zeevruchten</p>
-          </div>
+          <article class="dish" data-name="Pinchos morunos">
+            <img src="https://loremflickr.com/700/500/meat,skewers" alt="Pinchos morunos">
+            <div class="dish-content">
+              <h3 class="dish-name">Pinchos morunos</h3>
+              <p class="dish-desc">Spaanse gekruide vleesspiesjes.</p>
+              <div class="dish-bottom">
+                <span>Specialiteit</span>
+                <div class="quantity-control">
+                  <button type="button" class="minus">−</button>
+                  <strong>0</strong>
+                  <button type="button" class="plus">+</button>
+                </div>
+              </div>
+            </div>
+          </article>
 
-          <div class="dish">
-            <h3 class="dish-name">Mini paella de pollo</h3>
-            <p class="dish-desc">Kleine paella met kip</p>
-          </div>
 
-          <div class="dish">
-            <h3 class="dish-name">Paella mixta</h3>
-            <p class="dish-desc">Kleine tapa met kip en zeevruchten</p>
-          </div>
+          <article class="dish" data-name="Pulpo a la gallega">
+            <img src="https://loremflickr.com/700/500/octopus,food" alt="Pulpo a la gallega">
+            <div class="dish-content">
+              <h3 class="dish-name">Pulpo a la gallega</h3>
+              <p class="dish-desc">Octopus met aardappel en paprika.</p>
+              <div class="dish-bottom">
+                <span>Specialiteit</span>
+                <div class="quantity-control">
+                  <button type="button" class="minus">−</button>
+                  <strong>0</strong>
+                  <button type="button" class="plus">+</button>
+                </div>
+              </div>
+            </div>
+          </article>
 
-          <div class="dish">
-            <h3 class="dish-name">Empanadillas</h3>
-            <p class="dish-desc">Gevulde Spaanse deeghapjes</p>
-          </div>
 
-          <div class="dish">
-            <h3 class="dish-name">Berenjenas fritas con miel</h3>
-            <p class="dish-desc">Gebakken aubergine met honing</p>
-          </div>
+          <article class="dish" data-name="Mini paella de mariscos">
+            <img src="https://loremflickr.com/700/500/paella,seafood" alt="Mini paella de mariscos">
+            <div class="dish-content">
+              <h3 class="dish-name">Mini paella de mariscos</h3>
+              <p class="dish-desc">Kleine paella met zeevruchten.</p>
+              <div class="dish-bottom">
+                <span>Specialiteit</span>
+                <div class="quantity-control">
+                  <button type="button" class="minus">−</button>
+                  <strong>0</strong>
+                  <button type="button" class="plus">+</button>
+                </div>
+              </div>
+            </div>
+          </article>
 
-          <div class="dish">
-            <h3 class="dish-name">Lomo a la plancha</h3>
-            <p class="dish-desc">Gegrilde varkenshaas</p>
-          </div>
+
+          <article class="dish" data-name="Mini paella de pollo">
+            <img src="https://loremflickr.com/700/500/paella,chicken" alt="Mini paella de pollo">
+            <div class="dish-content">
+              <h3 class="dish-name">Mini paella de pollo</h3>
+              <p class="dish-desc">Kleine paella met kip en groenten.</p>
+              <div class="dish-bottom">
+                <span>Specialiteit</span>
+                <div class="quantity-control">
+                  <button type="button" class="minus">−</button>
+                  <strong>0</strong>
+                  <button type="button" class="plus">+</button>
+                </div>
+              </div>
+            </div>
+          </article>
 
         </div>
+
       </div>
 
 
@@ -619,37 +975,75 @@
 
         <div class="dish-list">
 
-          <div class="dish">
-            <h3 class="dish-name">Crema catalana</h3>
-            <p class="dish-desc">Catalaans dessert</p>
-          </div>
+          <article class="dish" data-name="Crema catalana">
+            <img src="https://loremflickr.com/700/500/creme,brulee,dessert" alt="Crema catalana">
+            <div class="dish-content">
+              <h3 class="dish-name">Crema catalana</h3>
+              <p class="dish-desc">Catalaans dessert met krokante suikerlaag.</p>
+              <div class="dish-bottom">
+                <span>Dessert</span>
+                <div class="quantity-control">
+                  <button type="button" class="minus">−</button>
+                  <strong>0</strong>
+                  <button type="button" class="plus">+</button>
+                </div>
+              </div>
+            </div>
+          </article>
 
-          <div class="dish">
-            <h3 class="dish-name">Flan</h3>
-            <p class="dish-desc">Spaanse karamelpudding</p>
-          </div>
 
-          <div class="dish">
-            <h3 class="dish-name">Arroz con leche</h3>
-            <p class="dish-desc">Spaanse rijstepap met kaneel</p>
-          </div>
+          <article class="dish" data-name="Flan">
+            <img src="https://loremflickr.com/700/500/flan,dessert" alt="Flan">
+            <div class="dish-content">
+              <h3 class="dish-name">Flan</h3>
+              <p class="dish-desc">Spaanse karamelpudding.</p>
+              <div class="dish-bottom">
+                <span>Dessert</span>
+                <div class="quantity-control">
+                  <button type="button" class="minus">−</button>
+                  <strong>0</strong>
+                  <button type="button" class="plus">+</button>
+                </div>
+              </div>
+            </div>
+          </article>
 
-          <div class="dish">
-            <h3 class="dish-name">Churros con chocolate</h3>
-            <p class="dish-desc">Churros met warme chocoladesaus</p>
-          </div>
 
-          <div class="dish">
-            <h3 class="dish-name">Tarta de Santiago</h3>
-            <p class="dish-desc">Traditionele Spaanse amandeltaart</p>
-          </div>
+          <article class="dish" data-name="Churros con chocolate">
+            <img src="https://loremflickr.com/700/500/churros,chocolate" alt="Churros con chocolate">
+            <div class="dish-content">
+              <h3 class="dish-name">Churros con chocolate</h3>
+              <p class="dish-desc">Churros met warme chocoladesaus.</p>
+              <div class="dish-bottom">
+                <span>Dessert</span>
+                <div class="quantity-control">
+                  <button type="button" class="minus">−</button>
+                  <strong>0</strong>
+                  <button type="button" class="plus">+</button>
+                </div>
+              </div>
+            </div>
+          </article>
 
-          <div class="dish">
-            <h3 class="dish-name">Helado de vainilla</h3>
-            <p class="dish-desc">Vanille-ijs</p>
-          </div>
+
+          <article class="dish" data-name="Tarta de Santiago">
+            <img src="https://loremflickr.com/700/500/almond,cake,dessert" alt="Tarta de Santiago">
+            <div class="dish-content">
+              <h3 class="dish-name">Tarta de Santiago</h3>
+              <p class="dish-desc">Traditionele Spaanse amandeltaart.</p>
+              <div class="dish-bottom">
+                <span>Dessert</span>
+                <div class="quantity-control">
+                  <button type="button" class="minus">−</button>
+                  <strong>0</strong>
+                  <button type="button" class="plus">+</button>
+                </div>
+              </div>
+            </div>
+          </article>
 
         </div>
+
       </div>
 
 
@@ -657,44 +1051,145 @@
 
         <div class="dish-list">
 
-          <div class="dish">
-            <h3 class="dish-name">Vino tinto</h3>
-            <p class="dish-desc">Spaanse rode wijn</p>
+          <article class="dish" data-name="Vino tinto">
+            <img src="https://loremflickr.com/700/500/red,wine" alt="Vino tinto">
+            <div class="dish-content">
+              <h3 class="dish-name">Vino tinto</h3>
+              <p class="dish-desc">Spaanse rode wijn.</p>
+              <div class="dish-bottom">
+                <span>Drank</span>
+                <div class="quantity-control">
+                  <button type="button" class="minus">−</button>
+                  <strong>0</strong>
+                  <button type="button" class="plus">+</button>
+                </div>
+              </div>
+            </div>
+          </article>
+
+
+          <article class="dish" data-name="Vino blanco">
+            <img src="https://loremflickr.com/700/500/white,wine" alt="Vino blanco">
+            <div class="dish-content">
+              <h3 class="dish-name">Vino blanco</h3>
+              <p class="dish-desc">Frisse Spaanse witte wijn.</p>
+              <div class="dish-bottom">
+                <span>Drank</span>
+                <div class="quantity-control">
+                  <button type="button" class="minus">−</button>
+                  <strong>0</strong>
+                  <button type="button" class="plus">+</button>
+                </div>
+              </div>
+            </div>
+          </article>
+
+
+          <article class="dish" data-name="Sangría">
+            <img src="https://loremflickr.com/700/500/sangria" alt="Sangría">
+            <div class="dish-content">
+              <h3 class="dish-name">Sangría</h3>
+              <p class="dish-desc">Klassieke Spaanse sangría.</p>
+              <div class="dish-bottom">
+                <span>Drank</span>
+                <div class="quantity-control">
+                  <button type="button" class="minus">−</button>
+                  <strong>0</strong>
+                  <button type="button" class="plus">+</button>
+                </div>
+              </div>
+            </div>
+          </article>
+
+
+          <article class="dish" data-name="Cerveza">
+            <img src="https://loremflickr.com/700/500/spanish,beer" alt="Cerveza">
+            <div class="dish-content">
+              <h3 class="dish-name">Cerveza</h3>
+              <p class="dish-desc">Spaanse bierselectie.</p>
+              <div class="dish-bottom">
+                <span>Drank</span>
+                <div class="quantity-control">
+                  <button type="button" class="minus">−</button>
+                  <strong>0</strong>
+                  <button type="button" class="plus">+</button>
+                </div>
+              </div>
+            </div>
+          </article>
+
+
+          <article class="dish" data-name="Agua mineral">
+            <img src="https://loremflickr.com/700/500/water,bottle" alt="Agua mineral">
+            <div class="dish-content">
+              <h3 class="dish-name">Agua mineral</h3>
+              <p class="dish-desc">Mineraalwater.</p>
+              <div class="dish-bottom">
+                <span>Drank</span>
+                <div class="quantity-control">
+                  <button type="button" class="minus">−</button>
+                  <strong>0</strong>
+                  <button type="button" class="plus">+</button>
+                </div>
+              </div>
+            </div>
+          </article>
+
+        </div>
+
+      </div>
+
+
+      <!-- BESTELLING -->
+
+      <div class="order-section">
+
+        <div class="order-card">
+
+          <div>
+
+            <span class="order-label">
+              JOUW SELECTIE
+            </span>
+
+            <h3>
+              Bestelling
+            </h3>
+
+            <div id="order-summary">
+              <p class="summary-empty">
+                Nog geen gerechten gekozen.
+              </p>
+            </div>
+
           </div>
 
-          <div class="dish">
-            <h3 class="dish-name">Vino blanco</h3>
-            <p class="dish-desc">Spaanse witte wijn</p>
-          </div>
+          <div class="order-total">
 
-          <div class="dish">
-            <h3 class="dish-name">Sangría</h3>
-            <p class="dish-desc">Klassieke Spaanse sangría</p>
-          </div>
+            <span>
+              Totaal geselecteerd
+            </span>
 
-          <div class="dish">
-            <h3 class="dish-name">Cerveza</h3>
-            <p class="dish-desc">Spaanse bierselectie</p>
-          </div>
+            <strong>
+              <span id="total-dishes">0</span>
+              gerechten
+            </strong>
 
-          <div class="dish">
-            <h3 class="dish-name">Agua mineral</h3>
-            <p class="dish-desc">Mineraalwater</p>
-          </div>
-
-          <div class="dish">
-            <h3 class="dish-name">Café con leche</h3>
-            <p class="dish-desc">Koffie met melk</p>
           </div>
 
         </div>
+
       </div>
 
 
       <div class="menu-booking-button">
-        <button class="btn btn-primary" data-page="contact">
+
+        <button
+          class="btn btn-primary"
+          data-page="contact">
           Reserveer uw tafel →
         </button>
+
       </div>
 
     </div>
@@ -704,7 +1199,9 @@
 </section>
 
 
-<!-- ================= RESERVEREN ================= -->
+<!-- =====================================================
+     RESERVEREN
+===================================================== -->
 
 <section class="page" id="page-contact">
 
@@ -723,8 +1220,8 @@
         </h2>
 
         <p>
-          Kies uw formule, tafel en aantal personen.
-          Daarna kunt u de demo-betaling afronden.
+          Kies uw formule, datum, tijd, aantal personen
+          en tafel. Daarna kunt u de demo-betaling uitvoeren.
         </p>
 
       </div>
@@ -734,21 +1231,21 @@
 
       <div class="reservation-steps">
 
-        <div class="reservation-step active">
+        <div class="reservation-step active" id="step-reservation">
           <span>1</span>
           <strong>Reservering</strong>
         </div>
 
         <div class="step-line"></div>
 
-        <div class="reservation-step">
+        <div class="reservation-step" id="step-payment">
           <span>2</span>
           <strong>Betaling</strong>
         </div>
 
         <div class="step-line"></div>
 
-        <div class="reservation-step">
+        <div class="reservation-step" id="step-confirmation">
           <span>3</span>
           <strong>Bevestiging</strong>
         </div>
@@ -756,7 +1253,7 @@
       </div>
 
 
-      <!-- FORM -->
+      <!-- RESERVERINGSFORMULIER -->
 
       <form id="reservation-form">
 
@@ -770,51 +1267,87 @@
             <div class="booking-card">
 
               <div class="booking-card-title">
+
                 <span>01</span>
 
                 <div>
-                  <h3>All You Can Eat</h3>
-                  <p>Kies uw favoriete formule</p>
+                  <h3>
+                    All You Can Eat
+                  </h3>
+
+                  <p>
+                    Kies uw favoriete formule
+                  </p>
                 </div>
+
               </div>
 
 
               <div class="booking-formulas">
 
-                <button type="button"
+                <button
+                  type="button"
                   class="booking-formula"
                   data-formula="2 uur tafelen"
                   data-price="29.50">
 
-                  <span>2 uur</span>
-                  <strong>€29,50</strong>
-                  <small>per persoon</small>
+                  <span>
+                    2 uur
+                  </span>
+
+                  <strong>
+                    €29,50
+                  </strong>
+
+                  <small>
+                    per persoon
+                  </small>
 
                 </button>
 
 
-                <button type="button"
+                <button
+                  type="button"
                   class="booking-formula active"
                   data-formula="3 uur tafelen"
                   data-price="36.50">
 
-                  <span>3 uur</span>
-                  <strong>€36,50</strong>
-                  <small>per persoon</small>
+                  <span>
+                    3 uur
+                  </span>
 
-                  <b>POPULAIR</b>
+                  <strong>
+                    €36,50
+                  </strong>
+
+                  <small>
+                    per persoon
+                  </small>
+
+                  <b>
+                    POPULAIR
+                  </b>
 
                 </button>
 
 
-                <button type="button"
+                <button
+                  type="button"
                   class="booking-formula"
                   data-formula="3 uur Spaans genieten met drinken"
                   data-price="49.50">
 
-                  <span>3 uur + drinken</span>
-                  <strong>€49,50</strong>
-                  <small>per persoon</small>
+                  <span>
+                    3 uur + drinken
+                  </span>
+
+                  <strong>
+                    €49,50
+                  </strong>
+
+                  <small>
+                    per persoon
+                  </small>
 
                 </button>
 
@@ -828,12 +1361,19 @@
             <div class="booking-card">
 
               <div class="booking-card-title">
+
                 <span>02</span>
 
                 <div>
-                  <h3>Wanneer komt u?</h3>
-                  <p>Kies datum en tijd</p>
+                  <h3>
+                    Wanneer komt u?
+                  </h3>
+
+                  <p>
+                    Kies datum en tijd
+                  </p>
                 </div>
+
               </div>
 
 
@@ -879,6 +1419,7 @@
                     <option>20:00</option>
                     <option>20:30</option>
                     <option>21:00</option>
+                    <option>21:30</option>
 
                   </select>
 
@@ -898,8 +1439,15 @@
                 <span>03</span>
 
                 <div>
-                  <h3>Gezelschap</h3>
-                  <p>Voor hoeveel personen?</p>
+
+                  <h3>
+                    Gezelschap
+                  </h3>
+
+                  <p>
+                    Voor hoeveel personen?
+                  </p>
+
                 </div>
 
               </div>
@@ -908,13 +1456,23 @@
               <div class="people-selector">
 
                 <div>
-                  <strong>Aantal personen</strong>
-                  <small>Maximaal 10 personen online</small>
+
+                  <strong>
+                    Aantal personen
+                  </strong>
+
+                  <small>
+                    1 t/m 10 personen online
+                  </small>
+
                 </div>
+
 
                 <div class="counter">
 
-                  <button type="button" id="minus-person">
+                  <button
+                    type="button"
+                    id="minus-person">
                     −
                   </button>
 
@@ -922,7 +1480,9 @@
                     2
                   </strong>
 
-                  <button type="button" id="plus-person">
+                  <button
+                    type="button"
+                    id="plus-person">
                     +
                   </button>
 
@@ -933,7 +1493,7 @@
             </div>
 
 
-            <!-- TAFEL -->
+            <!-- TAFEL + PLATTEGROND -->
 
             <div class="booking-card">
 
@@ -942,157 +1502,50 @@
                 <span>04</span>
 
                 <div>
-                  <h3>Kies uw tafel</h3>
-                  <p>Selecteer een beschikbare tafel</p>
+
+                  <h3>
+                    Kies uw tafel
+                  </h3>
+
+                  <p>
+                    Bekijk eerst de plattegrond
+                  </p>
+
                 </div>
 
               </div>
 
 
-              <div class="tables">
+              <div class="floorplan-box">
 
-                <button type="button"
-                  class="table-option"
-                  data-table="Tafel 1"
-                  data-capacity="2">
+                <img
+                  src="images/plattegrond.png"
+                  alt="Plattegrond van Las Tapas met tafels 1 tot en met 26">
 
-                  <span class="table-icon">●</span>
-                  <strong>Tafel 1</strong>
-                  <small>2 personen</small>
+                <p>
+                  De plattegrond laat zien waar de tafels
+                  zich in het restaurant bevinden.
+                </p>
 
-                </button>
-
-
-                <button type="button"
-                  class="table-option"
-                  data-table="Tafel 2"
-                  data-capacity="2">
-
-                  <span class="table-icon">●</span>
-                  <strong>Tafel 2</strong>
-                  <small>2 personen</small>
-
-                </button>
+              </div>
 
 
-                <button type="button"
-                  class="table-option"
-                  data-table="Tafel 3"
-                  data-capacity="2">
+              <div class="table-filter-info">
 
-                  <span class="table-icon">●</span>
-                  <strong>Tafel 3</strong>
-                  <small>2 personen</small>
+                <span>
+                  Beschikbare tafels voor
+                  <strong id="table-guest-number">
+                    2
+                  </strong>
+                  personen
+                </span>
 
-                </button>
-
-
-                <button type="button"
-                  class="table-option"
-                  data-table="Tafel 4"
-                  data-capacity="4">
-
-                  <span class="table-icon">●</span>
-                  <strong>Tafel 4</strong>
-                  <small>4 personen</small>
-
-                </button>
+              </div>
 
 
-                <button type="button"
-                  class="table-option"
-                  data-table="Tafel 5"
-                  data-capacity="4">
+              <div class="tables" id="tables">
 
-                  <span class="table-icon">●</span>
-                  <strong>Tafel 5</strong>
-                  <small>4 personen</small>
-
-                </button>
-
-
-                <button type="button"
-                  class="table-option"
-                  data-table="Tafel 6"
-                  data-capacity="4">
-
-                  <span class="table-icon">●</span>
-                  <strong>Tafel 6</strong>
-                  <small>4 personen</small>
-
-                </button>
-
-
-                <button type="button"
-                  class="table-option"
-                  data-table="Tafel 7"
-                  data-capacity="4">
-
-                  <span class="table-icon">●</span>
-                  <strong>Tafel 7</strong>
-                  <small>4 personen</small>
-
-                </button>
-
-
-                <button type="button"
-                  class="table-option"
-                  data-table="Tafel 8"
-                  data-capacity="6">
-
-                  <span class="table-icon">●</span>
-                  <strong>Tafel 8</strong>
-                  <small>6 personen</small>
-
-                </button>
-
-
-                <button type="button"
-                  class="table-option"
-                  data-table="Tafel 9"
-                  data-capacity="6">
-
-                  <span class="table-icon">●</span>
-                  <strong>Tafel 9</strong>
-                  <small>6 personen</small>
-
-                </button>
-
-
-                <button type="button"
-                  class="table-option"
-                  data-table="Tafel 10"
-                  data-capacity="6">
-
-                  <span class="table-icon">●</span>
-                  <strong>Tafel 10</strong>
-                  <small>6 personen</small>
-
-                </button>
-
-
-                <button type="button"
-                  class="table-option"
-                  data-table="Tafel 11"
-                  data-capacity="8">
-
-                  <span class="table-icon">●</span>
-                  <strong>Tafel 11</strong>
-                  <small>8 personen</small>
-
-                </button>
-
-
-                <button type="button"
-                  class="table-option"
-                  data-table="Tafel 12"
-                  data-capacity="8">
-
-                  <span class="table-icon">●</span>
-                  <strong>Tafel 12</strong>
-                  <small>8 personen</small>
-
-                </button>
+                <!-- JS vult hier de 26 tafels in -->
 
               </div>
 
@@ -1108,8 +1561,15 @@
                 <span>05</span>
 
                 <div>
-                  <h3>Uw gegevens</h3>
-                  <p>Voor de reserveringsbevestiging</p>
+
+                  <h3>
+                    Uw gegevens
+                  </h3>
+
+                  <p>
+                    Voor de reserveringsbevestiging
+                  </p>
+
                 </div>
 
               </div>
@@ -1118,24 +1578,32 @@
               <div class="input-grid">
 
                 <div class="input-group">
-                  <label for="name">Naam</label>
+
+                  <label for="name">
+                    Naam
+                  </label>
 
                   <input
                     type="text"
                     id="name"
                     placeholder="Uw naam"
                     required>
+
                 </div>
 
 
                 <div class="input-group">
-                  <label for="phone">Telefoon</label>
+
+                  <label for="phone">
+                    Telefoon
+                  </label>
 
                   <input
                     type="tel"
                     id="phone"
                     placeholder="+34 600 000 000"
                     required>
+
                 </div>
 
               </div>
@@ -1159,13 +1627,13 @@
               <div class="input-group full">
 
                 <label for="message">
-                  Opmerking
+                  Speciale wensen
                 </label>
 
                 <textarea
                   id="message"
                   rows="4"
-                  placeholder="Bijvoorbeeld verjaardag, kinderstoel of allergieën..."></textarea>
+                  placeholder="Bijvoorbeeld verjaardag, kinderstoel, allergieën..."></textarea>
 
               </div>
 
@@ -1174,7 +1642,7 @@
           </div>
 
 
-          <!-- SIDEBAR -->
+          <!-- OVERZICHT -->
 
           <aside class="reservation-summary">
 
@@ -1241,7 +1709,7 @@
                 €73,00
               </strong>
 
-              <small>
+              <small id="summary-calculation">
                 2 personen × €36,50
               </small>
 
@@ -1269,7 +1737,9 @@
       </form>
 
 
-      <!-- ================= BETALING ================= -->
+      <!-- =================================================
+           BETALING
+      ================================================= -->
 
       <div class="payment-screen" id="payment-screen">
 
@@ -1279,7 +1749,9 @@
             type="button"
             class="back-button"
             id="back-to-reservation">
+
             ← Terug naar reservering
+
           </button>
 
 
@@ -1294,7 +1766,8 @@
             </h2>
 
             <p>
-              Dit is een demo. Er wordt geen echte betaling uitgevoerd.
+              Dit is een demo.
+              Er wordt geen echte betaling uitgevoerd.
             </p>
 
           </div>
@@ -1412,6 +1885,11 @@
                 <strong id="pay-table">–</strong>
               </div>
 
+              <div class="payment-summary-row">
+                <span>Betaalmethode</span>
+                <strong id="pay-method">iDEAL</strong>
+              </div>
+
               <div class="payment-total">
 
                 <span>
@@ -1448,9 +1926,13 @@
       </div>
 
 
-      <!-- ================= SUCCES ================= -->
+      <!-- =================================================
+           SUCCES
+      ================================================= -->
 
-      <div class="success-screen" id="success-screen">
+      <div
+        class="success-screen"
+        id="success-screen">
 
         <div class="success-card">
 
@@ -1508,7 +1990,9 @@
 
           <div class="success-total">
 
-            <span>Totaalbedrag</span>
+            <span>
+              Totaalbedrag
+            </span>
 
             <strong id="success-total">
               €0,00
@@ -1544,7 +2028,9 @@
 </main>
 
 
-<!-- ================= FOOTER ================= -->
+<!-- =====================================================
+     FOOTER
+===================================================== -->
 
 <footer>
 
@@ -1554,46 +2040,14 @@
 
       <div>
 
-        <button class="brand" data-page="home">
-
-          <svg viewBox="0 0 460 110"
-            height="40"
-            width="170"
-            xmlns="http://www.w3.org/2000/svg">
-
-            <g fill="none" stroke="#D98B45" stroke-width="4">
-              <path d="M12 82 C45 18, 90 12, 125 30"/>
-              <path d="M335 30 C370 12, 415 18, 448 82"/>
-              <ellipse cx="230" cy="91" rx="145" ry="7"/>
-            </g>
-
-            <text x="230" y="58"
-              text-anchor="middle"
-              fill="#F5EAD9"
-              font-family="Fraunces, serif"
-              font-size="45"
-              font-weight="700"
-              letter-spacing="2">
-              LAS TAPAS
-            </text>
-
-            <text x="230" y="78"
-              text-anchor="middle"
-              fill="#E9AE72"
-              font-family="Work Sans, sans-serif"
-              font-size="9"
-              font-weight="600"
-              letter-spacing="4">
-              SMAAK &amp; BELEVING
-            </text>
-
-          </svg>
-
-        </button>
+        <img
+          class="footer-logo"
+          src="images/logo.png"
+          alt="Las Tapas">
 
         <p>
           Kleine gerechten, grote avonden.
-          Spaanse tapas aan de Golden Mile in Marbella.
+          Spaanse tapas in Marbella.
         </p>
 
       </div>
@@ -1601,44 +2055,87 @@
 
       <div>
 
-        <h4>Contact</h4>
+        <h4>
+          Contact
+        </h4>
 
         <address>
           Avenida Ricardo Soriano 72<br>
           29601 Marbella, Málaga
         </address>
 
-        <p>+34 952 86 47 21</p>
-        <p>reservas@lastapas.es</p>
+        <p>
+          +34 952 86 47 21
+        </p>
+
+        <p>
+          reservas@lastapas.es
+        </p>
 
       </div>
 
 
       <div>
 
-        <h4>Openingstijden</h4>
+        <h4>
+          Openingstijden
+        </h4>
 
-        <p>Maandag: Gesloten</p>
-        <p>Dinsdag – Woensdag: 17:00 – 22:30</p>
-        <p>Donderdag: 17:00 – 23:00</p>
-        <p>Vrijdag: 17:00 – 23:30</p>
-        <p>Zaterdag: 13:00 – 23:30</p>
-        <p>Zondag: 13:00 – 21:00</p>
+        <p>
+          Maandag: Gesloten
+        </p>
+
+        <p>
+          Di–Wo: 17:00 – 22:30
+        </p>
+
+        <p>
+          Donderdag: 17:00 – 23:00
+        </p>
+
+        <p>
+          Vrijdag: 17:00 – 23:30
+        </p>
+
+        <p>
+          Zaterdag: 13:00 – 23:30
+        </p>
+
+        <p>
+          Zondag: 13:00 – 21:00
+        </p>
 
       </div>
 
     </div>
 
 
+    <div class="footer-navigation">
+
+      <button data-page="home">
+        Home
+      </button>
+
+      <button data-page="menu">
+        Menukaart
+      </button>
+
+      <button data-page="contact">
+        Reserveren
+      </button>
+
+    </div>
+
+
     <div class="footer-bottom">
 
-      <div>
+      <span>
         © 2026 Las Tapas
-      </div>
+      </span>
 
-      <div>
+      <span>
         Website door het website-team
-      </div>
+      </span>
 
     </div>
 
@@ -1651,4 +2148,3 @@
 
 </body>
 </html>
-```
