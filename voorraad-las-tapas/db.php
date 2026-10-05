@@ -9,7 +9,7 @@ function database(): PDO
         return $connection;
     }
 
-    $host = '127.0.0.1';
+    $host = 'localhost';
     $database = 'las_tapas';
     $username = 'root';
     $password = '';

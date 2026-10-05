@@ -14,11 +14,11 @@ CREATE TABLE IF NOT EXISTS gebruikers (
 );
 
 INSERT INTO gebruikers (gebruikersnaam, naam, wachtwoord_hash)
-SELECT 'sofia', 'Sofia', '$2y$10$d5BDa/W42divn6206WIrke5cmFtQ.4gXdAUyx9icsq8CojoGjB1gS'
+SELECT 'sofia', 'Sofia', '$2y$10$A7QoAXZV9bCQeTRiTTfg1.9vL.1OFsJqLK6D9UjR86IhLgDT60fYu'
 WHERE NOT EXISTS (SELECT 1 FROM gebruikers WHERE gebruikersnaam = 'sofia');
 
 INSERT INTO gebruikers (gebruikersnaam, naam, wachtwoord_hash)
-SELECT 'marcus', 'Marcus', '$2y$10$gpW/lvX/.OJBcjeNz8nHsOjNsPIY/2LF0GhvYnxmELEAxhEJ/Rwc2'
+SELECT 'marcus', 'Marcus', '$2y$10$GFgyJqHUHxv6jJ6qpd9SUegSPCBOMx7BHxk1fxNTVCWVejBNqsp2e'
 WHERE NOT EXISTS (SELECT 1 FROM gebruikers WHERE gebruikersnaam = 'marcus');
 
 CREATE TABLE IF NOT EXISTS voorraad_items (
