@@ -21,7 +21,7 @@ compatibility with the current frontend and stored data.
 ## Local Setup
 
 1. Import `database/las_tapas.sql` into MySQL using phpMyAdmin or the MySQL CLI. This creates the `las_tapas` database with tables and example data (tables and dishes). It also creates the `kassa_gebruikers` and `kassa_wachtwoord_resets` tables.
-2. If the `las_tapas` database already exists, import `database/migrate_auth_tables.sql` first. This creates the separate cashier login tables while leaving the stock accounts unchanged.
+2. If the `las_tapas` database already exists, import `database/migrate_auth_tables.sql` to create the cashier login tables and `database/migrate_table_capacities.sql` to align the 26 table capacities with the restaurant website. The capacity migration can be safely run more than once.
 3. Configure `LAS_TAPAS_DB_HOST`, `LAS_TAPAS_DB_NAME`, `LAS_TAPAS_DB_USER`, and
   `LAS_TAPAS_DB_PASS` in the web-server environment if the local defaults do
   not match your WAMP/XAMPP installation. Defaults are for a local MySQL
@@ -38,6 +38,9 @@ compatibility with the current frontend and stored data.
 - Staff use `frontend/overzicht.html` as the single-page work panel for placing
   orders, preparing kitchen and bar items, and checking out tables. The panels
   are grouped into three task tabs to keep the daily interface focused.
+- Table seating limits match the restaurant website: tables 1–3 seat 2, tables
+  4–7 seat 4, tables 8–10 seat 6, and tables 11–26 seat 8. The API reads these
+  capacities from `tafels` and enforces them when an order is submitted.
 - Ordering submits table, guest-count, optional email, and menu-item data. The
   API validates the request, checks table capacity and stock, saves order lines,
   and deducts inventory in one database transaction.

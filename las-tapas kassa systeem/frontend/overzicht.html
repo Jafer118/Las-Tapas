@@ -188,7 +188,7 @@ function renderTableOptions() {
     orderSelect.replaceChildren(new Option(tables.length ? 'Selecteer een tafel' : 'Geen tafels beschikbaar', ''));
     tables.forEach((table) => {
         const status = table.status === 'bezet' ? 'Bezet · bestelling toevoegen' : 'Vrij';
-        orderSelect.add(new Option(`${table.naam} · max. ${table.capaciteit} · ${status}`, table.id));
+        orderSelect.add(new Option(`${table.naam} · max. ${table.capaciteit} personen · ${status}`, table.id));
     });
     if (tables.some((table) => String(table.id) === previousOrderTable)) orderSelect.value = previousOrderTable;
 

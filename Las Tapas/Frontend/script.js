@@ -632,7 +632,7 @@ document.addEventListener("DOMContentLoaded", function () {
     1-3  = 2 personen
     4-7  = 4 personen
     8-10 = 6 personen
-    11-26 = 4-8 personen
+    11-26 = 8 personen
   */
 
   const tableCapacities = {
