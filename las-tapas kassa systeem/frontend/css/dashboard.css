@@ -391,3 +391,532 @@ body.dashboard {
     color: var(--kleur-wijn);
 }
 .instellingen-kaart a { color: var(--kleur-terracotta); font-weight: 600; }
+
+/* Overview dashboard */
+.db-dashboard {
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 22px 28px 34px;
+}
+.db-dashboard-heading {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 22px;
+}
+.db-dashboard-heading h1 {
+    margin: 0;
+    color: var(--kleur-tekst);
+    font-family: var(--font-kop);
+    font-size: clamp(1.65rem, 3vw, 2.35rem);
+}
+.db-dashboard-heading p:last-child {
+    margin: 7px 0 0;
+    color: var(--kleur-tekst-zacht);
+}
+.db-eyebrow {
+    margin: 0 0 6px;
+    color: var(--kleur-terracotta-op);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+}
+.db-live-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex: 0 0 auto;
+    padding: 8px 11px;
+    border: 1px solid var(--kleur-paneel-rand);
+    border-radius: 999px;
+    color: var(--kleur-tekst-zacht);
+    font-size: 0.76rem;
+}
+.db-live-label i {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--kleur-olijf);
+    box-shadow: 0 0 0 3px rgba(156, 179, 121, 0.14);
+}
+.db-stat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 18px;
+}
+.db-stat-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-height: 92px;
+    padding: 16px;
+    border: 1px solid var(--kleur-paneel-rand);
+    border-radius: var(--rond-groot);
+    background: linear-gradient(135deg, var(--kleur-paneel), var(--kleur-bodega-diep));
+    box-shadow: var(--schaduw-kaart);
+}
+.db-stat-icon,
+.db-actie-icoon {
+    display: grid;
+    flex: 0 0 42px;
+    width: 42px;
+    height: 42px;
+    place-items: center;
+    border-radius: 12px;
+    background: rgba(217, 139, 69, 0.15);
+    color: var(--kleur-saffraan);
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+.db-stat-icon.vrij { background: rgba(156, 179, 121, 0.16); color: var(--kleur-olijf); }
+.db-stat-icon.order { background: rgba(233, 174, 114, 0.15); }
+.db-stat-card > div {
+    display: grid;
+    gap: 5px;
+}
+.db-stat-label {
+    color: var(--kleur-tekst-zacht);
+    font-size: 0.78rem;
+}
+.db-stat-card strong {
+    color: var(--kleur-tekst);
+    font-family: var(--font-kop);
+    font-size: 1.45rem;
+}
+.db-snelle-acties {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 24px;
+}
+.db-actie-kaart {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    padding: 14px;
+    border: 1px solid var(--kleur-paneel-rand);
+    border-radius: var(--rond-groot);
+    background: var(--kleur-paneel);
+    color: var(--kleur-tekst);
+    text-decoration: none;
+    transition: border-color 0.15s ease, transform 0.15s ease;
+}
+.db-actie-kaart:hover {
+    transform: translateY(-2px);
+    border-color: var(--kleur-terracotta);
+}
+.db-actie-kaart > span:nth-child(2) {
+    display: grid;
+    gap: 5px;
+    min-width: 0;
+}
+.db-actie-kaart strong {
+    font-size: 0.88rem;
+}
+.db-actie-kaart small {
+    color: var(--kleur-tekst-zacht);
+    font-size: 0.74rem;
+    line-height: 1.4;
+}
+.db-actie-pijl {
+    margin-left: auto;
+    color: var(--kleur-saffraan);
+    font-size: 1.2rem;
+}
+.db-dashboard .db-kolommen {
+    grid-template-columns: minmax(320px, 1.25fr) repeat(2, minmax(250px, 1fr));
+    padding: 0;
+}
+.db-dashboard #tafel-overzicht-inhoud {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-content: start;
+    max-height: 510px;
+    overflow: auto;
+}
+.db-dashboard .db-tafelkaart.vrij {
+    border-left-color: var(--kleur-olijf);
+}
+.db-dashboard .db-tafelkaart.vrij .actief-label {
+    color: var(--kleur-olijf);
+}
+.db-tafelactie {
+    display: inline-block;
+    margin-top: 8px;
+    color: var(--kleur-saffraan);
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-decoration: none;
+}
+.db-tafelactie:hover {
+    color: var(--kleur-terracotta-op);
+    text-decoration: underline;
+}
+@media (max-width: 760px) {
+    .db-dashboard { padding: 18px 16px 28px; }
+    .db-dashboard-heading { align-items: flex-start; flex-direction: column; }
+    .db-stat-grid { grid-template-columns: 1fr; }
+    .db-stat-card { min-height: 76px; }
+    .db-snelle-acties { grid-template-columns: 1fr; }
+    .db-dashboard .db-kolommen { grid-template-columns: 1fr; }
+    .db-dashboard #tafel-overzicht-inhoud { grid-template-columns: 1fr; max-height: 420px; }
+}
+
+/* Single-page staff workspace */
+.db-topbar .db-user-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.db-logout {
+    padding: 9px 13px;
+    border: 1px solid var(--kleur-paneel-rand);
+    background: var(--kleur-paneel);
+    color: var(--kleur-tekst);
+}
+.db-logout:hover {
+    border-color: var(--kleur-terracotta);
+    background: var(--kleur-wijn);
+}
+.db-dashboard.werkpaneel {
+    max-width: 1500px;
+    padding-bottom: 40px;
+}
+.werk-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    padding: 7px;
+    border: 1px solid var(--kleur-paneel-rand);
+    border-radius: var(--rond-groot);
+    background: var(--kleur-bodega-diep);
+}
+.werk-tab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex: 1;
+    min-height: 44px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--kleur-tekst-zacht);
+}
+.werk-tab:hover {
+    color: var(--kleur-tekst);
+    background: var(--kleur-paneel);
+}
+.werk-tab.actief {
+    border-color: var(--kleur-terracotta);
+    background: var(--kleur-paneel);
+    color: var(--kleur-saffraan);
+}
+.werk-tab-count {
+    display: inline-grid;
+    min-width: 22px;
+    height: 22px;
+    place-items: center;
+    border-radius: 999px;
+    background: var(--kleur-wijn);
+    color: var(--kleur-tekst);
+    font-size: 0.72rem;
+}
+.werk-tab:focus-visible,
+.db-logout:focus-visible {
+    outline: 3px solid var(--kleur-saffraan);
+    outline-offset: 2px;
+}
+.werk-paneel[hidden] {
+    display: none;
+}
+.werk-paneel.actief {
+    display: block;
+}
+.werk-paneel > .db-paneel,
+.werk-queue-grid > .db-paneel {
+    min-height: 250px;
+}
+.werk-paneel-inhoud {
+    padding: 20px;
+}
+.werk-context-velden {
+    display: grid;
+    grid-template-columns: 190px minmax(0, 1fr);
+    align-items: center;
+    gap: 10px 16px;
+    max-width: 850px;
+}
+.werk-context-velden label,
+.werk-afrekenen-select label {
+    color: var(--kleur-tekst);
+    font-size: 0.88rem;
+    font-weight: 600;
+}
+.werk-context-velden label span {
+    color: var(--kleur-tekst-zacht);
+    font-weight: 400;
+}
+.werk-context-velden select,
+.werk-context-velden input,
+.werk-afrekenen-select select {
+    width: 100%;
+    min-height: 42px;
+}
+.capaciteit-info {
+    min-height: 1.4em;
+    margin: 10px 0 24px;
+    color: var(--kleur-olijf);
+    font-size: 0.85rem;
+}
+.capaciteit-info.capaciteit-waarschuwing {
+    color: #F0C2C2;
+}
+.werk-subkop,
+.werk-mandje-kop,
+.rekening-kop {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+}
+.werk-subkop {
+    padding-top: 17px;
+    border-top: 1px solid var(--kleur-paneel-rand);
+}
+.werk-subkop h2,
+.werk-mandje-kop h2,
+.rekening-kop h2 {
+    margin: 0;
+}
+.werk-subkop p,
+.werk-mandje-kop p,
+.rekening-kop p {
+    margin: 5px 0 0;
+    color: var(--kleur-tekst-zacht);
+    font-size: 0.82rem;
+}
+.werk-subkop .menu-tabs {
+    justify-content: flex-end;
+    margin: 0 0 12px;
+}
+.werk-subkop .menu-tabs .tab {
+    appearance: none;
+    border: 0;
+    border-bottom: 3px solid transparent;
+    border-radius: 0;
+    background: transparent;
+    margin: 0 0 -2px;
+    padding: 9px 11px;
+}
+.werk-subkop .menu-tabs .tab.actief {
+    border-bottom-color: var(--kleur-terracotta);
+    color: var(--kleur-saffraan);
+}
+.werk-subkop .menu-tabs .tab:focus-visible,
+.aantal-controls button:focus-visible {
+    outline: 3px solid var(--kleur-saffraan);
+    outline-offset: 2px;
+}
+.gerecht-rij {
+    gap: 16px;
+}
+.gerecht-rij .naam-prijs {
+    min-width: 0;
+    gap: 2px;
+}
+.gerecht-rij.gerecht-uitverkocht {
+    opacity: 0.62;
+}
+.aantal-controls button:disabled,
+.werk-verstuur:disabled,
+.werk-afrekenen-select button:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+}
+.werk-mandje {
+    margin-top: 22px;
+    padding: 18px;
+    border: 1px solid var(--kleur-terracotta);
+    border-radius: var(--rond-groot);
+    background: var(--kleur-bodega-diep);
+}
+.werk-mandje-totaal {
+    display: grid;
+    gap: 4px;
+    text-align: right;
+}
+.werk-mandje-totaal span {
+    color: var(--kleur-tekst-zacht);
+    font-size: 0.8rem;
+}
+.werk-mandje-totaal strong {
+    color: var(--kleur-saffraan);
+    font-family: var(--font-kop);
+    font-size: 1.25rem;
+}
+.mandje-regels,
+.rekening-regels {
+    max-height: 210px;
+    margin: 13px 0;
+    overflow: auto;
+    border-top: 1px solid var(--kleur-paneel-rand);
+    border-bottom: 1px solid var(--kleur-paneel-rand);
+    padding: 8px 0;
+}
+.mandje-regel {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 6px 0;
+    color: var(--kleur-tekst);
+    font-size: 0.88rem;
+}
+.mandje-regel span:last-child {
+    color: var(--kleur-saffraan);
+    white-space: nowrap;
+}
+.mandje-leeg {
+    margin: 6px 0;
+    color: var(--kleur-tekst-zacht);
+    font-size: 0.86rem;
+}
+.werk-verstuur {
+    display: block;
+    min-height: 44px;
+    margin-left: auto;
+}
+.werk-queue-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    align-items: start;
+}
+.werk-queue-inhoud {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 12px;
+    padding: 16px;
+}
+.werk-order-groep {
+    padding: 12px;
+    border: 1px solid var(--kleur-paneel-rand);
+    border-radius: var(--rond-klein);
+    background: var(--kleur-bodega-diep);
+}
+.werk-order-groep h3 {
+    margin: 0 0 9px;
+    color: var(--kleur-saffraan);
+    font-family: var(--font-kop);
+}
+.werk-order-regel {
+    display: grid;
+    gap: 7px;
+    padding: 10px 0;
+    border-top: 1px solid rgba(107, 30, 42, 0.75);
+}
+.werk-order-regel > div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+.werk-order-regel strong {
+    font-size: 0.86rem;
+}
+.werk-order-regel small {
+    color: var(--kleur-tekst-zacht);
+    font-size: 0.74rem;
+}
+.werk-order-regel button {
+    justify-self: start;
+}
+.werk-afrekenen-select {
+    display: grid;
+    grid-template-columns: minmax(160px, 220px) minmax(180px, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+    max-width: 900px;
+}
+.rekening-details {
+    max-width: 900px;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--kleur-paneel-rand);
+}
+.rekening-totaal {
+    display: flex;
+    justify-content: space-between;
+    padding: 13px 0;
+    color: var(--kleur-saffraan);
+    font-family: var(--font-kop);
+    font-size: 1.12rem;
+}
+.rekening-acties {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 12px;
+}
+.werk-email-bon {
+    display: grid;
+    gap: 8px;
+    max-width: 580px;
+    margin-top: 18px;
+}
+.werk-email-bon label {
+    color: var(--kleur-tekst);
+    font-size: 0.86rem;
+    font-weight: 600;
+}
+.werk-email-bon > div {
+    display: flex;
+    gap: 8px;
+}
+.werk-email-bon input {
+    flex: 1;
+    min-width: 0;
+}
+.werk-email-bon small {
+    color: var(--kleur-tekst-zacht);
+}
+.werk-link-knop {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    padding: 8px 13px;
+    text-decoration: none;
+}
+.werkpaneel #melding-plek:empty {
+    display: none;
+}
+
+@media (max-width: 900px) {
+    .werk-subkop {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+    .werk-subkop .menu-tabs {
+        justify-content: flex-start;
+        flex-wrap: wrap;
+    }
+}
+@media (max-width: 640px) {
+    .db-dashboard.werkpaneel { padding: 18px 14px 28px; }
+    .werk-tabs { flex-direction: column; }
+    .werk-tab { justify-content: flex-start; }
+    .werk-context-velden,
+    .werk-afrekenen-select {
+        grid-template-columns: 1fr;
+        gap: 7px;
+    }
+    .werk-email-bon > div { flex-direction: column; }
+    .werk-context-velden label:not(:first-child) { margin-top: 7px; }
+    .werk-queue-grid { grid-template-columns: 1fr; }
+    .werk-mandje-kop { align-items: flex-start; }
+    .werk-mandje { padding: 13px; }
+    .werk-verstuur { width: 100%; }
+}

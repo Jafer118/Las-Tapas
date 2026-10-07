@@ -2,12 +2,14 @@
 <html lang="nl">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#1E0B10">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-<title>Las Tapas — Overzicht</title>
+<title>Las Tapas — Bedieningspaneel</title>
 <link rel="stylesheet" href="css/dashboard.css">
+<link rel="stylesheet" href="css/stijl.css">
 </head>
 <body class="dashboard">
 
@@ -15,161 +17,489 @@
     <div class="db-brand">
         <img src="img/logo-las-tapas.png" alt="Las Tapas — Smaak & Beleving" class="db-logo">
     </div>
-
-    <div class="db-avatar">M&amp;M</div>
+    <div class="db-user-actions">
+        <span class="db-avatar">LT</span>
+        <button type="button" class="db-logout" id="logout-button">Uitloggen</button>
+    </div>
 </header>
 
-<div class="db-subheader">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="4" rx="1"/><path d="M5 10v8M19 10v8"/></svg>
-    <span>Actieve tafels</span>
-</div>
-
-<main class="db-kolommen">
-
-    <section class="db-paneel">
-        <div class="db-paneel-titel">Tafel overzicht</div>
-        <div class="db-paneel-inhoud" id="tafel-overzicht-inhoud">
-            <p class="db-geen-tafels">Laden…</p>
+<main class="db-dashboard werkpaneel">
+    <section class="db-dashboard-heading">
+        <div>
+            <p class="db-eyebrow">LAS TAPAS · BEDIENING</p>
+            <h1>Bedieningspaneel</h1>
+            <p>Bestellingen, bereiding en afrekenen op één plek.</p>
         </div>
-        <div class="db-paneel-footer" id="tafel-overzicht-footer"></div>
+        <span class="db-live-label"><i></i> Live bijgewerkt</span>
     </section>
 
-    <section class="db-paneel">
-        <div class="db-paneel-titel">Keuken bestellingen</div>
-        <div class="db-paneel-inhoud" id="keuken-inhoud">
-            <p class="db-geen-tafels">Laden…</p>
+    <div id="melding-plek" role="status" aria-live="polite"></div>
+
+    <section class="db-stat-grid" aria-label="Restaurantstatus">
+        <article class="db-stat-card">
+            <span class="db-stat-icon">▤</span>
+            <div><span class="db-stat-label">Bezette tafels</span><strong id="stat-bezet">—</strong></div>
+        </article>
+        <article class="db-stat-card">
+            <span class="db-stat-icon vrij">✓</span>
+            <div><span class="db-stat-label">Vrije tafels</span><strong id="stat-vrij">—</strong></div>
+        </article>
+        <article class="db-stat-card">
+            <span class="db-stat-icon order">◷</span>
+            <div><span class="db-stat-label">Open keuken- en barregels</span><strong id="stat-orders">—</strong></div>
+        </article>
+    </section>
+
+    <nav class="werk-tabs" role="tablist" aria-label="Bedieningstaken">
+        <button class="werk-tab actief" id="tab-bestellen" type="button" role="tab" aria-selected="true" aria-controls="paneel-bestellen" data-paneel="paneel-bestellen">＋ Bestellen</button>
+        <button class="werk-tab" id="tab-bereiden" type="button" role="tab" aria-selected="false" aria-controls="paneel-bereiden" data-paneel="paneel-bereiden">♨ Keuken &amp; bar <span class="werk-tab-count" id="tab-open-count">0</span></button>
+        <button class="werk-tab" id="tab-afrekenen" type="button" role="tab" aria-selected="false" aria-controls="paneel-afrekenen" data-paneel="paneel-afrekenen">€ Afrekenen</button>
+    </nav>
+
+    <section class="werk-paneel actief" id="paneel-bestellen" role="tabpanel" aria-labelledby="tab-bestellen">
+        <div class="db-paneel bestel-paneel">
+            <div class="db-paneel-titel">Nieuwe bestelling</div>
+            <div class="werk-paneel-inhoud">
+                <div class="werk-context-velden">
+                    <label for="tafel-select">Tafel</label>
+                    <select id="tafel-select" required><option value="">Tafels laden…</option></select>
+                    <label for="aantal-personen">Aantal gasten</label>
+                    <input type="number" id="aantal-personen" min="1" value="2" required>
+                    <label for="klant-email">E-mailadres voor bon <span>(optioneel)</span></label>
+                    <input type="email" id="klant-email" placeholder="naam@voorbeeld.nl">
+                </div>
+                <p id="capaciteit-info" class="capaciteit-info" aria-live="polite"></p>
+
+                <div class="werk-subkop">
+                    <div><h2>Menukaart</h2><p>Kies de gerechten en dranken voor deze tafel.</p></div>
+                    <div class="menu-tabs" id="menu-tabs" role="tablist" aria-label="Menucategorieën"></div>
+                </div>
+                <div id="menu-lijst" role="tabpanel" tabindex="0"></div>
+
+                <section class="werk-mandje" aria-labelledby="mandje-titel">
+                    <div class="werk-mandje-kop">
+                        <div><h2 id="mandje-titel">Controleer bestelling</h2><p id="mandje-context">Kies eerst een tafel.</p></div>
+                        <div class="werk-mandje-totaal"><span id="mandje-aantal">0 items</span><strong id="mandje-totaal">€0,00</strong></div>
+                    </div>
+                    <div id="mandje-regels" class="mandje-regels" aria-live="polite"><p class="mandje-leeg">Nog geen gerechten gekozen.</p></div>
+                    <button class="primair werk-verstuur" type="button" id="btn-versturen" disabled>Bestelling versturen</button>
+                </section>
+            </div>
         </div>
     </section>
 
-    <section class="db-paneel">
-        <div class="db-paneel-titel">Bar bestellingen</div>
-        <div class="db-paneel-inhoud" id="bar-inhoud">
-            <p class="db-geen-tafels">Laden…</p>
+    <section class="werk-paneel" id="paneel-bereiden" role="tabpanel" aria-labelledby="tab-bereiden" hidden>
+        <div class="werk-queue-grid">
+            <section class="db-paneel">
+                <div class="db-paneel-titel">Keuken</div>
+                <div class="werk-queue-inhoud" id="keuken-inhoud"><p class="db-geen-tafels">Bestellingen laden…</p></div>
+            </section>
+            <section class="db-paneel">
+                <div class="db-paneel-titel">Bar</div>
+                <div class="werk-queue-inhoud" id="bar-inhoud"><p class="db-geen-tafels">Bestellingen laden…</p></div>
+            </section>
         </div>
     </section>
 
+    <section class="werk-paneel" id="paneel-afrekenen" role="tabpanel" aria-labelledby="tab-afrekenen" hidden>
+        <section class="db-paneel">
+            <div class="db-paneel-titel">Rekening en afrekenen</div>
+            <div class="werk-paneel-inhoud">
+                <div class="werk-afrekenen-select">
+                    <label for="afreken-tafel">Kies een bezette tafel</label>
+                    <select id="afreken-tafel"><option value="">Tafels laden…</option></select>
+                    <button type="button" class="secundair" id="rekening-laden" disabled>Rekening bekijken</button>
+                </div>
+                <div id="rekening-details" class="rekening-details"><p class="mandje-leeg">Selecteer een tafel om de rekening te bekijken.</p></div>
+            </div>
+        </section>
+    </section>
 </main>
-
-<nav class="db-navbar">
-    <a href="overzicht.html" class="db-navitem blauw">
-        <span class="icoon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9 21v-6h6v6"/></svg></span>
-        <span>Home</span>
-    </a>
-    <a href="bestellen.html" class="db-navitem">
-        <span class="icoon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/><path d="M9 10h6M9 13h6M9 16h4"/></svg></span>
-        <span>Bestellingen</span>
-    </a>
-    <a href="overzicht.html" class="db-navitem actief">
-        <span class="icoon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="4" rx="1"/><path d="M5 10v8M19 10v8"/></svg></span>
-        <span>Tafels</span>
-    </a>
-    <a href="instellingen.html" class="db-navitem">
-        <span class="icoon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06A2 2 0 1 1 7.04 4.29l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.32 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
-        <span>Instellingen</span>
-    </a>
-</nav>
 
 <script src="js/gedeeld.js"></script>
 <script>
-async function loadDashboard() {
-    await Promise.all([
-        loadTableOverview(),
+const MENU_GROUPS = ['Frías', 'Calientes', 'Especialidades', 'Postres', 'Bebidas'];
+let tables = [];
+let menuItems = [];
+let cart = {};
+let activeMenuGroup = MENU_GROUPS[0];
+let selectedCheckoutTable = null;
+let isRefreshing = false;
+
+function showMessage(message, type = 'fout') {
+    const container = document.getElementById('melding-plek');
+    container.replaceChildren();
+    const notice = document.createElement('div');
+    notice.className = `melding ${type === 'succes' ? 'succes' : 'fout'}`;
+    notice.textContent = message;
+    container.appendChild(notice);
+}
+
+function switchPanel(panelId) {
+    document.querySelectorAll('.werk-tab').forEach((tab) => {
+        const isSelected = tab.dataset.paneel === panelId;
+        tab.classList.toggle('actief', isSelected);
+        tab.setAttribute('aria-selected', String(isSelected));
+        tab.tabIndex = isSelected ? 0 : -1;
+    });
+    document.querySelectorAll('.werk-paneel').forEach((panel) => {
+        const isSelected = panel.id === panelId;
+        panel.hidden = !isSelected;
+        panel.classList.toggle('actief', isSelected);
+    });
+}
+
+document.querySelector('.werk-tabs').addEventListener('click', (event) => {
+    const tab = event.target.closest('.werk-tab');
+    if (tab) switchPanel(tab.dataset.paneel);
+});
+
+document.querySelector('.werk-tabs').addEventListener('keydown', (event) => {
+    if (!['ArrowLeft', 'ArrowRight'].includes(event.key)) return;
+    const tabs = [...document.querySelectorAll('.werk-tab')];
+    const activeIndex = tabs.indexOf(document.activeElement);
+    const direction = event.key === 'ArrowRight' ? 1 : -1;
+    const nextTab = tabs[(activeIndex + direction + tabs.length) % tabs.length];
+    nextTab.focus();
+    switchPanel(nextTab.dataset.paneel);
+});
+
+async function loadInitialData() {
+    const [tableData, menuData] = await Promise.all([
+        apiGet('tafels_ophalen.php'),
+        apiGet('gerechten_ophalen.php'),
+    ]);
+    if (!Array.isArray(tableData.tafels) || !Array.isArray(menuData.gerechten)) {
+        showMessage('De tafels of menukaart konden niet worden geladen. Vernieuw de pagina of probeer het opnieuw.');
+        return;
+    }
+    tables = tableData.tafels;
+    menuItems = menuData.gerechten;
+    renderTableOptions();
+    renderMenuTabs();
+    renderMenuItems();
+    updateCart();
+    await refreshLiveSections();
+}
+
+function renderTableOptions() {
+    const orderSelect = document.getElementById('tafel-select');
+    const previousOrderTable = orderSelect.value;
+    orderSelect.replaceChildren(new Option(tables.length ? 'Selecteer een tafel' : 'Geen tafels beschikbaar', ''));
+    tables.forEach((table) => {
+        const status = table.status === 'bezet' ? 'Bezet · bestelling toevoegen' : 'Vrij';
+        orderSelect.add(new Option(`${table.naam} · max. ${table.capaciteit} · ${status}`, table.id));
+    });
+    if (tables.some((table) => String(table.id) === previousOrderTable)) orderSelect.value = previousOrderTable;
+
+    const checkoutSelect = document.getElementById('afreken-tafel');
+    const previousCheckoutTable = checkoutSelect.value;
+    const occupiedTables = tables.filter((table) => table.status === 'bezet');
+    checkoutSelect.replaceChildren(new Option(occupiedTables.length ? 'Selecteer een bezette tafel' : 'Geen bezette tafels', ''));
+    occupiedTables.forEach((table) => checkoutSelect.add(new Option(table.naam, table.id)));
+    if (occupiedTables.some((table) => String(table.id) === previousCheckoutTable)) {
+        checkoutSelect.value = previousCheckoutTable;
+    } else {
+        selectedCheckoutTable = null;
+        document.getElementById('rekening-laden').disabled = true;
+        document.getElementById('rekening-details').innerHTML = '<p class="mandje-leeg">Selecteer een tafel om de rekening te bekijken.</p>';
+    }
+}
+
+function renderMenuTabs() {
+    const container = document.getElementById('menu-tabs');
+    container.replaceChildren();
+    MENU_GROUPS.forEach((group, index) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = `tab${group === activeMenuGroup ? ' actief' : ''}`;
+        button.id = `menu-tab-${index}`;
+        button.setAttribute('role', 'tab');
+        button.setAttribute('aria-selected', String(group === activeMenuGroup));
+        button.setAttribute('aria-controls', 'menu-lijst');
+        button.textContent = group;
+        button.addEventListener('click', () => {
+            activeMenuGroup = group;
+            renderMenuTabs();
+            renderMenuItems();
+            document.querySelector('.menu-tabs .tab.actief').focus();
+        });
+        container.appendChild(button);
+    });
+    const activeTab = container.querySelector('.tab.actief');
+    if (activeTab) document.getElementById('menu-lijst').setAttribute('aria-labelledby', activeTab.id);
+}
+
+function renderMenuItems() {
+    const container = document.getElementById('menu-lijst');
+    const items = menuItems.filter((item) => item.menugroep === activeMenuGroup);
+    if (!items.length) {
+        container.innerHTML = '<p class="mandje-leeg">Geen gerechten in deze categorie.</p>';
+        return;
+    }
+    container.innerHTML = items.map((item) => {
+        const id = Number(item.id);
+        const quantity = Number(cart[id]) || 0;
+        const stock = Math.max(0, Number(item.voorraad) || 0);
+        return `
+            <article class="gerecht-rij${stock === 0 ? ' gerecht-uitverkocht' : ''}">
+                <div class="naam-prijs">
+                    <span>${escapeHtml(item.naam)}</span>
+                    ${item.beschrijving ? `<span class="beschrijving">${escapeHtml(item.beschrijving)}</span>` : ''}
+                    <span class="voorraad">${formatCurrency(item.prijs)} · ${stock > 0 ? `${stock} op voorraad` : 'Uitverkocht'}</span>
+                </div>
+                <div class="aantal-controls">
+                    <button type="button" data-quantity="${id}" data-delta="-1" aria-label="Minder ${escapeHtml(item.naam)}" ${quantity === 0 ? 'disabled' : ''}>−</button>
+                    <span class="aantal-waarde" id="aantal-${id}" aria-live="polite">${quantity}</span>
+                    <button type="button" data-quantity="${id}" data-delta="1" aria-label="Meer ${escapeHtml(item.naam)}" ${quantity >= stock ? 'disabled' : ''}>+</button>
+                </div>
+            </article>`;
+    }).join('');
+}
+
+document.getElementById('menu-lijst').addEventListener('click', (event) => {
+    const button = event.target.closest('button[data-quantity]');
+    if (!button) return;
+    const id = Number(button.dataset.quantity);
+    const item = menuItems.find((menuItem) => Number(menuItem.id) === id);
+    if (!item) return;
+    cart[id] = Math.max(0, Math.min(Number(item.voorraad) || 0, (Number(cart[id]) || 0) + Number(button.dataset.delta)));
+    if (cart[id] === 0) delete cart[id];
+    renderMenuItems();
+    updateCart();
+});
+
+function updateCart() {
+    let count = 0;
+    let total = 0;
+    const rows = [];
+    Object.entries(cart).forEach(([id, quantity]) => {
+        const item = menuItems.find((menuItem) => Number(menuItem.id) === Number(id));
+        if (!item || quantity < 1) return;
+        count += quantity;
+        total += quantity * Number(item.prijs);
+        rows.push(`<div class="mandje-regel"><span>${quantity} × ${escapeHtml(item.naam)}</span><span>${formatCurrency(quantity * Number(item.prijs))}</span></div>`);
+    });
+    document.getElementById('mandje-aantal').textContent = `${count} ${count === 1 ? 'item' : 'items'}`;
+    document.getElementById('mandje-totaal').textContent = formatCurrency(total);
+    document.getElementById('mandje-regels').innerHTML = rows.join('') || '<p class="mandje-leeg">Nog geen gerechten gekozen.</p>';
+    updateOrderContext();
+}
+
+function updateOrderContext() {
+    const tableId = document.getElementById('tafel-select').value;
+    const table = tables.find((item) => String(item.id) === tableId);
+    const guests = Number(document.getElementById('aantal-personen').value) || 0;
+    const validGuests = table && guests >= 1 && guests <= Number(table.capaciteit);
+    document.getElementById('capaciteit-info').textContent = !table
+        ? 'Selecteer een tafel om door te gaan.'
+        : !validGuests
+            ? `${table.naam} heeft plaats voor maximaal ${table.capaciteit} personen.`
+            : `${table.naam} · maximaal ${table.capaciteit} personen · ${table.status === 'bezet' ? 'bestelling wordt toegevoegd aan de lopende tafel' : 'tafel is vrij'}.`;
+    document.getElementById('capaciteit-info').classList.toggle('capaciteit-waarschuwing', Boolean(table && !validGuests));
+    const guestInput = document.getElementById('aantal-personen');
+    if (table) guestInput.max = table.capaciteit;
+    else guestInput.removeAttribute('max');
+    document.getElementById('mandje-context').textContent = table && validGuests
+        ? `${table.naam} · ${guests} ${guests === 1 ? 'gast' : 'gasten'}`
+        : 'Kies een tafel en vul het aantal gasten in.';
+    document.getElementById('btn-versturen').disabled =
+        !Object.keys(cart).length || !validGuests;
+}
+
+document.getElementById('tafel-select').addEventListener('change', updateOrderContext);
+document.getElementById('aantal-personen').addEventListener('input', updateOrderContext);
+
+document.getElementById('btn-versturen').addEventListener('click', async (event) => {
+    const button = event.currentTarget;
+    const tableId = Number(document.getElementById('tafel-select').value);
+    const table = tables.find((item) => Number(item.id) === tableId);
+    const guests = Number(document.getElementById('aantal-personen').value);
+    if (!table || guests < 1 || guests > Number(table.capaciteit) || !Object.keys(cart).length) {
+        showMessage('Controleer de tafel, het aantal gasten en de bestelling.');
+        return;
+    }
+    button.disabled = true;
+    button.textContent = 'Bestelling versturen…';
+    try {
+        const result = await apiPost('bestelling_toevoegen.php', {
+            tafel_id: tableId,
+            regels: Object.entries(cart).map(([id, aantal]) => ({ gerecht_id: Number(id), aantal })),
+            klant_email: document.getElementById('klant-email').value.trim(),
+            aantal_personen: guests,
+        });
+        if (!result.succes) {
+            showMessage(result.fout || 'De bestelling kon niet worden verstuurd.');
+            return;
+        }
+        cart = {};
+        document.getElementById('klant-email').value = '';
+        document.getElementById('aantal-personen').value = '2';
+        showMessage('Bestelling verstuurd naar keuken en bar.', 'succes');
+        await loadInitialData();
+    } finally {
+        button.textContent = 'Bestelling versturen';
+        updateOrderContext();
+    }
+});
+
+async function loadOrderColumn(endpoint, containerId) {
+    const data = await apiGet(endpoint);
+    if (!Array.isArray(data.orderregels)) return null;
+    const container = document.getElementById(containerId);
+    if (!data.orderregels.length) {
+        container.innerHTML = '<p class="db-geen-tafels">Geen openstaande bestellingen.</p>';
+        return 0;
+    }
+    const grouped = new Map();
+    data.orderregels.forEach((line) => {
+        const key = String(line.tafel_id);
+        if (!grouped.has(key)) grouped.set(key, { name: line.tafel_naam, lines: [] });
+        grouped.get(key).lines.push(line);
+    });
+    container.innerHTML = [...grouped.values()].map((group) => `
+        <article class="werk-order-groep">
+            <h3>${escapeHtml(group.name)}</h3>
+            ${group.lines.map((line) => {
+                const id = Number(line.orderregel_id);
+                const status = ['besteld', 'bereid'].includes(line.status) ? line.status : 'besteld';
+                const action = status === 'besteld'
+                    ? `<button type="button" class="primair" data-order-id="${id}" data-next-status="bereid">Start bereiden</button>`
+                    : `<button type="button" class="secundair" data-order-id="${id}" data-next-status="geserveerd">Markeer geserveerd</button>`;
+                return `<div class="werk-order-regel">
+                    <div><strong>${escapeHtml(line.gerecht_naam)} × ${escapeHtml(line.aantal)}</strong><span class="badge ${status}">${status === 'besteld' ? 'Nieuw' : 'In bereiding'}</span></div>
+                    <small>Besteld om ${escapeHtml(formatTime(line.besteld_op))}</small>
+                    ${action}
+                </div>`;
+            }).join('')}
+        </article>`).join('');
+    return data.orderregels.length;
+}
+
+async function refreshQueues() {
+    const [kitchen, bar] = await Promise.all([
         loadOrderColumn('keuken_bestellingen.php', 'keuken-inhoud'),
         loadOrderColumn('bar_bestellingen.php', 'bar-inhoud'),
     ]);
+    if (Number.isInteger(kitchen) && Number.isInteger(bar)) {
+        document.getElementById('stat-orders').textContent = kitchen + bar;
+        document.getElementById('tab-open-count').textContent = kitchen + bar;
+    }
 }
 
-async function loadTableOverview() {
-    const tableData = await apiGet('tafels_ophalen.php');
-    const occupiedTables = (Array.isArray(tableData.tafels) ? tableData.tafels : [])
-        .filter((table) => table.status === 'bezet');
-    const overviewContent = document.getElementById('tafel-overzicht-inhoud');
-    const overviewFooter = document.getElementById('tafel-overzicht-footer');
+document.querySelector('.werk-queue-grid').addEventListener('click', async (event) => {
+    const button = event.target.closest('button[data-order-id]');
+    if (!button) return;
+    button.disabled = true;
+    const result = await apiPost('status_bijwerken.php', {
+        orderregel_id: Number(button.dataset.orderId),
+        status: button.dataset.nextStatus,
+    });
+    if (!result.succes) {
+        showMessage(result.fout || 'De bestelstatus kon niet worden bijgewerkt.');
+    } else {
+        showMessage(button.dataset.nextStatus === 'bereid' ? 'Bereiding gestart.' : 'Bestelling als geserveerd gemarkeerd.', 'succes');
+    }
+    await refreshQueues();
+}
+);
 
-    if (occupiedTables.length === 0) {
-        overviewContent.innerHTML = '<p class="db-geen-tafels">Geen bezette tafels op dit moment.</p>';
-        overviewFooter.innerHTML = '';
+document.getElementById('afreken-tafel').addEventListener('change', (event) => {
+    selectedCheckoutTable = Number(event.target.value) || null;
+    document.getElementById('rekening-laden').disabled = !selectedCheckoutTable;
+    document.getElementById('rekening-details').innerHTML = '<p class="mandje-leeg">Klik op ‘Rekening bekijken’ om de tafelrekening te laden.</p>';
+});
+
+document.getElementById('rekening-laden').addEventListener('click', async () => {
+    if (!selectedCheckoutTable) return;
+    await renderBill(selectedCheckoutTable);
+});
+
+async function renderBill(tableId) {
+    const bill = await apiGet(`rekening.php?tafel_id=${tableId}`);
+    const container = document.getElementById('rekening-details');
+    if (!bill.bestelling_id) {
+        container.innerHTML = '<p class="mandje-leeg">Geen openstaande rekening gevonden voor deze tafel.</p>';
         return;
     }
-
-    let totalForAllTables = 0;
-    let tableCardsHtml = '';
-
-    for (const table of occupiedTables) {
-        const billData = await apiGet(`rekening.php?tafel_id=${table.id}`);
-        const activeOrderCount = (billData.orderregels || [])
-            .filter((orderLine) => orderLine.status !== 'geserveerd').length;
-        totalForAllTables += billData.totaal || 0;
-        const guestCountText = billData.aantal_personen
-            ? `${billData.aantal_personen} / ${table.capaciteit} personen`
-            : `max ${table.capaciteit} personen`;
-
-        tableCardsHtml += `
-            <div class="db-tafelkaart">
-                <div class="naam">${escapeHtml(table.naam)}</div>
-                <div class="actief-label">${activeOrderCount} actieve order${activeOrderCount === 1 ? '' : 's'} — ${escapeHtml(guestCountText)}</div>
-                <div class="regel">
-                    <span>Openstaand bedrag</span>
-                    <span>${formatCurrency(billData.totaal || 0)}</span>
-                </div>
-            </div>
-        `;
-    }
-
-    overviewContent.innerHTML = tableCardsHtml;
-    overviewFooter.innerHTML = `<span>${occupiedTables.length} tafel${occupiedTables.length === 1 ? '' : 's'} open</span><span>TOTAAL: ${formatCurrency(totalForAllTables)}</span>`;
+    const orderLines = Array.isArray(bill.orderregels) ? bill.orderregels : [];
+    container.innerHTML = `
+        <div class="rekening-kop"><div><h2>Rekening · ${escapeHtml(bill.tafel_naam || tables.find((table) => Number(table.id) === tableId)?.naam || `Tafel ${tableId}`)}</h2><p>${bill.aantal_personen ? `${escapeHtml(bill.aantal_personen)} gasten` : 'Aantal gasten onbekend'}</p></div></div>
+        <div class="rekening-regels">${orderLines.map((line) => `<div class="mandje-regel"><span>${escapeHtml(line.gerecht_naam)} × ${escapeHtml(line.aantal)}</span><span>${formatCurrency(line.subtotaal)}</span></div>`).join('') || '<p class="mandje-leeg">Geen orderregels.</p>'}</div>
+        <div class="rekening-totaal"><strong>Totaal</strong><strong>${formatCurrency(bill.totaal || 0)}</strong></div>
+        <div class="rekening-acties">
+            <a class="secundair werk-link-knop" href="../backend/api/bon_pdf.php?tafel_id=${tableId}" target="_blank" rel="noopener">Bon als PDF</a>
+            <a class="secundair werk-link-knop" href="bon.html?tafel_id=${tableId}" target="_blank" rel="noopener">Bon bekijken / printen</a>
+            <button class="primair" type="button" id="btn-afrekenen" data-table-id="${tableId}">Afrekenen en tafel vrijgeven</button>
+        </div>`;
 }
 
-async function loadOrderColumn(endpointPath, containerId) {
-    const orderData = await apiGet(endpointPath);
-    const orderContainer = document.getElementById(containerId);
-    const orderLines = orderData.orderregels || [];
-
-    if (orderLines.length === 0) {
-        orderContainer.innerHTML = '<p class="db-geen-tafels">Geen openstaande bestellingen.</p>';
-        return;
-    }
-
-    const ordersByTable = {};
-    orderLines.forEach((orderLine) => {
-        if (!ordersByTable[orderLine.tafel_id]) {
-            ordersByTable[orderLine.tafel_id] = { naam: orderLine.tafel_naam, regels: [] };
+document.getElementById('rekening-details').addEventListener('click', async (event) => {
+    const emailButton = event.target.closest('button[data-gmail-order-id]');
+    if (emailButton) {
+        const emailInput = document.getElementById('mail-naar-klant');
+        if (!emailInput.value.trim() || !emailInput.checkValidity()) {
+            emailInput.reportValidity();
+            return;
         }
-        ordersByTable[orderLine.tafel_id].regels.push(orderLine);
-    });
+        const orderId = Number(emailButton.dataset.gmailOrderId);
+        const subject = 'Uw bonnetje van Las Tapas';
+        const body = `Beste gast,\n\nBedankt voor uw bezoek aan Las Tapas! In de bijlage vindt u uw bonnetje (bonnummer #${String(orderId).padStart(5, '0')}).\n\nTot ziens!\nTeam Las Tapas`;
+        const gmailUrl = 'https://mail.google.com/mail/?view=cm&fs=1'
+            + `&to=${encodeURIComponent(emailInput.value.trim())}`
+            + `&su=${encodeURIComponent(subject)}`
+            + `&body=${encodeURIComponent(body)}`;
+        window.open(gmailUrl, '_blank', 'noopener');
+        return;
+    }
+    const button = event.target.closest('#btn-afrekenen');
+    if (!button) return;
+    button.disabled = true;
+    const tableId = Number(button.dataset.tableId);
+    const result = await apiPost('afrekenen.php', { tafel_id: tableId });
+    if (!result.succes) {
+        showMessage(result.fout || 'De rekening kon niet worden afgerekend.');
+        button.disabled = false;
+        return;
+    }
+    const orderId = Number(result.bestelling_id);
+    const safeOrderId = Number.isSafeInteger(orderId) && orderId > 0 ? orderId : null;
+    document.getElementById('rekening-details').innerHTML = `
+        <div class="melding succes">Tafel afgerekend en weer vrij.</div>
+        ${safeOrderId ? `<div class="rekening-acties">
+            <a class="secundair werk-link-knop" href="../backend/api/bon_pdf.php?bestelling_id=${safeOrderId}" target="_blank" rel="noopener">Bon als PDF</a>
+            <a class="secundair werk-link-knop" href="bon.html?bestelling_id=${safeOrderId}" target="_blank" rel="noopener">Bon bekijken / printen</a>
+        </div>
+        <div class="werk-email-bon">
+            <label for="mail-naar-klant">Bon per e-mail klaarzetten</label>
+            <div><input type="email" id="mail-naar-klant" value="${escapeHtml(result.klant_email || '')}" placeholder="naam@voorbeeld.nl">
+            <button class="secundair" type="button" data-gmail-order-id="${safeOrderId}">E-mail openen</button></div>
+            <small>Voeg de gedownloade PDF zelf als bijlage toe.</small>
+        </div>` : ''}`;
+    showMessage('Tafel succesvol afgerekend.', 'succes');
+    await refreshLiveSections();
+});
 
-    let orderCardsHtml = '';
-    Object.values(ordersByTable).forEach((tableGroup) => {
-        const lastOrderTime = tableGroup.regels[tableGroup.regels.length - 1].besteld_op;
-        let orderLinesHtml = '';
-        tableGroup.regels.forEach((orderLine) => {
-            const statusBadge = orderLine.status === 'bereid'
-                ? '<span class="db-badge bezig">BEZIG</span>'
-                : '<span class="db-badge nieuw">NIEUW</span>';
-            orderLinesHtml += `
-                <div class="db-orderregel">
-                    <span>${escapeHtml(orderLine.gerecht_naam)} (${escapeHtml(orderLine.aantal)})</span>
-                    ${statusBadge}
-                </div>
-            `;
-        });
-
-        orderCardsHtml += `
-            <div class="db-orderkaart">
-                <div class="kop">
-                    <span>${escapeHtml(tableGroup.naam)}</span>
-                    <span class="tijd">${formatTime(lastOrderTime)}</span>
-                </div>
-                ${orderLinesHtml}
-            </div>
-        `;
-    });
-
-    orderContainer.innerHTML = orderCardsHtml;
+async function refreshLiveSections() {
+    if (isRefreshing) return;
+    isRefreshing = true;
+    try {
+        const tableData = await apiGet('tafels_ophalen.php');
+        if (Array.isArray(tableData.tafels)) {
+            tables = tableData.tafels;
+            const occupied = tables.filter((table) => table.status === 'bezet');
+            document.getElementById('stat-bezet').textContent = occupied.length;
+            document.getElementById('stat-vrij').textContent = tables.length - occupied.length;
+            renderTableOptions();
+        }
+        await refreshQueues();
+    } finally {
+        isRefreshing = false;
+    }
 }
 
-setInterval(loadDashboard, 5000);
-loadDashboard();
+setInterval(refreshLiveSections, 5000);
+loadInitialData();
 </script>
 </body>
 </html>

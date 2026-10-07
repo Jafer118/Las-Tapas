@@ -423,3 +423,211 @@ nav.subnav a.home-link:hover {
     background: var(--kleur-wijn);
     color: var(--kleur-papier);
 }
+
+/* Ordering screen: keep the table, menu, and final check in a clear sequence. */
+.bestel-intro {
+    margin: 0 0 18px;
+}
+.bestel-eyebrow {
+    margin: 0 0 6px;
+    color: var(--kleur-terracotta-op);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+}
+.bestel-intro h1 {
+    margin: 0;
+    color: var(--kleur-tekst);
+    font-family: var(--font-kop);
+    font-size: clamp(1.7rem, 4vw, 2.4rem);
+}
+.bestel-intro > p:last-child,
+.bestel-sectie-kop p {
+    margin: 6px 0 0;
+    color: var(--kleur-tekst-zacht);
+    font-size: 0.9rem;
+}
+.bestel-stappen {
+    display: flex;
+    gap: 10px;
+    margin: 0 0 18px;
+    padding: 0;
+    list-style: none;
+}
+.bestel-stappen li {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    flex: 1;
+    padding: 11px 13px;
+    border: 1px solid var(--kleur-paneel-rand);
+    border-radius: var(--rond-klein);
+    background: rgba(59, 22, 32, 0.72);
+    color: var(--kleur-tekst-zacht);
+    font-size: 0.82rem;
+    font-weight: 600;
+}
+.bestel-stappen li span,
+.bestel-stap-nummer {
+    display: inline-grid;
+    flex: 0 0 29px;
+    width: 29px;
+    height: 29px;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--kleur-terracotta);
+    color: var(--kleur-bodega-diep);
+    font-weight: 700;
+}
+.bestel-context,
+.bestel-menu {
+    margin-bottom: 18px;
+}
+.bestel-sectie-kop {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.bestel-sectie-kop h2 {
+    margin: 0;
+}
+.bestel-context-velden {
+    display: grid;
+    grid-template-columns: minmax(130px, 190px) minmax(0, 1fr);
+    align-items: center;
+    gap: 11px 16px;
+    margin-top: 18px;
+}
+.bestel-context-velden label {
+    color: var(--kleur-tekst);
+    font-size: 0.88rem;
+    font-weight: 600;
+}
+.bestel-context-velden label span {
+    color: var(--kleur-tekst-zacht);
+    font-weight: 400;
+}
+.bestel-context-velden select,
+.bestel-context-velden input {
+    width: 100%;
+    min-height: 42px;
+}
+.capaciteit-info {
+    min-height: 1.3em;
+    margin: 14px 0 0;
+    color: var(--kleur-olijf);
+    font-size: 0.85rem;
+}
+.capaciteit-info.capaciteit-waarschuwing {
+    color: #F0C2C2;
+}
+.bestel-menu .bestel-sectie-kop {
+    margin-bottom: 16px;
+}
+.menu-tabs .tab {
+    appearance: none;
+    border: 0;
+    border-bottom: 3px solid transparent;
+    border-radius: 0;
+    background: transparent;
+    margin: 0 0 -2px;
+    padding: 10px 15px;
+}
+.menu-tabs .tab:focus-visible,
+.aantal-controls button:focus-visible,
+.bestel-verstuur:focus-visible {
+    outline: 3px solid var(--kleur-saffraan);
+    outline-offset: 3px;
+}
+.gerecht-rij {
+    gap: 16px;
+}
+.gerecht-rij .naam-prijs {
+    min-width: 0;
+    gap: 2px;
+}
+.gerecht-rij.gerecht-uitverkocht {
+    opacity: 0.65;
+}
+.aantal-controls button:disabled,
+.bestel-verstuur:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+}
+.mandje-samenvatting {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 12px 22px;
+    margin-bottom: 18px;
+}
+.mandje-kop {
+    display: contents;
+}
+.mandje-kop .bestel-sectie-kop {
+    grid-column: 1;
+}
+.mandje-totalen {
+    display: grid;
+    grid-template-columns: auto auto;
+    align-items: baseline;
+    gap: 5px 12px;
+    text-align: right;
+}
+.mandje-totalen span {
+    color: var(--kleur-tekst-zacht);
+    font-size: 0.82rem;
+}
+.mandje-totalen strong:last-child {
+    font-size: 1.25rem;
+}
+.mandje-regels {
+    grid-column: 1 / -1;
+    max-height: 190px;
+    overflow: auto;
+    border-top: 1px solid var(--kleur-paneel-rand);
+    border-bottom: 1px solid var(--kleur-paneel-rand);
+    padding: 8px 0;
+}
+.mandje-regel {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 5px 0;
+    color: var(--kleur-tekst);
+    font-size: 0.88rem;
+}
+.mandje-regel span:last-child {
+    color: var(--kleur-saffraan);
+    white-space: nowrap;
+}
+.mandje-leeg,
+.menu-leeg {
+    margin: 4px 0;
+    color: var(--kleur-tekst-zacht);
+    font-size: 0.86rem;
+}
+.bestel-verstuur {
+    grid-column: 1 / -1;
+    justify-self: end;
+    min-width: min(100%, 250px);
+    min-height: 44px;
+}
+
+@media (max-width: 640px) {
+    main { padding: 18px 14px; }
+    .bestel-stappen { flex-direction: column; gap: 7px; }
+    .bestel-stappen li { flex: auto; }
+    .bestel-context-velden { grid-template-columns: 1fr; gap: 7px; }
+    .bestel-context-velden label:not(:first-child) { margin-top: 7px; }
+    .mandje-samenvatting { grid-template-columns: 1fr; }
+    .mandje-totalen {
+        grid-template-columns: 1fr auto;
+        text-align: left;
+    }
+    .mandje-totalen strong:first-child { grid-column: 1 / -1; }
+    .bestel-verstuur { width: 100%; }
+    .gerecht-rij { align-items: flex-start; padding: 11px; }
+    .gerecht-rij .naam-prijs { flex: 1; }
+    .aantal-controls { flex-shrink: 0; }
+}

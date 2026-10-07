@@ -30,39 +30,6 @@ function showApiError(message) {
     errorBanner.textContent = message;
 }
 
-function addSystemNavigation() {
-    const subnav = document.querySelector('.subnav');
-    if (subnav) {
-        const homeLink = document.createElement('a');
-        homeLink.href = START_PAGE;
-        homeLink.className = 'home-link';
-        homeLink.textContent = '← Startpagina';
-        subnav.prepend(homeLink);
-
-        const stockLink = document.createElement('a');
-        stockLink.href = '../../voorraad-las-tapas/index.html';
-        stockLink.textContent = 'Voorraadbeheer';
-        subnav.appendChild(stockLink);
-    }
-
-    const dashboardNav = document.querySelector('.db-navbar');
-    if (dashboardNav) {
-        const homeLink = document.createElement('a');
-        homeLink.className = 'db-navitem home-link';
-        homeLink.href = START_PAGE;
-        homeLink.innerHTML = '<span class="icoon" aria-hidden="true">⌂</span><span>Start</span>';
-        dashboardNav.prepend(homeLink);
-
-        const stockLink = document.createElement('a');
-        stockLink.className = 'db-navitem';
-        stockLink.href = '../../voorraad-las-tapas/index.html';
-        stockLink.innerHTML = '<span class="icoon" aria-hidden="true">▤</span><span>Voorraad</span>';
-        dashboardNav.appendChild(stockLink);
-    }
-}
-
-addSystemNavigation();
-
 async function requireAuthentication() {
     const response = await fetch(`${API_BASE}/auth.php?actie=me`, { credentials: 'same-origin' });
     const sessionData = await response.json();
@@ -74,32 +41,32 @@ async function requireAuthentication() {
         const avatar = document.querySelector('.db-avatar');
         if (avatar) {
             avatar.textContent = sessionData.gebruiker.naam;
-            avatar.title = 'Klik om uit te loggen';
-            avatar.style.cursor = 'pointer';
-            avatar.addEventListener('click', async () => {
-                await fetch(`${API_BASE}/auth.php?actie=logout`, {
-                    method: 'POST',
-                    headers: { 'X-CSRF-Token': csrfToken },
-                    credentials: 'same-origin',
-                });
-                location.href = START_PAGE;
-            }, { once: true });
+            avatar.removeAttribute('title');
+            avatar.style.cursor = 'default';
         }
-        if (!document.querySelector('.auth-uitloggen')) {
-            const logoutButton = document.createElement('button');
+        let logoutButton = document.querySelector('#logout-button, .auth-uitloggen');
+        if (!logoutButton) {
+            logoutButton = document.createElement('button');
             logoutButton.className = 'auth-uitloggen';
             logoutButton.type = 'button';
             logoutButton.textContent = 'Uitloggen';
             logoutButton.style.cssText = 'position:fixed;right:18px;bottom:18px;z-index:20;padding:9px 14px;background:var(--kleur-wijn);color:var(--kleur-tekst);border:0;border-radius:6px;font:700 0.85rem var(--font-tekst);cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.28)';
+            document.body.appendChild(logoutButton);
+        }
+        if (logoutButton.dataset.logoutBound !== 'true') {
+            logoutButton.dataset.logoutBound = 'true';
             logoutButton.addEventListener('click', async () => {
-                await fetch(`${API_BASE}/auth.php?actie=logout`, {
+                const response = await fetch(`${API_BASE}/auth.php?actie=logout`, {
                     method: 'POST',
                     headers: { 'X-CSRF-Token': csrfToken },
                     credentials: 'same-origin',
                 });
+                if (!response.ok) {
+                    showApiError('Uitloggen is mislukt. Probeer het opnieuw.');
+                    return;
+                }
                 location.href = START_PAGE;
             });
-            document.body.appendChild(logoutButton);
         }
     }
     return sessionData;

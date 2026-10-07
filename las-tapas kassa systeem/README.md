@@ -35,15 +35,18 @@ compatibility with the current frontend and stored data.
 
 ## Main Workflows
 
-- The ordering screen submits table, guest-count, optional email, and menu-item
-  data. The API validates the request, checks table capacity and stock, saves
-  order lines, and deducts inventory in one database transaction.
-- Kitchen and bar screens poll for outstanding items every five seconds and
-  allow staff to advance their preparation status.
-- The cash-register screen displays the bill and closes the order. Receipts can
-  be printed or downloaded as PDF. The Gmail handoff pre-fills the message;
-  staff attach the downloaded PDF themselves because browsers cannot attach
-  local files automatically.
+- Staff use `frontend/overzicht.html` as the single-page work panel for placing
+  orders, preparing kitchen and bar items, and checking out tables. The panels
+  are grouped into three task tabs to keep the daily interface focused.
+- Ordering submits table, guest-count, optional email, and menu-item data. The
+  API validates the request, checks table capacity and stock, saves order lines,
+  and deducts inventory in one database transaction.
+- Kitchen and bar orders refresh every five seconds in the work panel and allow
+  staff to advance each order line through preparation and serving.
+- Checkout closes the order and frees the table. Receipts can be printed or
+  downloaded as PDF. The Gmail handoff pre-fills the message; staff attach the
+  downloaded PDF themselves because browsers cannot attach local files
+  automatically.
 - The menu contains 55 sample items across five menu groups. The floor plan has
   26 tables. Prices are placeholders and must be checked before real use.
 
