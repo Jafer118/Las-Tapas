@@ -4,9 +4,85 @@
 
 document.addEventListener("DOMContentLoaded", function () {
 
+  const reservationApiUrl =
+    "../Backend/api/reservations.php";
+
+
+  async function readReservationResponse(response) {
+
+    let responseData;
+
+    try {
+      responseData = await response.json();
+    } catch {
+      throw new Error("De server heeft een ongeldig antwoord teruggestuurd.");
+    }
+
+
+    if (
+      !responseData ||
+      typeof responseData !== "object" ||
+      Array.isArray(responseData)
+    ) {
+      throw new Error("De server heeft een ongeldig antwoord teruggestuurd.");
+    }
+
+
+    if (!response.ok) {
+      throw new Error(
+        responseData.error ||
+        `Aanvraag mislukt (HTTP ${response.status}).`
+      );
+    }
+
+
+    return responseData;
+
+  }
+
+
+  async function createReservation(reservationData) {
+
+    const tokenResponse =
+      await fetch(
+        reservationApiUrl,
+        {
+          credentials: "same-origin",
+          headers: { "Accept": "application/json" }
+        }
+      );
+
+    const tokenData =
+      await readReservationResponse(tokenResponse);
+
+    if (typeof tokenData.csrfToken !== "string") {
+      throw new Error("De beveiligingscontrole kan niet worden geladen.");
+    }
+
+
+    const response =
+      await fetch(
+        reservationApiUrl,
+        {
+          method: "POST",
+          credentials: "same-origin",
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "X-CSRF-Token": tokenData.csrfToken
+          },
+          body: JSON.stringify(reservationData)
+        }
+      );
+
+
+    return readReservationResponse(response);
+
+  }
+
 
   /* =======================================================
-     PAGINA ROUTER
+     PAGE ROUTER
   ======================================================= */
 
   const pages = document.querySelectorAll(".page");
@@ -133,7 +209,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =======================================================
-     MOBIELE NAVIGATIE
+     MOBILE NAVIGATION
   ======================================================= */
 
   const navToggle =
@@ -221,7 +297,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =======================================================
-     FORMULES OP MENU
+     MENU PACKAGES
   ======================================================= */
 
   const menuFormulaCards =
@@ -268,7 +344,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
 
-        /* Zelfde formule ook in reservering selecteren */
+        /* Keep the matching reservation package selected as well. */
 
         const formula =
           card.dataset.formula;
@@ -308,7 +384,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =======================================================
-     GERECHTEN + / -
+     DISHES + / -
   ======================================================= */
 
   const dishes =
@@ -459,14 +535,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =======================================================
-     RESERVERING VARIABELEN
+     RESERVATION STATE
   ======================================================= */
 
   let guests = 2;
 
   let selectedTable = null;
-
-  let selectedPayment = "iDEAL";
 
   let selectedFormula = {
     name: "3 uur tafelen",
@@ -475,7 +549,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =======================================================
-     FORMULE KIEZEN
+     SELECT PACKAGE
   ======================================================= */
 
   const bookingFormulas =
@@ -526,7 +600,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =======================================================
-     PERSONEN
+     GUESTS
   ======================================================= */
 
   const guestNumber =
@@ -617,7 +691,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =======================================================
-     TAFELS
+     TABLES
   ======================================================= */
 
   const tableContainer =
@@ -830,7 +904,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =======================================================
-     DATUM MINIMAAL VANDAAG
+     MINIMUM RESERVATION DATE
   ======================================================= */
 
   const dateInput =
@@ -868,7 +942,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =======================================================
-     DATUM / TIJD
+     DATE / TIME
   ======================================================= */
 
   const timeInput =
@@ -898,7 +972,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =======================================================
-     RESERVERINGS OVERZICHT
+     RESERVATION SUMMARY
   ======================================================= */
 
   function updateReservationSummary() {
@@ -1041,7 +1115,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =======================================================
-     RESERVERING SUBMIT
+     RESERVATION SUBMISSION
   ======================================================= */
 
   const reservationForm =
@@ -1103,7 +1177,7 @@ document.addEventListener("DOMContentLoaded", function () {
           ).value.trim();
 
 
-        /* Betalingsgegevens vullen */
+        /* Populate the payment summary. */
 
         document.getElementById(
           "pay-formula"
@@ -1132,7 +1206,7 @@ document.addEventListener("DOMContentLoaded", function () {
           );
 
 
-        /* Betaling tonen */
+        /* Show the payment screen. */
 
         reservationForm.style.display =
           "none";
@@ -1150,7 +1224,7 @@ document.addEventListener("DOMContentLoaded", function () {
           "none";
 
 
-        /* Stap indicator */
+        /* Update the reservation progress indicator. */
 
         document
           .getElementById("step-reservation")
@@ -1168,7 +1242,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
 
-        /* Gegevens bewaren */
+        /* Preserve the entered details for the confirmation screen. */
 
         reservationForm.dataset.name =
           name;
@@ -1189,62 +1263,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =======================================================
-     BETAALMETHODE
-  ======================================================= */
-
-  const paymentMethods =
-    document.querySelectorAll(
-      ".payment-method"
-    );
-
-
-  paymentMethods.forEach(function (method) {
-
-    method.addEventListener(
-      "click",
-      function () {
-
-        paymentMethods.forEach(
-          function (other) {
-
-            other.classList.remove(
-              "active"
-            );
-
-          }
-        );
-
-
-        method.classList.add(
-          "active"
-        );
-
-
-        selectedPayment =
-          method.dataset.payment;
-
-
-        const payMethod =
-          document.getElementById(
-            "pay-method"
-          );
-
-
-        if (payMethod) {
-
-          payMethod.textContent =
-            selectedPayment;
-
-        }
-
-      }
-    );
-
-  });
-
-
-  /* =======================================================
-     TERUG NAAR RESERVERING
+     RETURN TO RESERVATION
   ======================================================= */
 
   const backButton =
@@ -1285,7 +1304,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =======================================================
-     DEMO BETALING
+     RESERVATION CONFIRMATION
   ======================================================= */
 
   const demoPay =
@@ -1298,7 +1317,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     demoPay.addEventListener(
       "click",
-      function () {
+      async function () {
 
         const name =
           reservationForm.dataset.name ||
@@ -1318,8 +1337,41 @@ document.addEventListener("DOMContentLoaded", function () {
             "time"
           ).value;
 
+        const tableMatch =
+          /^Tafel (\d+)$/.exec(selectedTable || "");
 
-        /* Succesgegevens */
+        const errorElement =
+          document.getElementById("reservation-error");
+
+        errorElement.textContent = "";
+        demoPay.disabled = true;
+
+        let reservationResult;
+        try {
+          reservationResult =
+            await createReservation({
+              name,
+              phone: reservationForm.dataset.phone,
+              email: reservationForm.dataset.email,
+              specialRequests: reservationForm.dataset.message,
+              date,
+              time,
+              tableNumber: tableMatch ? Number(tableMatch[1]) : null,
+              guestCount: guests,
+              package: selectedFormula.name,
+              privacyAccepted:
+                document.getElementById("privacy-accepted").checked
+            });
+        } catch (error) {
+          errorElement.textContent = error.message;
+          console.error(error);
+          return;
+        } finally {
+          demoPay.disabled = false;
+        }
+
+
+        /* Populate the booking confirmation. */
 
         document.getElementById(
           "success-name"
@@ -1375,12 +1427,16 @@ document.addEventListener("DOMContentLoaded", function () {
           "success-total"
         ).textContent =
           formatPrice(
-            selectedFormula.price *
-            guests
+            Number(reservationResult.totalPrice)
           );
 
+        document.getElementById(
+          "success-reservation-id"
+        ).textContent =
+          reservationResult.reservationId;
 
-        /* Schermen */
+
+        /* Switch from payment to confirmation. */
 
         document.getElementById(
           "payment-screen"
@@ -1416,7 +1472,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =======================================================
-     NIEUWE RESERVERING
+     NEW RESERVATION
   ======================================================= */
 
   const newReservation =
@@ -1461,7 +1517,7 @@ document.addEventListener("DOMContentLoaded", function () {
         };
 
 
-        /* Formule reset */
+        /* Reset the selected package. */
 
         bookingFormulas.forEach(
           function (button) {
@@ -1485,7 +1541,7 @@ document.addEventListener("DOMContentLoaded", function () {
         );
 
 
-        /* Gerechten reset */
+        /* Reset the selected dishes. */
 
         Object.keys(selectedDishes)
           .forEach(function (name) {
@@ -1545,7 +1601,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =======================================================
-     OPENINGSTIJDEN
+     OPENING HOURS
   ======================================================= */
 
   const today =

@@ -21,6 +21,14 @@ INSERT INTO gebruikers (gebruikersnaam, naam, wachtwoord_hash)
 SELECT 'marcus', 'Marcus', '$2y$10$GFgyJqHUHxv6jJ6qpd9SUegSPCBOMx7BHxk1fxNTVCWVejBNqsp2e'
 WHERE NOT EXISTS (SELECT 1 FROM gebruikers WHERE gebruikersnaam = 'marcus');
 
+CREATE TABLE IF NOT EXISTS voorraad_login_rate_limits (
+    client_hash CHAR(64) NOT NULL,
+    attempts SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+    window_started_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (client_hash),
+    INDEX idx_voorraad_login_window (window_started_at)
+);
+
 CREATE TABLE IF NOT EXISTS voorraad_items (
     id INT UNSIGNED NOT NULL AUTO_INCREMENT,
     naam VARCHAR(120) NOT NULL,

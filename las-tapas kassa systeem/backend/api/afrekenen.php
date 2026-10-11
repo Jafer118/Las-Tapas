@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * POST api/afrekenen.php
  * Expects a JSON body: { "tafel_id": 10 }

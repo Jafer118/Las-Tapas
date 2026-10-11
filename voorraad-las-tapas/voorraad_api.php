@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 header('Content-Type: application/json; charset=utf-8');
 
-session_start();
+require_once __DIR__ . '/session.php';
+startAppSession();
+require_once __DIR__ . '/validation.php';
 
 if (!isset($_SESSION['user_id'])) {
     http_response_code(401);
@@ -22,13 +24,38 @@ function response(array $data, int $status = 200): void
 
 function requestBody(): array
 {
-    $body = json_decode(file_get_contents('php://input'), true);
-    return is_array($body) ? $body : [];
+    $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
+    if (stripos($contentType, 'application/json') !== 0) {
+        response(['error' => 'Een JSON-aanvraag is vereist.'], 415);
+    }
+
+    $maximumBytes = 1048576;
+    $contentLength = filter_var($_SERVER['CONTENT_LENGTH'] ?? null, FILTER_VALIDATE_INT);
+    if ($contentLength !== false && $contentLength > $maximumBytes) {
+        response(['error' => 'De aanvraag is te groot.'], 413);
+    }
+
+    $rawBody = file_get_contents('php://input');
+    if (strlen($rawBody) > $maximumBytes) {
+        response(['error' => 'De aanvraag is te groot.'], 413);
+    }
+
+    $decodedBody = json_decode($rawBody);
+    if (json_last_error() !== JSON_ERROR_NONE || !$decodedBody instanceof stdClass) {
+        response(['error' => 'Ongeldige JSON-aanvraag.'], 400);
+    }
+
+    return get_object_vars($decodedBody);
 }
 
 try {
-    $pdo = database();
     $method = $_SERVER['REQUEST_METHOD'];
+    if (!in_array($method, ['GET', 'POST', 'PATCH', 'DELETE'], true)) {
+        header('Allow: GET, POST, PATCH, DELETE');
+        response(['error' => 'Methode niet toegestaan.'], 405);
+    }
+
+    $pdo = database();
 
     if ($method === 'GET') {
         $statement = $pdo->query(
@@ -38,20 +65,18 @@ try {
              WHERE actief = 1
              ORDER BY categorie, naam'
         );
-        response(['items' => $statement->fetchAll()]);
+        response(['items' => $statement->fetchAll(), 'csrfToken' => csrfToken()]);
+    }
+
+    if (!hasValidCsrfToken($_SERVER['HTTP_X_CSRF_TOKEN'] ?? null)) {
+        response(['error' => 'Ongeldig beveiligingstoken.'], 403);
     }
 
     $body = requestBody();
-    $id = filter_var($body['id'] ?? null, FILTER_VALIDATE_INT);
 
     if ($method === 'POST') {
-        $name = trim((string) ($body['name'] ?? ''));
-        $category = $body['category'] ?? '';
-        $stock = filter_var($body['stock'] ?? null, FILTER_VALIDATE_INT);
-        $minimum = filter_var($body['minimum'] ?? null, FILTER_VALIDATE_INT);
-        $price = filter_var($body['price'] ?? null, FILTER_VALIDATE_FLOAT);
-
-        if ($name === '' || !in_array($category, ['keuken', 'bar'], true) || $stock === false || $minimum === false || $price === false || $stock < 0 || $minimum < 0 || $price < 0) {
+        $item = validateInventoryItem($body);
+        if ($item === null) {
             response(['error' => 'Ongeldige artikelgegevens.'], 422);
         }
 
@@ -59,17 +84,18 @@ try {
             'INSERT INTO voorraad_items (naam, categorie, voorraad, minimumvoorraad, prijs)
              VALUES (:name, :category, :stock, :minimum, :price)'
         );
-        $statement->execute(['name' => $name, 'category' => $category, 'stock' => $stock, 'minimum' => $minimum, 'price' => $price]);
+        $statement->execute($item);
         response(['id' => (int) $pdo->lastInsertId()], 201);
     }
 
-    if ($id === false || $id === null) {
+    $id = parseInventoryId($body['id'] ?? null);
+    if ($id === null) {
         response(['error' => 'Een geldig artikel-id is verplicht.'], 422);
     }
 
     if ($method === 'PATCH') {
-        $delta = filter_var($body['delta'] ?? null, FILTER_VALIDATE_INT);
-        if ($delta === false || abs($delta) > 10000) {
+        $delta = parseStockDelta($body['delta'] ?? null);
+        if ($delta === null) {
             response(['error' => 'Ongeldige voorraadmutatie.'], 422);
         }
 

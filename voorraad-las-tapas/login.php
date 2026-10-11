@@ -1,11 +1,14 @@
 <?php
 declare(strict_types=1);
-session_start();
+
+require_once __DIR__ . '/session.php';
+startAppSession();
+
 if (isset($_SESSION['user_id'])) {
     header('Location: index.html');
     exit;
 }
-$hasError = isset($_GET['error']);
+$error = $_GET['error'] ?? '';
 ?><!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -23,9 +26,10 @@ $hasError = isset($_GET['error']);
         <p class="eyebrow">VOORRAADBEHEER</p>
         <h1>Welkom terug.</h1>
         <p class="login-intro">Log in om de actuele voorraad van de zaak te bekijken.</p>
-        <?php if ($hasError): ?><div class="login-error">Onjuiste gebruikersnaam of wachtwoord.</div><?php endif; ?>
+        <?php if ($error === 'unavailable'): ?><div class="login-error">Inloggen is tijdelijk niet mogelijk. Probeer het later opnieuw.</div><?php elseif ($error === 'rate-limit'): ?><div class="login-error">Te veel inlogpogingen. Probeer het over 15 minuten opnieuw.</div><?php elseif ($error !== ''): ?><div class="login-error">Onjuiste gebruikersnaam of wachtwoord.</div><?php endif; ?>
         <form class="login-form" action="auth.php" method="post">
-            <label>Gebruikersnaam<input name="username" autocomplete="username" required autofocus placeholder="sofia of marcus"></label>
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8') ?>">
+            <label>Gebruikersnaam<input name="username" autocomplete="username" maxlength="50" required autofocus placeholder="sofia of marcus"></label>
             <label>Wachtwoord<input name="password" type="password" autocomplete="current-password" required></label>
             <button class="primary-button" type="submit">Inloggen <span>→</span></button>
         </form>

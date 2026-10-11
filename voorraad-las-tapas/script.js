@@ -1,6 +1,7 @@
 const API_URL = 'voorraad_api.php';
 let items = [];
 let selectedCategory = 'all';
+let csrfToken = '';
 
 function formatMoney(value) {
     return new Intl.NumberFormat('nl-NL', { style: 'currency', currency: 'EUR', maximumFractionDigits: 2 }).format(value);
@@ -20,24 +21,37 @@ function escapeHtml(value) {
 
 async function apiRequest(method = 'GET', body = null) {
     const options = { method, headers: { 'Accept': 'application/json' } };
+    if (method !== 'GET') {
+        if (!csrfToken) throw new Error('Beveiligingstoken ontbreekt. Vernieuw de pagina.');
+        options.headers['X-CSRF-Token'] = csrfToken;
+    }
     if (body) {
         options.headers['Content-Type'] = 'application/json';
         options.body = JSON.stringify(body);
     }
     const response = await fetch(API_URL, options);
-    const data = await response.json().catch(() => ({}));
+    let data;
+    try {
+        data = await response.json();
+    } catch {
+        throw new Error('De server heeft een ongeldig antwoord teruggestuurd.');
+    }
     if (response.status === 401) {
         window.location.href = 'login.php';
         throw new Error('Inloggen vereist.');
     }
     if (!response.ok) throw new Error(data.error || `API-fout (${response.status})`);
+    if (data.csrfToken) csrfToken = data.csrfToken;
     return data;
 }
 
 async function loadItems(showMessage = false) {
     try {
         const data = await apiRequest();
-        items = data.items || [];
+        if (!Array.isArray(data.items)) {
+            throw new Error('De voorraadgegevens hebben een ongeldig formaat.');
+        }
+        items = data.items;
         render();
         if (showMessage) showToast('Voorraad is gesynchroniseerd.');
     } catch (error) {
@@ -120,7 +134,8 @@ document.querySelector('#logout-button').addEventListener('click', async event =
     const button = event.currentTarget;
     button.disabled = true;
     try {
-        const response = await fetch('logout.php', { method: 'POST', credentials: 'same-origin', headers: { 'Accept': 'application/json' } });
+        if (!csrfToken) throw new Error('Beveiligingstoken ontbreekt. Vernieuw de pagina.');
+        const response = await fetch('logout.php', { method: 'POST', credentials: 'same-origin', headers: { 'Accept': 'application/json', 'X-CSRF-Token': csrfToken } });
         if (!response.ok) throw new Error('Uitloggen is mislukt.');
         window.location.href = '../index.html';
     } catch (error) {

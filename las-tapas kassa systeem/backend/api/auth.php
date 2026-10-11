@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 require_once __DIR__ . '/../db.php';
 require_once __DIR__ . '/../lib/auth.php';
 
@@ -52,7 +54,10 @@ if ($action === 'login') {
         sendJsonResponse(['succes' => false, 'fout' => 'E-mailadres of wachtwoord is onjuist.'], 401);
     }
 
-    session_regenerate_id(true);
+    if (!session_regenerate_id(true)) {
+        error_log('Failed to regenerate the session ID after login.');
+        sendJsonResponse(['succes' => false, 'fout' => 'Inloggen is tijdelijk niet mogelijk.'], 500);
+    }
     unset($_SESSION['csrf_token']);
     $_SESSION['gebruiker'] = [
         'id' => (int) $user['id'],

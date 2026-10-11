@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 require_once __DIR__ . '/../backend/lib/validation.php';
 require_once __DIR__ . '/../backend/lib/pdf_bon.php';

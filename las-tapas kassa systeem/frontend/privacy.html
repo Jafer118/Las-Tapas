@@ -21,30 +21,44 @@
 
 <main>
     <div class="paneel" style="max-width:800px;margin:0 auto;line-height:1.6;">
-        <h2>Privacyverklaring bestel- en kassasysteem</h2>
+        <h2>Privacyverklaring Las Tapas-systemen</h2>
         <p>
-            Dit bestel- en kassasysteem van Las Tapas is ontwikkeld om papieren bestelbonnetjes
-            te vervangen door een digitaal systeem. Hieronder staat hoe wij omgaan met gegevens
-            binnen dit systeem, in lijn met de Algemene Verordening Gegevensbescherming (AVG).
+            Deze verklaring beschrijft welke gegevens de prototypes van de Las Tapas-website,
+            het bestel- en kassasysteem en het voorraadbeheer verwerken. Laat deze tekst juridisch
+            controleren en vul de gegevens van de verwerkingsverantwoordelijke aan voordat een
+            systeem voor echte gasten wordt ingezet.
         </p>
 
-        <h3>Welke gegevens worden opgeslagen?</h3>
+        <h3>Bestel- en kassasysteem</h3>
         <p>
-            Het systeem slaat uitsluitend operationele gegevens op die nodig zijn voor de
-            bediening: tafelnummers, bestelde gerechten/drankjes, aantallen, prijzen, tijdstippen
-            en voorraadaantallen. Er worden <strong>geen</strong> namen, contactgegevens,
-            betaalgegevens of andere persoonsgegevens van gasten verzameld of opgeslagen, tenzij
-            een gast zelf vrijwillig een naam doorgeeft die aan een tafel wordt gekoppeld
-            (bijvoorbeeld bij een reservering) — in dat geval wordt deze alleen intern gebruikt
-            en niet gedeeld met derden.
+            Het kassasysteem verwerkt operationele gegevens zoals tafel- en bestelregels, aantallen,
+            prijzen, tijdstippen en voorraad. Optioneel kan een e-mailadres bij een bestelling worden
+            opgeslagen voor de bestelafhandeling. De publieke reserveringswebsite verwerkt daarnaast
+            de gegevens die hieronder zijn beschreven.
+        </p>
+
+        <h3>Publieke reserveringswebsite</h3>
+        <p>
+            Wanneer een gast een reservering bevestigt, worden naam, telefoonnummer, e-mailadres,
+            eventuele speciale verzoeken, reserveringsdatum en -tijd, tafel, groepsgrootte, gekozen
+            formule en de berekende prijs opgeslagen. Deze gegevens worden gebruikt om de reservering
+            vast te leggen, dubbele tafelboekingen te voorkomen en zo nodig contact over de reservering
+            op te nemen. De websiteprototype koppelt geen betaalprovider en vraagt geen betaling aan.
+            De reserveringsprijs is indicatief.
+        </p>
+        <p>
+            Reserveringsgegevens worden uiterlijk verwijderd zodra de reserveringsdatum 90 dagen
+            verstreken is. De installatie moet daarvoor de periodieke opschoontaak uit de README
+            uitvoeren. Ter voorkoming van misbruik wordt daarnaast een HMAC-hash van het IP-adres
+            tijdelijk gebruikt voor een limiet op reserveringspogingen; het ruwe IP-adres wordt niet
+            in die tabel opgeslagen en limietregels ouder dan een dag worden door die taak verwijderd.
         </p>
 
         <h3>Bewaartermijn</h3>
         <p>
-            Bestelgegevens worden bewaard zolang dit nodig is voor de bedrijfsvoering (o.a.
-            financiële administratie en voorraadbeheer) en conform de wettelijke bewaartermijn
-            voor de fiscale administratie (in Nederland doorgaans 7 jaar voor de basisgegevens
-            van de kassa-administratie).
+            Bestel- en voorraadgegevens worden bewaard zolang dit voor de prototype-workflows nodig
+            is. Als kassagegevens voor een echte administratie worden gebruikt, moeten de toepasselijke
+            wettelijke bewaartermijnen afzonderlijk worden vastgesteld en nageleefd.
         </p>
 
         <h3>Toegang tot gegevens</h3>
@@ -55,10 +69,11 @@
 
         <h3>Beveiliging</h3>
         <p>
-            Bij een productie-implementatie wordt aangeraden om het systeem te beveiligen met
-            een inlogverplichting voor medewerkers (authenticatie), een beveiligde (HTTPS)
-            verbinding en periodieke back-ups van de database, om te voldoen aan de AVG-eisen
-            rondom passende technische en organisatorische maatregelen.
+            De applicaties gebruiken onder meer sessies, CSRF-controles, server-side validatie,
+            voorbereide databaseaanvragen en limieten op pogingen. Dit is geen garantie op AVG-
+            of productiegeschiktheid. Gebruik HTTPS, een databaseaccount met minimale rechten,
+            sterke omgevingsgeheimen, toegangsbeheer en geteste back-ups voordat echte gegevens
+            worden verwerkt.
         </p>
 
         <h3>Contact</h3>

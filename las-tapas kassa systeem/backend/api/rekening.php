@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * GET api/rekening.php?tafel_id=10
  * Returns the open order lines and total for one table.

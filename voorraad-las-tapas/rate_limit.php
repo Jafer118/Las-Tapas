@@ -1,0 +1,41 @@
+<?php
+declare(strict_types=1);
+
+function isInventoryLoginRateLimited(PDO $pdo, string $clientAddress): bool
+{
+    $secret = getenv('LAS_TAPAS_RATE_LIMIT_SECRET') ?: 'local-development-only';
+    $clientHash = hash_hmac('sha256', $clientAddress, $secret);
+
+    $statement = $pdo->prepare(
+        'INSERT INTO voorraad_login_rate_limits (client_hash, attempts, window_started_at)
+         VALUES (?, 1, NOW())
+         ON DUPLICATE KEY UPDATE
+            attempts = IF(
+                window_started_at <= DATE_SUB(NOW(), INTERVAL 15 MINUTE),
+                1,
+                LEAST(attempts + 1, 65535)
+            ),
+            window_started_at = IF(
+                window_started_at <= DATE_SUB(NOW(), INTERVAL 15 MINUTE),
+                NOW(),
+                window_started_at
+            )'
+    );
+    $statement->execute([$clientHash]);
+
+    $statement = $pdo->prepare(
+        'SELECT attempts
+         FROM voorraad_login_rate_limits
+         WHERE client_hash = ?'
+    );
+    $statement->execute([$clientHash]);
+
+    if (random_int(1, 100) === 1) {
+        $pdo->exec(
+            'DELETE FROM voorraad_login_rate_limits
+             WHERE window_started_at < DATE_SUB(NOW(), INTERVAL 1 DAY)'
+        );
+    }
+
+    return (int) $statement->fetchColumn() > 10;
+}

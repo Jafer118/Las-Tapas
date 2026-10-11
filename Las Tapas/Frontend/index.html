@@ -17,7 +17,7 @@
 <body>
 
 <!-- =====================================================
-     NAVIGATIE
+     NAVIGATION
 ===================================================== -->
 
 <header class="site">
@@ -142,7 +142,7 @@
   </section>
 
 
-  <!-- OVER LAS TAPAS -->
+  <!-- ABOUT LAS TAPAS -->
 
   <section class="about-section">
 
@@ -227,7 +227,7 @@
   </section>
 
 
-  <!-- LIVE MUZIEK -->
+  <!-- LIVE MUSIC -->
 
   <section class="weekend-section" id="weekend-live">
 
@@ -377,7 +377,7 @@
       </div>
 
 
-      <!-- FORMULES -->
+      <!-- DINING PACKAGES -->
 
       <div class="ayce-grid">
 
@@ -509,7 +509,7 @@
       </div>
 
 
-      <!-- GERECHTEN -->
+      <!-- DISHES -->
 
       <div class="menu-panel active" id="fria">
 
@@ -1152,7 +1152,7 @@
       </div>
 
 
-      <!-- BESTELLING -->
+      <!-- ORDER -->
 
       <div class="order-section">
 
@@ -1212,7 +1212,7 @@
 
 
 <!-- =====================================================
-     RESERVEREN
+     RESERVATIONS
 ===================================================== -->
 
 <section class="page" id="page-contact">
@@ -1233,13 +1233,13 @@
 
         <p>
           Kies uw formule, datum, tijd, aantal personen
-          en tafel. Daarna kunt u de demo-betaling uitvoeren.
+          en tafel. Uw reservering wordt opgeslagen na uw bevestiging.
         </p>
 
       </div>
 
 
-      <!-- STAPPEN -->
+      <!-- STEPS -->
 
       <div class="reservation-steps">
 
@@ -1252,7 +1252,7 @@
 
         <div class="reservation-step" id="step-payment">
           <span>2</span>
-          <strong>Betaling</strong>
+          <strong>Bevestigen</strong>
         </div>
 
         <div class="step-line"></div>
@@ -1265,7 +1265,7 @@
       </div>
 
 
-      <!-- RESERVERINGSFORMULIER -->
+      <!-- RESERVATION FORM -->
 
       <form id="reservation-form">
 
@@ -1274,7 +1274,7 @@
           <div class="reservation-main">
 
 
-            <!-- FORMULE -->
+            <!-- PACKAGE -->
 
             <div class="booking-card">
 
@@ -1368,7 +1368,7 @@
             </div>
 
 
-            <!-- DATUM EN TIJD -->
+            <!-- DATE AND TIME -->
 
             <div class="booking-card">
 
@@ -1442,7 +1442,7 @@
             </div>
 
 
-            <!-- PERSONEN -->
+            <!-- GUESTS -->
 
             <div class="booking-card">
 
@@ -1505,7 +1505,7 @@
             </div>
 
 
-            <!-- TAFEL + PLATTEGROND -->
+            <!-- TABLE AND FLOOR PLAN -->
 
             <div class="booking-card">
 
@@ -1557,14 +1557,14 @@
 
               <div class="tables" id="tables">
 
-                <!-- JS vult hier de 26 tafels in -->
+                <!-- JavaScript inserts the 26 tables here. -->
 
               </div>
 
             </div>
 
 
-            <!-- GEGEVENS -->
+            <!-- DETAILS -->
 
             <div class="booking-card">
 
@@ -1649,12 +1649,17 @@
 
               </div>
 
+              <label class="privacy-acceptance">
+                <input id="privacy-accepted" type="checkbox" required>
+                <span>Ik heb de <a href="../../las-tapas%20kassa%20systeem/frontend/privacy.html" target="_blank" rel="noopener">privacyverklaring</a> gelezen.</span>
+              </label>
+
             </div>
 
           </div>
 
 
-          <!-- OVERZICHT -->
+          <!-- SUMMARY -->
 
           <aside class="reservation-summary">
 
@@ -1732,14 +1737,14 @@
               type="submit"
               class="confirm-button">
 
-              Naar betaling
+              Reservering controleren
               <span>→</span>
 
             </button>
 
 
             <p class="secure-note">
-              🔒 Demo-betaling · Geen echte betaling
+              🔒 Reservering wordt opgeslagen na bevestiging · Geen betaling
             </p>
 
           </aside>
@@ -1750,7 +1755,7 @@
 
 
       <!-- =================================================
-           BETALING
+           BEVESTIGEN
       ================================================= -->
 
       <div class="payment-screen" id="payment-screen">
@@ -1770,16 +1775,16 @@
           <div class="payment-heading">
 
             <span class="eyebrow-plain">
-              STAP 2 · BETALING
+              STAP 2 · BEVESTIGEN
             </span>
 
             <h2>
-              Betaal uw reservering
+              Bevestig uw reservering
             </h2>
 
             <p>
-              Dit is een demo.
-              Er wordt geen echte betaling uitgevoerd.
+              Uw reservering wordt nu opgeslagen.
+              Er wordt geen betaling verwerkt.
             </p>
 
           </div>
@@ -1787,88 +1792,9 @@
 
           <div class="payment-layout">
 
-            <div class="payment-methods">
-
-              <h3>
-                Kies betaalmethode
-              </h3>
-
-
-              <button
-                type="button"
-                class="payment-method active"
-                data-payment="iDEAL">
-
-                <span class="payment-logo ideal">
-                  iD
-                </span>
-
-                <div>
-                  <strong>iDEAL</strong>
-                  <small>Betaal via uw bank</small>
-                </div>
-
-                <span class="radio"></span>
-
-              </button>
-
-
-              <button
-                type="button"
-                class="payment-method"
-                data-payment="Bancontact">
-
-                <span class="payment-logo bancontact">
-                  BC
-                </span>
-
-                <div>
-                  <strong>Bancontact</strong>
-                  <small>Snel en veilig betalen</small>
-                </div>
-
-                <span class="radio"></span>
-
-              </button>
-
-
-              <button
-                type="button"
-                class="payment-method"
-                data-payment="Creditcard">
-
-                <span class="payment-logo card-logo">
-                  ▣
-                </span>
-
-                <div>
-                  <strong>Creditcard</strong>
-                  <small>Visa / Mastercard</small>
-                </div>
-
-                <span class="radio"></span>
-
-              </button>
-
-
-              <button
-                type="button"
-                class="payment-method"
-                data-payment="Restaurant">
-
-                <span class="payment-logo cash-logo">
-                  €
-                </span>
-
-                <div>
-                  <strong>Betalen in restaurant</strong>
-                  <small>U betaalt bij aankomst</small>
-                </div>
-
-                <span class="radio"></span>
-
-              </button>
-
+            <div class="payment-methods reservation-note">
+              <h3>Geen betaalprovider gekoppeld</h3>
+              <p>Dit project slaat alleen de reservering op. De prijs is een indicatie; er wordt geen betaling aangevraagd of verwerkt.</p>
             </div>
 
 
@@ -1897,15 +1823,10 @@
                 <strong id="pay-table">–</strong>
               </div>
 
-              <div class="payment-summary-row">
-                <span>Betaalmethode</span>
-                <strong id="pay-method">iDEAL</strong>
-              </div>
-
               <div class="payment-total">
 
                 <span>
-                  Te betalen
+                  Indicatief totaal
                 </span>
 
                 <strong id="pay-total">
@@ -1920,14 +1841,16 @@
                 class="demo-pay-button"
                 id="demo-pay">
 
-                Bevestig demo-betaling
+                Bevestig reservering
                 <span>→</span>
 
               </button>
 
               <small class="demo-label">
-                DEMO · Er wordt niets afgeschreven
+                DEMO · Er wordt geen betaling uitgevoerd
               </small>
+
+              <p id="reservation-error" role="alert" aria-live="polite"></p>
 
             </div>
 
@@ -1939,7 +1862,7 @@
 
 
       <!-- =================================================
-           SUCCES
+           SUCCESS
       ================================================= -->
 
       <div
@@ -1961,9 +1884,10 @@
           </h2>
 
           <p>
-            Uw tafel bij Las Tapas is succesvol gereserveerd.
+            Uw reservering is opgeslagen. Er is geen betaling uitgevoerd.
           </p>
 
+          <p>Reserveringsnummer: <strong id="success-reservation-id">–</strong></p>
 
           <div class="success-details">
 
@@ -2014,7 +1938,7 @@
 
 
           <p class="success-demo">
-            ✓ DEMO: betaling geslaagd · Er is geen echt geld afgeschreven.
+            ✓ DEMO: reservering opgeslagen · Er is geen betaling uitgevoerd.
           </p>
 
 

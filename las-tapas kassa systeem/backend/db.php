@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * db.php
  * Shared PDO database connection for all API scripts.

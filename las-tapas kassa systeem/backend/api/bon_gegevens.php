@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * GET api/bon_gegevens.php?tafel_id=10
  * GET api/bon_gegevens.php?bestelling_id=7

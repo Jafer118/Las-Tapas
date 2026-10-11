@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * bon_data.php
  * Retrieves the data needed for a receipt in JSON or PDF form.

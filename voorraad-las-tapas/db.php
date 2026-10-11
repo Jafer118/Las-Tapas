@@ -9,10 +9,13 @@ function database(): PDO
         return $connection;
     }
 
-    $host = 'localhost';
-    $database = 'las_tapas';
-    $username = 'root';
-    $password = '';
+    $host = getenv('LAS_TAPAS_DB_HOST') ?: 'localhost';
+    $database = getenv('LAS_TAPAS_DB_NAME') ?: 'las_tapas';
+    $username = getenv('LAS_TAPAS_DB_USER') ?: 'root';
+    $password = getenv('LAS_TAPAS_DB_PASSWORD');
+    if ($password === false) {
+        $password = '';
+    }
 
     $connection = new PDO(
         "mysql:host=$host;dbname=$database;charset=utf8mb4",
