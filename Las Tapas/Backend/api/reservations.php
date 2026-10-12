@@ -87,6 +87,7 @@ try {
          WHERE reservation_date <= DATE_SUB(CURDATE(), INTERVAL 90 DAY)'
     );
 
+    // Lock the table row to serialize bookings for this table, including when none exist yet.
     $statement = $pdo->prepare(
         'SELECT capacity
          FROM reservation_tables
@@ -121,6 +122,7 @@ try {
         $reservation['start'],
     ]);
 
+    // Half-open intervals allow a new booking to start exactly when the previous one ends.
     if ($statement->fetchColumn() !== false) {
         $pdo->rollBack();
         sendReservationResponse(['error' => 'Deze tafel is op dat tijdstip niet meer beschikbaar. Kies een andere tafel of tijd.'], 409);

@@ -24,3 +24,6 @@ indent_size = 2
 
 [voorraad-las-tapas/*.css]
 indent_size = 2
+
+[las-tapas kassa systeem/frontend/Las Tapas.html]
+indent_size = 2

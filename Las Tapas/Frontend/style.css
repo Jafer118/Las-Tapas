@@ -1299,7 +1299,7 @@ section {
 }
 
 .confirm-button,
-.demo-pay-button {
+.confirm-reservation-button {
   width: calc(100% - 44px);
   margin: 22px;
   padding: 15px;
@@ -1313,11 +1313,11 @@ section {
 }
 
 .confirm-button:hover,
-.demo-pay-button:hover {
+.confirm-reservation-button:hover {
   transform: translateY(-2px);
 }
 
-.secure-note {
+.reservation-notice {
   text-align: center;
   opacity: .5;
   font-size: .7rem;
@@ -1329,13 +1329,13 @@ section {
    CONFIRMATION
 ===================================================== */
 
-.payment-screen,
+.reservation-review-screen,
 .success-screen {
   display: none;
   margin-top: 35px;
 }
 
-.payment-card,
+.reservation-review-card,
 .success-card {
   max-width: 1000px;
   margin: auto;
@@ -1353,126 +1353,57 @@ section {
   margin-bottom: 25px;
 }
 
-.payment-heading {
+.reservation-review-heading {
   text-align: center;
   margin-bottom: 35px;
 }
 
-.payment-heading h2 {
+.reservation-review-heading h2 {
   font-family: var(--font-display);
   font-size: 2.5rem;
   margin: 8px 0;
 }
 
-.payment-heading p {
+.reservation-review-heading p {
   opacity: .55;
 }
 
-.payment-layout {
+.reservation-review-layout {
   display: grid;
   grid-template-columns: 1fr 330px;
   gap: 25px;
 }
 
-.payment-methods {
+.reservation-info {
   background: var(--wine-dark);
   padding: 25px;
   border-radius: 8px;
 }
 
-.payment-methods h3 {
+.reservation-info h3 {
   font-family: var(--font-display);
   margin-top: 0;
 }
 
-.payment-method {
-  width: 100%;
-  display: grid;
-  grid-template-columns: 50px 1fr 20px;
-  align-items: center;
-  gap: 15px;
-  text-align: left;
-  color: var(--cream);
-  background: var(--panel);
-  border: 1px solid rgba(245,234,217,.1);
-  border-radius: 7px;
-  padding: 14px;
-  margin-bottom: 10px;
-}
-
-.payment-method.active {
-  border-color: var(--saffron);
-}
-
-.payment-logo {
-  width: 42px;
-  height: 42px;
-  display: grid;
-  place-items: center;
-  border-radius: 6px;
-  font-weight: 900;
-}
-
-.ideal {
-  background: #fff;
-  color: #c43c48;
-}
-
-.bancontact {
-  background: #fff;
-  color: #111;
-}
-
-.card-logo {
-  background: var(--saffron-light);
-  color: var(--wine-dark);
-}
-
-.cash-logo {
-  background: var(--olive);
-  color: var(--wine-dark);
-}
-
-.payment-method strong,
-.payment-method small {
-  display: block;
-}
-
-.payment-method small {
-  opacity: .5;
-  margin-top: 2px;
-}
-
-.radio {
-  width: 17px;
-  height: 17px;
-  border: 1px solid rgba(245,234,217,.4);
-  border-radius: 50%;
-}
-
-.payment-method.active .radio {
-  border: 5px solid var(--saffron);
-}
-
-.payment-summary {
+.reservation-review-summary {
   background: var(--panel-2);
   border: 1px solid rgba(217,139,69,.35);
   border-radius: 8px;
   padding: 25px;
 }
 
-.payment-summary > span {
+.reservation-review-summary > span {
   color: var(--saffron-light);
   font-size: .65rem;
   letter-spacing: .15em;
 }
 
-.payment-summary h3 {
+.reservation-review-summary h3 {
   font-family: var(--font-display);
   font-size: 1.8rem;
 }
 
-.payment-summary-row {
+.reservation-review-row {
   display: flex;
   justify-content: space-between;
   gap: 10px;
@@ -1480,37 +1411,37 @@ section {
   border-bottom: 1px solid rgba(245,234,217,.1);
 }
 
-.payment-summary-row span {
+.reservation-review-row span {
   opacity: .5;
 }
 
-.payment-summary-row strong {
+.reservation-review-row strong {
   text-align: right;
 }
 
-.payment-total {
+.reservation-review-total {
   display: flex;
   justify-content: space-between;
   align-items: end;
   margin-top: 25px;
 }
 
-.payment-total span {
+.reservation-review-total span {
   opacity: .5;
 }
 
-.payment-total strong {
+.reservation-review-total strong {
   color: var(--saffron-light);
   font-family: var(--font-display);
   font-size: 2rem;
 }
 
-.demo-pay-button {
+.confirm-reservation-button {
   width: 100%;
   margin: 25px 0 8px;
 }
 
-.demo-label {
+.reservation-review-note {
   display: block;
   text-align: center;
   color: var(--olive);
@@ -1658,7 +1589,7 @@ footer address {
   .hero-grid,
   .about-grid,
   .reservation-layout,
-  .payment-layout {
+  .reservation-review-layout {
     grid-template-columns: 1fr;
   }
 
@@ -1754,7 +1685,7 @@ footer address {
   }
 
   .booking-card,
-  .payment-card,
+  .reservation-review-card,
   .success-card {
     padding: 20px;
   }

@@ -36,6 +36,9 @@ async function apiRequest(method = 'GET', body = null) {
     } catch {
         throw new Error('De server heeft een ongeldig antwoord teruggestuurd.');
     }
+    if (!data || typeof data !== 'object' || Array.isArray(data)) {
+        throw new Error('De server heeft een ongeldig antwoord teruggestuurd.');
+    }
     if (response.status === 401) {
         window.location.href = 'login.php';
         throw new Error('Inloggen vereist.');
@@ -112,50 +115,84 @@ async function changeStock(id, delta) {
     }
 }
 
-document.querySelector('#inventory-body').addEventListener('click', async event => {
-    const button = event.target.closest('button');
+async function handleInventoryClick(event) {
+    const button = event.target.closest('button[data-action]');
     if (!button) return;
-    const row = button.closest('tr');
+
+    const row = button.closest('tr[data-id]');
+    if (!row) return;
+
     const id = Number(row.dataset.id);
-    if (button.dataset.action === 'increase') await changeStock(id, 1);
-    if (button.dataset.action === 'decrease') await changeStock(id, -1);
-});
+    if (!Number.isInteger(id) || id < 1) return;
 
-document.querySelector('#search-input').addEventListener('input', render);
-document.querySelector('#low-only').addEventListener('change', render);
-document.querySelectorAll('.filter-button').forEach(button => button.addEventListener('click', () => {
+    const stockDelta = button.dataset.action === 'increase'
+        ? 1
+        : button.dataset.action === 'decrease'
+            ? -1
+            : null;
+
+    if (stockDelta !== null) {
+        await changeStock(id, stockDelta);
+    }
+}
+
+function handleCategoryFilterClick(event) {
+    const button = event.currentTarget;
     selectedCategory = button.dataset.category;
-    document.querySelectorAll('.filter-button').forEach(filter => filter.classList.toggle('active', filter === button));
-    render();
-}));
 
-document.querySelector('#refresh-button').addEventListener('click', () => loadItems(true));
-document.querySelector('#logout-button').addEventListener('click', async event => {
+    document.querySelectorAll('.filter-button').forEach(filter => {
+        filter.classList.toggle('active', filter === button);
+    });
+
+    render();
+}
+
+async function handleLogout(event) {
     const button = event.currentTarget;
     button.disabled = true;
+
     try {
         if (!csrfToken) throw new Error('Beveiligingstoken ontbreekt. Vernieuw de pagina.');
-        const response = await fetch('logout.php', { method: 'POST', credentials: 'same-origin', headers: { 'Accept': 'application/json', 'X-CSRF-Token': csrfToken } });
+
+        const response = await fetch('logout.php', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+                'Accept': 'application/json',
+                'X-CSRF-Token': csrfToken,
+            },
+        });
+
         if (!response.ok) throw new Error('Uitloggen is mislukt.');
-        window.location.href = '../index.html';
+        window.location.href = '../projectinformatie/index.html';
     } catch (error) {
         button.disabled = false;
         showToast(error.message);
     }
-});
+}
 
 const backdrop = document.querySelector('#modal-backdrop');
-function toggleModal(open) { backdrop.hidden = !open; if (open) backdrop.querySelector('input').focus(); }
-document.querySelector('#open-add').addEventListener('click', () => toggleModal(true));
-document.querySelector('#close-modal').addEventListener('click', () => toggleModal(false));
-document.querySelector('#cancel-modal').addEventListener('click', () => toggleModal(false));
-backdrop.addEventListener('click', event => { if (event.target === backdrop) toggleModal(false); });
 
-document.querySelector('#add-form').addEventListener('submit', async event => {
+function toggleModal(open) {
+    backdrop.hidden = !open;
+
+    if (open) {
+        backdrop.querySelector('input').focus();
+    }
+}
+
+async function handleAddItemSubmit(event) {
     event.preventDefault();
     const form = new FormData(event.target);
+
     try {
-        await apiRequest('POST', { name: form.get('name').trim(), category: form.get('category'), stock: Number(form.get('stock')), minimum: Number(form.get('minimum')), price: Number(form.get('price')) });
+        await apiRequest('POST', {
+            name: String(form.get('name') || '').trim(),
+            category: form.get('category'),
+            stock: Number(form.get('stock')),
+            minimum: Number(form.get('minimum')),
+            price: Number(form.get('price')),
+        });
         await loadItems();
         event.target.reset();
         toggleModal(false);
@@ -163,19 +200,73 @@ document.querySelector('#add-form').addEventListener('submit', async event => {
     } catch (error) {
         showToast(error.message);
     }
-});
+}
 
-document.querySelector('#export-button').addEventListener('click', () => {
+function escapeCsvValue(value) {
+    const text = String(value);
+    const spreadsheetSafeText = /^[\t\r ]*[=+\-@]/.test(text)
+        ? `'${text}`
+        : text;
+
+    return `"${spreadsheetSafeText.replace(/"/g, '""')}"`;
+}
+
+function exportLowStockItems() {
     const lowItems = items.filter(isLow);
-    const lines = ['Las Tapas - Inkooplijst', `Gegenereerd: ${new Date().toLocaleString('nl-NL')}`, '', 'Artikel;Categorie;Huidige voorraad;Minimum;Bijbestellen'];
-    lowItems.forEach(item => lines.push(`${item.name};${categoryLabel(item.category)};${item.stock};${item.minimum};${Math.max(item.minimum - item.stock, 0)}`));
+    const rows = [
+        ['Las Tapas - Inkooplijst'],
+        [`Gegenereerd: ${new Date().toLocaleString('nl-NL')}`],
+        [],
+        ['Artikel', 'Categorie', 'Huidige voorraad', 'Minimum', 'Bijbestellen'],
+        ...lowItems.map(item => [
+            item.name,
+            categoryLabel(item.category),
+            item.stock,
+            item.minimum,
+            Math.max(item.minimum - item.stock, 0),
+        ]),
+    ];
+    const csv = rows
+        .map(row => row.map(escapeCsvValue).join(';'))
+        .join('\r\n');
     const link = document.createElement('a');
-    link.href = URL.createObjectURL(new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8' }));
+    const downloadUrl = URL.createObjectURL(
+        new Blob(['\uFEFF', csv], { type: 'text/csv;charset=utf-8' })
+    );
+
+    link.href = downloadUrl;
     link.download = 'las-tapas-inkooplijst.csv';
     link.click();
-    URL.revokeObjectURL(link.href);
-});
 
-document.querySelector('#today-label').textContent = new Intl.DateTimeFormat('nl-NL', { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date());
-loadItems();
-setInterval(() => loadItems(), 30000);
+    window.setTimeout(() => URL.revokeObjectURL(downloadUrl), 1000);
+}
+
+function initializeInventoryDashboard() {
+    document.querySelector('#inventory-body').addEventListener('click', handleInventoryClick);
+    document.querySelector('#search-input').addEventListener('input', render);
+    document.querySelector('#low-only').addEventListener('change', render);
+    document.querySelectorAll('.filter-button').forEach(button => {
+        button.addEventListener('click', handleCategoryFilterClick);
+    });
+    document.querySelector('#refresh-button').addEventListener('click', () => loadItems(true));
+    document.querySelector('#logout-button').addEventListener('click', handleLogout);
+    document.querySelector('#open-add').addEventListener('click', () => toggleModal(true));
+    document.querySelector('#close-modal').addEventListener('click', () => toggleModal(false));
+    document.querySelector('#cancel-modal').addEventListener('click', () => toggleModal(false));
+    backdrop.addEventListener('click', event => {
+        if (event.target === backdrop) {
+            toggleModal(false);
+        }
+    });
+    document.querySelector('#add-form').addEventListener('submit', handleAddItemSubmit);
+    document.querySelector('#export-button').addEventListener('click', exportLowStockItems);
+    document.querySelector('#today-label').textContent = new Intl.DateTimeFormat(
+        'nl-NL',
+        { weekday: 'long', day: 'numeric', month: 'long' }
+    ).format(new Date());
+
+    loadItems();
+    setInterval(() => loadItems(), 30000);
+}
+
+initializeInventoryDashboard();

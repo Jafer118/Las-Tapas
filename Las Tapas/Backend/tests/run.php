@@ -39,12 +39,19 @@ assertSameValue(null, validatePublicReservation(array_merge($validReservation, [
 assertSameValue(null, validatePublicReservation(array_merge($validReservation, ['tableNumber' => true])), 'Reject boolean table number');
 assertSameValue(null, validatePublicReservation(array_merge($validReservation, ['email' => 'not-an-email'])), 'Reject malformed email');
 assertSameValue(null, validatePublicReservation(array_merge($validReservation, ['phone' => 'call me'])), 'Reject malformed phone number');
+assertSameValue(null, validatePublicReservation(array_merge($validReservation, ['name' => []])), 'Reject non-string name');
+assertSameValue(null, validatePublicReservation(array_merge($validReservation, ['name' => str_repeat('x', 121)])), 'Reject overlong name');
 assertSameValue(null, validatePublicReservation(array_merge($validReservation, ['specialRequests' => str_repeat('x', 1001)])), 'Reject oversized special requests');
 assertSameValue(null, validatePublicReservation(array_merge($validReservation, ['package' => 'free package'])), 'Reject unknown package');
 assertSameValue(null, validatePublicReservation(array_merge($validReservation, ['privacyAccepted' => false])), 'Require privacy notice acknowledgement');
 assertSameValue(null, validatePublicReservation(array_merge($validReservation, ['date' => '2099-02-30'])), 'Reject impossible date');
 assertSameValue(null, validatePublicReservation(array_merge($validReservation, ['time' => '18:15'])), 'Reject unavailable time slot');
 assertSameValue(null, validatePublicReservation(array_merge($validReservation, ['time' => '21:00'])), 'Reject package ending after closing');
+assertSameValue(
+    null,
+    validatePublicReservation(array_merge($validReservation, ['date' => (new DateTimeImmutable('yesterday'))->format('Y-m-d')])),
+    'Reject past reservation date'
+);
 
 $monday = new DateTimeImmutable('next Monday');
 assertSameValue(

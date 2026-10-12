@@ -67,7 +67,14 @@ function requireHttpMethod(string $expectedMethod): void
 function enforceRateLimit(PDO $pdo, string $scope, int $maximumAttempts, int $windowMinutes): void
 {
     $clientAddress = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
-    $rateLimitSecret = getenv('LAS_TAPAS_RATE_LIMIT_SECRET') ?: 'local-development-only';
+    $rateLimitSecret = getenv('LAS_TAPAS_RATE_LIMIT_SECRET');
+    if ($rateLimitSecret === false || strlen($rateLimitSecret) < 32) {
+        if (getenv('APP_ENV') === 'production') {
+            throw new RuntimeException('A 32-character rate-limit secret is required in production.');
+        }
+        $rateLimitSecret = 'local-development-only';
+    }
+
     $clientHash = hash_hmac('sha256', $clientAddress, $rateLimitSecret);
     $windowMinutes = max(1, min($windowMinutes, 1440));
     $windowStart = 'DATE_SUB(NOW(), INTERVAL ' . $windowMinutes . ' MINUTE)';

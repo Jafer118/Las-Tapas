@@ -105,7 +105,7 @@ header.topbar .status {
 .portal-header-link:hover { background: var(--kleur-paneel); }
 .portal-page-header { position: sticky; top: 0; z-index: 20; }
 
-/* ---------- Hoofdinhoud ---------- */
+/* ---------- Main content ---------- */
 main {
     padding: 26px;
     max-width: 1400px;

@@ -40,8 +40,8 @@ try {
     $statement = $pdo->prepare('SELECT id, gebruikersnaam, naam, wachtwoord_hash FROM gebruikers WHERE gebruikersnaam = :username LIMIT 1');
     $statement->execute(['username' => $username]);
     $user = $statement->fetch();
-} catch (PDOException $error) {
-    error_log('Login database error: ' . $error->getMessage());
+} catch (Throwable $error) {
+    error_log('Inventory login request failed: ' . $error->getMessage());
     header('Location: login.php?error=unavailable');
     exit;
 }

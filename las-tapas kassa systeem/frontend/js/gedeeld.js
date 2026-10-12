@@ -2,7 +2,6 @@
 
 // Update this path if the backend directory is located elsewhere.
 const API_BASE = '../backend/api';
-const START_PAGE = '../../Las%20Tapas/Frontend/index.html';
 let csrfToken = '';
 
 function escapeHtml(value) {
@@ -65,7 +64,7 @@ async function requireAuthentication() {
                     showApiError('Uitloggen is mislukt. Probeer het opnieuw.');
                     return;
                 }
-                location.href = START_PAGE;
+                location.href = 'login.html';
             });
         }
     }

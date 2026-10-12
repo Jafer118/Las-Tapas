@@ -1177,28 +1177,28 @@ document.addEventListener("DOMContentLoaded", function () {
           ).value.trim();
 
 
-        /* Populate the payment summary. */
+        /* Populate the reservation review. */
 
         document.getElementById(
-          "pay-formula"
+          "review-formula"
         ).textContent =
           selectedFormula.name;
 
 
         document.getElementById(
-          "pay-guests"
+          "review-guests"
         ).textContent =
           guests;
 
 
         document.getElementById(
-          "pay-table"
+          "review-table"
         ).textContent =
           selectedTable;
 
 
         document.getElementById(
-          "pay-total"
+          "review-total"
         ).textContent =
           formatPrice(
             selectedFormula.price *
@@ -1206,14 +1206,14 @@ document.addEventListener("DOMContentLoaded", function () {
           );
 
 
-        /* Show the payment screen. */
+        /* Show the review screen before creating the reservation. */
 
         reservationForm.style.display =
           "none";
 
 
         document.getElementById(
-          "payment-screen"
+          "reservation-review-screen"
         ).style.display =
           "block";
 
@@ -1232,7 +1232,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         document
-          .getElementById("step-payment")
+          .getElementById("step-review")
           .classList.add("active");
 
 
@@ -1279,7 +1279,7 @@ document.addEventListener("DOMContentLoaded", function () {
       function () {
 
         document.getElementById(
-          "payment-screen"
+          "reservation-review-screen"
         ).style.display =
           "none";
 
@@ -1289,7 +1289,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         document
-          .getElementById("step-payment")
+          .getElementById("step-review")
           .classList.remove("active");
 
 
@@ -1307,15 +1307,15 @@ document.addEventListener("DOMContentLoaded", function () {
      RESERVATION CONFIRMATION
   ======================================================= */
 
-  const demoPay =
+  const confirmReservationButton =
     document.getElementById(
-      "demo-pay"
+      "confirm-reservation"
     );
 
 
-  if (demoPay) {
+  if (confirmReservationButton) {
 
-    demoPay.addEventListener(
+    confirmReservationButton.addEventListener(
       "click",
       async function () {
 
@@ -1344,7 +1344,7 @@ document.addEventListener("DOMContentLoaded", function () {
           document.getElementById("reservation-error");
 
         errorElement.textContent = "";
-        demoPay.disabled = true;
+        confirmReservationButton.disabled = true;
 
         let reservationResult;
         try {
@@ -1367,7 +1367,16 @@ document.addEventListener("DOMContentLoaded", function () {
           console.error(error);
           return;
         } finally {
-          demoPay.disabled = false;
+          confirmReservationButton.disabled = false;
+        }
+
+        if (
+          !Number.isInteger(reservationResult.reservationId) ||
+          !Number.isFinite(reservationResult.totalPrice)
+        ) {
+          errorElement.textContent =
+            "De server heeft de reservering niet correct bevestigd.";
+          return;
         }
 
 
@@ -1436,10 +1445,10 @@ document.addEventListener("DOMContentLoaded", function () {
           reservationResult.reservationId;
 
 
-        /* Switch from payment to confirmation. */
+        /* Replace the review screen with the saved reservation confirmation. */
 
         document.getElementById(
-          "payment-screen"
+          "reservation-review-screen"
         ).style.display =
           "none";
 
@@ -1451,7 +1460,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         document
-          .getElementById("step-payment")
+          .getElementById("step-review")
           .classList.remove("active");
 
 
@@ -1495,7 +1504,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         document.getElementById(
-          "payment-screen"
+          "reservation-review-screen"
         ).style.display =
           "none";
 
@@ -1580,7 +1589,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         document
-          .getElementById("step-payment")
+          .getElementById("step-review")
           .classList.remove("active");
 
 

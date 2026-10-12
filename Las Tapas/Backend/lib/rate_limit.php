@@ -3,7 +3,14 @@ declare(strict_types=1);
 
 function isReservationRateLimited(PDO $pdo, string $clientAddress): bool
 {
-    $secret = getenv('LAS_TAPAS_RATE_LIMIT_SECRET') ?: 'local-development-only';
+    $secret = getenv('LAS_TAPAS_RATE_LIMIT_SECRET');
+    if ($secret === false || strlen($secret) < 32) {
+        if (getenv('APP_ENV') === 'production') {
+            throw new RuntimeException('A 32-character rate-limit secret is required in production.');
+        }
+        $secret = 'local-development-only';
+    }
+
     $clientHash = hash_hmac('sha256', $clientAddress, $secret);
 
     $statement = $pdo->prepare(

@@ -3,7 +3,15 @@ declare(strict_types=1);
 
 function isInventoryLoginRateLimited(PDO $pdo, string $clientAddress): bool
 {
-    $secret = getenv('LAS_TAPAS_RATE_LIMIT_SECRET') ?: 'local-development-only';
+    $secret = getenv('LAS_TAPAS_RATE_LIMIT_SECRET');
+    if ($secret === false || strlen($secret) < 32) {
+        if (getenv('APP_ENV') === 'production') {
+            throw new RuntimeException('A 32-character rate-limit secret is required in production.');
+        }
+        $secret = 'local-development-only';
+    }
+
+    // Store a keyed digest so the rate-limit table does not retain raw client addresses.
     $clientHash = hash_hmac('sha256', $clientAddress, $secret);
 
     $statement = $pdo->prepare(

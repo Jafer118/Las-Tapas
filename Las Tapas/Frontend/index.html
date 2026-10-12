@@ -1250,7 +1250,7 @@
 
         <div class="step-line"></div>
 
-        <div class="reservation-step" id="step-payment">
+        <div class="reservation-step" id="step-review">
           <span>2</span>
           <strong>Bevestigen</strong>
         </div>
@@ -1743,7 +1743,7 @@
             </button>
 
 
-            <p class="secure-note">
+            <p class="reservation-notice">
               🔒 Reservering wordt opgeslagen na bevestiging · Geen betaling
             </p>
 
@@ -1758,9 +1758,9 @@
            BEVESTIGEN
       ================================================= -->
 
-      <div class="payment-screen" id="payment-screen">
+      <div class="reservation-review-screen" id="reservation-review-screen">
 
-        <div class="payment-card">
+        <div class="reservation-review-card">
 
           <button
             type="button"
@@ -1772,7 +1772,7 @@
           </button>
 
 
-          <div class="payment-heading">
+          <div class="reservation-review-heading">
 
             <span class="eyebrow-plain">
               STAP 2 · BEVESTIGEN
@@ -1790,15 +1790,15 @@
           </div>
 
 
-          <div class="payment-layout">
+          <div class="reservation-review-layout">
 
-            <div class="payment-methods reservation-note">
+            <div class="reservation-info">
               <h3>Geen betaalprovider gekoppeld</h3>
               <p>Dit project slaat alleen de reservering op. De prijs is een indicatie; er wordt geen betaling aangevraagd of verwerkt.</p>
             </div>
 
 
-            <div class="payment-summary">
+            <div class="reservation-review-summary">
 
               <span>
                 LAS TAPAS
@@ -1808,28 +1808,28 @@
                 Reservering
               </h3>
 
-              <div class="payment-summary-row">
+              <div class="reservation-review-row">
                 <span>Formule</span>
-                <strong id="pay-formula">3 uur tafelen</strong>
+                <strong id="review-formula">3 uur tafelen</strong>
               </div>
 
-              <div class="payment-summary-row">
+              <div class="reservation-review-row">
                 <span>Personen</span>
-                <strong id="pay-guests">2</strong>
+                <strong id="review-guests">2</strong>
               </div>
 
-              <div class="payment-summary-row">
+              <div class="reservation-review-row">
                 <span>Tafel</span>
-                <strong id="pay-table">–</strong>
+                <strong id="review-table">–</strong>
               </div>
 
-              <div class="payment-total">
+              <div class="reservation-review-total">
 
                 <span>
                   Indicatief totaal
                 </span>
 
-                <strong id="pay-total">
+                <strong id="review-total">
                   €73,00
                 </strong>
 
@@ -1838,15 +1838,15 @@
 
               <button
                 type="button"
-                class="demo-pay-button"
-                id="demo-pay">
+                class="confirm-reservation-button"
+                id="confirm-reservation">
 
                 Bevestig reservering
                 <span>→</span>
 
               </button>
 
-              <small class="demo-label">
+              <small class="reservation-review-note">
                 DEMO · Er wordt geen betaling uitgevoerd
               </small>
 

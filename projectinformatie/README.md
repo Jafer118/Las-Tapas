@@ -16,18 +16,18 @@ repository. The portal and this project documentation are grouped in
 ## Project Structure
 
 ```text
-index.html              Redirects visitors to the project portal
-.editorconfig           Shared repository formatting conventions
+.editorconfig           Shared repository formatting conventions (root)
 projectinformatie/
   index.html            Repository portal
   portal.css            Repository portal styles
   README.md             Shared setup and engineering documentation
-Las Tapas/Frontend/     Restaurant website and reservation interface
-Las Tapas/Backend/
-  api/                  Public reservation API
-  lib/                  Reservation validation and rate limiting
-  tests/                Reservation validation checks
-Las Tapas/Database/     Reservation database migration
+Las Tapas/
+  Frontend/             Restaurant website and reservation interface
+  Backend/
+    api/                Public reservation API
+    lib/                Reservation validation and rate limiting
+    tests/              Reservation validation checks
+  Database/             Reservation database migration
 las-tapas kassa systeem/
   database/     MySQL schema, migrations, and sample data
   backend/      PHP API endpoints, shared authentication, and PDO connection
@@ -50,6 +50,12 @@ state, and payment operations. The inventory application has its own PHP
 endpoints and login. Database changes belong in the relevant application's
 SQL schema or a documented migration.
 
+The root `.editorconfig` intentionally remains at the repository root so its
+formatting rules apply to every application. Portal content and shared
+documentation are grouped in `projectinformatie/`. Internal identifiers and
+comments are English; Dutch database identifiers and API field names remain
+unchanged where they are existing contracts shared by the applications.
+
 ## Point-of-Sale Local Setup
 
 1. Import `las-tapas kassa systeem/database/las_tapas.sql` into MySQL using
@@ -67,9 +73,9 @@ SQL schema or a documented migration.
    not match your WAMP/XAMPP installation. Defaults are for a local MySQL
    server using `root` with an empty password.
 4. Set `APP_ENV=development` in the local WAMP/XAMPP environment when serving
-  over plain HTTP. This allows local session cookies and exposes reset links
-  for testing without email. The default production mode suppresses reset-token
-  disclosure and requires HTTPS session cookies.
+   over plain HTTP. This allows local session cookies and exposes reset links
+   for testing without email. The default production mode suppresses reset-token
+   disclosure and requires HTTPS session cookies.
 5. Place the repository under the web server document root.
 6. Open `las-tapas kassa systeem/frontend/login.html` under the repository's
    local web URL and sign in with the sample admin account
@@ -103,7 +109,8 @@ SQL schema or a documented migration.
 5. Schedule `php "C:\path\to\Las-Tapas\Las Tapas\Backend\cleanup_expired_reservations.php"`
    to run hourly. It removes reservations at least 90 days old and expired
    rate-limit records. Check the PHP error log if the task exits unsuccessfully.
-6. Serve the repository through PHP and open `Las Tapas/Frontend/index.html`.
+6. Serve the repository through PHP and open
+   `http://localhost/php/Las-Tapas/Las%20Tapas/Frontend/`.
    Reservations are written only after the user confirms them. No real payment
    is accepted or processed.
 
@@ -116,6 +123,10 @@ uses separate cashier and order tables.
 
 Paths in the remaining point-of-sale sections are relative to
 `las-tapas kassa systeem/`.
+
+The shared portal is available through WAMP at
+`http://localhost/php/Las-Tapas/projectinformatie/` when the repository is
+installed at `C:\wamp64\www\php\Las-Tapas`.
 
 ## Main Workflows
 
@@ -136,7 +147,7 @@ Paths in the remaining point-of-sale sections are relative to
   automatically.
 - The public restaurant website validates reservations in the browser and
   independently on the server, checks table capacity and overlapping bookings,
-  and stores confirmed reservations. Its payment screen is an explicit
+  and stores confirmed reservations. Its review screen is an explicit
   confirmation demo: no payment provider is connected and no payment is
   processed.
 - The menu contains 55 sample items across five menu groups. The floor plan has
@@ -144,10 +155,14 @@ Paths in the remaining point-of-sale sections are relative to
 
 ## Engineering Conventions
 
-- Write source comments, PHP/JavaScript identifiers, and documentation in
-  English. Dutch remains in visible interface copy and existing API routes,
-  request/response keys, and database identifiers, which are compatibility
-  contracts; changing those contracts requires a coordinated migration.
+- Write source comments, internal PHP/JavaScript identifiers, and developer
+  documentation in English. Use camelCase for PHP and JavaScript functions and
+  variables, and kebab-case for CSS classes and custom properties. Dutch is
+  appropriate for visible interface copy.
+- Preserve established Dutch API route names, request/response keys, database
+  tables and columns, and filenames that are part of existing links. These are
+  compatibility contracts rather than internal identifiers; translating them
+  requires a coordinated migration across the database, backend, and clients.
 - Keep presentation in `frontend/`, request handling in `backend/api/`, shared
   authentication and response helpers in `backend/lib/`, and persistence
   definitions in `database/` for the point-of-sale system. Keep each other
@@ -164,10 +179,19 @@ Paths in the remaining point-of-sale sections are relative to
   four spaces elsewhere, including PHP. Keep PHP strict typing enabled,
   functions focused, and implementation identifiers descriptive and
   camelCase.
-- Add comments only to explain non-obvious decisions or invariants; document
-  setup, architectural boundaries, security assumptions, and verification here.
+- Add comments only to explain non-obvious decisions or invariants. For example,
+  document why a table row is locked, why a keyed digest is stored instead of a
+  client address, or how PDF byte offsets are calculated. Keep setup,
+  architectural boundaries, security assumptions, and verification documented
+  here; comments should complement rather than repeat names or documentation.
 - Return deliberate client errors for invalid input. Log unexpected server
   errors and return generic messages without database or stack details.
+
+The public website frontend is a single-page application: its script is
+organized into named sections for navigation, menu, ordering, reservation,
+and opening-hours behavior. Reservation persistence and business rules are
+isolated in the PHP API, validation/rate-limit helpers, and database migration.
+This keeps browser presentation separate from authoritative data checks.
 
 ## Validation and Error Handling
 
@@ -218,7 +242,9 @@ cleanup job against a disposable MySQL database.
   backend validates item fields and request sizes independently of browser
   checks, uses prepared statements for database writes, and limits login
   attempts to 10 per client address every 15 minutes. Set
-  `LAS_TAPAS_RATE_LIMIT_SECRET` to a long random value in production. Re-import
+  `LAS_TAPAS_RATE_LIMIT_SECRET` to a random value of at least 32 characters in
+  production; all three applications reject a missing or shorter production
+  secret rather than silently using the local fallback. Re-import
   `voorraad-las-tapas/voorraad.sql` on an existing database to create its login
   rate-limit table; its `CREATE TABLE IF NOT EXISTS` statements are repeatable.
 - Authenticated state-changing requests require a random session-bound CSRF
@@ -240,6 +266,10 @@ cleanup job against a disposable MySQL database.
   protected, rate-limited, and validated on the server. Server-side prices and
   package durations are authoritative. A transaction and table row lock prevent
   overlapping bookings from being accepted concurrently.
+- In production, explicitly set `APP_ENV=production` and provide a
+  `LAS_TAPAS_RATE_LIMIT_SECRET` containing at least 32 characters. Each
+  application rejects a missing or shorter secret in production. Local
+  development retains the existing fallback.
 - Public reservation personal data is removed when its reservation date is at
   least 90 days old. Schedule the documented cleanup task; POST requests also
   remove expired reservations, but scheduled cleanup enforces retention even
