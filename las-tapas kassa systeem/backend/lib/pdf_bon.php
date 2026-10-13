@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 /**
- * pdf_bon.php
+ * bon_pdf.php
  *
  * Generates a valid receipt PDF using plain PHP, without an external library.
  *

@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 /**
- * bon_data.php
+ * bon_gegevens.php
  * Retrieves the data needed for a receipt in JSON or PDF form.
  * Shared by bon_gegevens.php and bon_pdf.php to keep this logic in one place.
  */

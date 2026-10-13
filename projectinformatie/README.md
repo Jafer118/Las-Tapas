@@ -31,7 +31,7 @@ Las Tapas/
 las-tapas kassa systeem/
   database/     MySQL schema, migrations, and sample data
   backend/      PHP API endpoints, shared authentication, and PDO connection
-  frontend/     HTML screens, CSS, and shared JavaScript
+  frontend/     HTML screens with separate CSS and JavaScript assets
   tests/        Lightweight validation and PDF checks
 voorraad-las-tapas/
   auth.php      Inventory login handler
@@ -186,6 +186,34 @@ installed at `C:\wamp64\www\php\Las-Tapas`.
   here; comments should complement rather than repeat names or documentation.
 - Return deliberate client errors for invalid input. Log unexpected server
   errors and return generic messages without database or stack details.
+
+### Applying the conventions to a change
+
+For each requested change, first identify the responsible layer and follow this
+sequence:
+
+1. Put page structure in the relevant HTML file, presentation in its CSS file,
+   browser behavior in its JavaScript file, and authoritative validation or
+   persistence in the relevant PHP API/helper. Do not add new inline CSS or
+   JavaScript.
+2. Name new internal functions and variables in English `camelCase`, CSS
+   classes in English `kebab-case`, and keep visible Dutch copy in the UI.
+   Preserve Dutch route, request/response, and database names when they are
+   existing integration contracts.
+3. Validate untrusted values on the server even when the browser also checks
+   them. Use the existing validation, response, and authentication helpers
+   rather than creating a competing pattern.
+4. Add a comment only when the reason or invariant is not clear from the code.
+   Update this document when a setup step, shared boundary, security
+   assumption, or test command changes.
+5. Run the focused test suite for the affected application, syntax-check
+   changed PHP/JavaScript, and manually exercise the changed user workflow.
+
+For example, adding a menu interaction means keeping its markup in the page,
+styles in `frontend/css/restaurant.css`, and event handling in
+`frontend/js/restaurant.js`; any submitted data still needs server-side
+validation in the API. This makes the conventions usable when implementing a
+feature, not just a list to recite.
 
 The public website frontend is a single-page application: its script is
 organized into named sections for navigation, menu, ordering, reservation,

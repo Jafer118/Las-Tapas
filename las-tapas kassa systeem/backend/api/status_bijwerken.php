@@ -8,7 +8,7 @@ declare(strict_types=1);
  * { "orderregel_id": 12, "status": "bereid" }
  *
  * Allowed status values: 'besteld' -> 'bereid' -> 'geserveerd'.
- * Called from kitchen.html or bar.html when staff update an order line.
+ * Called from keuken.html or bar.html when staff update an order line.
  */
 
 require_once __DIR__ . '/../lib/auth.php';
