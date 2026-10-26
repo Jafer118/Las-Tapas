@@ -15,8 +15,12 @@ declare(strict_types=1);
  *       'tafel_naam'  => 'Tafel 10',
  *       'bestelling_id' => 7,
  *       'datum_tijd'  => '2026-09-14 19:32:00',
+ *       'formule_naam' => '3 uur tafelen',
+ *       'formule_prijs' => 36.50,
+ *       'formule_subtotaal' => 73.00,
+ *       'aantal_personen' => 2,
  *       'orderregels' => [ ['gerecht_naam'=>'Sangria (glas)', 'aantal'=>2, 'subtotaal'=>11.00], ... ],
- *       'totaal'      => 42.50,
+ *       'totaal'      => 115.50,
  *   ]);
  */
 
@@ -54,15 +58,25 @@ function generateReceiptPdf(array $data): string
     if (!empty($data['aantal_personen'])) {
         $lines[] = ['Personen: ' . $data['aantal_personen'], 9, false];
     }
+    if (!empty($data['formule_naam']) && !empty($data['formule_subtotaal'])) {
+        $formulaCount = (int) ($data['aantal_personen'] ?? 0);
+        $formulaPrice = number_format((float) $data['formule_prijs'], 2, ',', '.');
+        $formulaTotal = number_format((float) $data['formule_subtotaal'], 2, ',', '.');
+        $lines[] = ['Formule: ' . $data['formule_naam'], 9, false];
+        $lines[] = [$formulaCount . ' personen x EUR' . $formulaPrice, 9, false];
+        $lines[] = ['Formule totaal: EUR' . $formulaTotal, 9, false];
+    }
     $lines[] = ['------------------------------', 9, false];
 
     foreach ($data['orderregels'] as $row) {
         $description = $row['aantal'] . 'x ' . $row['gerecht_naam'];
-        $amount = number_format((float) $row['subtotaal'], 2, ',', '.');
+        $amount = !empty($data['formule_naam'])
+            ? 'Inbegrepen'
+            : 'EUR' . number_format((float) $row['subtotaal'], 2, ',', '.');
         // Courier is monospaced, so spaces can be used to align the amount.
         $lineWidthCharacters = 32;
-        $availableSpace = max(1, $lineWidthCharacters - pdfCharacterLength($description) - pdfCharacterLength('EUR' . $amount));
-        $lines[] = [$description . str_repeat(' ', $availableSpace) . 'EUR' . $amount, 9, false];
+        $availableSpace = max(1, $lineWidthCharacters - pdfCharacterLength($description) - pdfCharacterLength($amount));
+        $lines[] = [$description . str_repeat(' ', $availableSpace) . $amount, 9, false];
     }
 
     $lines[] = ['------------------------------', 9, false];

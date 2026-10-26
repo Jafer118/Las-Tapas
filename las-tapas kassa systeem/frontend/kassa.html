@@ -92,11 +92,20 @@ async function showBill(tableId, tableName) {
         billHtml += `<p style="color:#C9AC93; font-size:0.85rem; margin-top:0;">${billData.aantal_personen} personen aan tafel</p>`;
     }
 
+    if (billData.formule_naam && Number(billData.formule_subtotaal) > 0) {
+        billHtml += `
+            <div class="regel-item">
+                <span>${escapeHtml(billData.formule_naam)} · ${escapeHtml(billData.aantal_personen)} personen</span>
+                <span>${formatCurrency(billData.formule_subtotaal)}</span>
+            </div>
+        `;
+    }
+
     billData.orderregels.forEach(orderLine => {
         billHtml += `
             <div class="regel-item">
                 <span>${escapeHtml(orderLine.gerecht_naam)} × ${escapeHtml(orderLine.aantal)}</span>
-                <span>${formatCurrency(orderLine.subtotaal)}</span>
+                <span>${billData.formule_code ? 'Inbegrepen' : formatCurrency(orderLine.subtotaal)}</span>
             </div>
         `;
     });

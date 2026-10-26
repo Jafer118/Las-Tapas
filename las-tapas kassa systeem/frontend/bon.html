@@ -239,10 +239,20 @@ async function loadReceipt() {
         lineElement.className = 'bon-regel';
         lineElement.innerHTML = `
             <span class="naam-aantal">${escapeHtml(orderLine.aantal)}× ${escapeHtml(orderLine.gerecht_naam)}</span>
-            <span>${formatCurrency(orderLine.subtotaal)}</span>
+            <span>${receiptData.formule_code ? 'Inbegrepen' : formatCurrency(orderLine.subtotaal)}</span>
         `;
         orderLinesContainer.appendChild(lineElement);
     });
+
+    if (receiptData.formule_naam && Number(receiptData.formule_subtotaal) > 0) {
+        const formulaLine = document.createElement('div');
+        formulaLine.className = 'bon-regel';
+        formulaLine.innerHTML = `
+            <span class="naam-aantal">${escapeHtml(receiptData.formule_naam)} · ${escapeHtml(receiptData.aantal_personen)} personen</span>
+            <span>${formatCurrency(receiptData.formule_subtotaal)}</span>
+        `;
+        orderLinesContainer.prepend(formulaLine);
+    }
 
     document.getElementById('bon-totaal').textContent = formatCurrency(receiptData.totaal);
     document.getElementById('bon-inhoud').style.display = 'block';

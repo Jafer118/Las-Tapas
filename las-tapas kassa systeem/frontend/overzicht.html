@@ -70,6 +70,37 @@
                 </div>
                 <p id="capaciteit-info" class="capaciteit-info" aria-live="polite"></p>
 
+                <section class="formules" aria-labelledby="formules-titel">
+                    <div class="formules-kop">
+                        <h3 id="formules-titel">Tafelarrangementen</h3>
+                        <p>Kies een formule. De gerechten hieronder zijn inbegrepen; alleen de formuleprijs per persoon wordt gerekend.</p>
+                    </div>
+                    <div class="formules-grid">
+                        <button type="button" class="formule-kaart" data-formule-code="2-uur" data-formule-prijs="29.50" aria-pressed="false">
+                            <span class="formule-duur">2 UUR</span>
+                            <h4>2 uur tafelen</h4>
+                            <p>Twee uur onbeperkt genieten van onze geselecteerde tapas.</p>
+                            <strong>€29,50 <small>p.p.</small></strong>
+                            <span class="formule-keuze">Kies deze formule</span>
+                        </button>
+                        <button type="button" class="formule-kaart formule-kaart-populair" data-formule-code="3-uur" data-formule-prijs="36.50" aria-pressed="false">
+                            <span class="formule-label">MEEST GEKOZEN</span>
+                            <span class="formule-duur">3 UUR</span>
+                            <h4>3 uur tafelen</h4>
+                            <p>Drie uur onbeperkt tapas eten en rustig genieten.</p>
+                            <strong>€36,50 <small>p.p.</small></strong>
+                            <span class="formule-keuze">Kies deze formule</span>
+                        </button>
+                        <button type="button" class="formule-kaart" data-formule-code="3-uur-drinken" data-formule-prijs="49.50" aria-pressed="false">
+                            <span class="formule-duur">3 UUR + DRINKEN</span>
+                            <h4>3 uur + drinken</h4>
+                            <p>Onbeperkt tapas met een selectie drankjes inbegrepen.</p>
+                            <strong>€49,50 <small>p.p.</small></strong>
+                            <span class="formule-keuze">Kies deze formule</span>
+                        </button>
+                    </div>
+                </section>
+
                 <div class="werk-subkop">
                     <div><h2>Menukaart</h2><p>Kies de gerechten en dranken voor deze tafel.</p></div>
                     <div class="menu-tabs" id="menu-tabs" role="tablist" aria-label="Menucategorieën"></div>
@@ -122,6 +153,8 @@ const MENU_GROUPS = ['Frías', 'Calientes', 'Especialidades', 'Postres', 'Bebida
 let tables = [];
 let menuItems = [];
 let cart = {};
+let selectedFormulaCode = '';
+let formulaSelectionRevision = 0;
 let activeMenuGroup = MENU_GROUPS[0];
 let selectedCheckoutTable = null;
 let isRefreshing = false;
@@ -163,6 +196,41 @@ document.querySelector('.werk-tabs').addEventListener('keydown', (event) => {
     nextTab.focus();
     switchPanel(nextTab.dataset.paneel);
 });
+
+function selectFormula(formulaCode) {
+    selectedFormulaCode = formulaCode;
+    formulaSelectionRevision += 1;
+    document.querySelectorAll('.formule-kaart').forEach((formulaButton) => {
+        const selected = formulaButton.dataset.formuleCode === formulaCode;
+        formulaButton.classList.toggle('geselecteerd', selected);
+        formulaButton.setAttribute('aria-pressed', String(selected));
+        formulaButton.querySelector('.formule-keuze').textContent = selected ? 'Gekozen ✓' : 'Kies deze formule';
+    });
+    renderMenuItems();
+    updateCart();
+}
+
+async function loadSavedFormula() {
+    const tableId = document.getElementById('tafel-select').value;
+    if (!tableId) {
+        selectFormula('');
+        return;
+    }
+
+    selectFormula('');
+    const selectionRevision = formulaSelectionRevision;
+    const billData = await apiGet(`rekening.php?tafel_id=${encodeURIComponent(tableId)}`);
+    if (document.getElementById('tafel-select').value !== tableId
+        || formulaSelectionRevision !== selectionRevision) return;
+    if (!billData.succes) {
+        showMessage(billData.fout || 'De bestaande tafelbestelling kon niet worden geladen.');
+        return;
+    }
+    if (billData.aantal_personen) {
+        document.getElementById('aantal-personen').value = billData.aantal_personen;
+    }
+    selectFormula(billData.bestelling_id ? (billData.formule_code || '') : '');
+}
 
 async function loadInitialData() {
     const [tableData, menuData] = await Promise.all([
@@ -246,7 +314,7 @@ function renderMenuItems() {
                 <div class="naam-prijs">
                     <span>${escapeHtml(item.naam)}</span>
                     ${item.beschrijving ? `<span class="beschrijving">${escapeHtml(item.beschrijving)}</span>` : ''}
-                    <span class="voorraad">${formatCurrency(item.prijs)} · ${stock > 0 ? `${stock} op voorraad` : 'Uitverkocht'}</span>
+                    <span class="voorraad">${selectedFormulaCode ? 'Inbegrepen' : formatCurrency(item.prijs)} · ${stock > 0 ? `${stock} op voorraad` : 'Uitverkocht'}</span>
                 </div>
                 <div class="aantal-controls">
                     <button type="button" data-quantity="${id}" data-delta="-1" aria-label="Minder ${escapeHtml(item.naam)}" ${quantity === 0 ? 'disabled' : ''}>−</button>
@@ -277,9 +345,15 @@ function updateCart() {
         const item = menuItems.find((menuItem) => Number(menuItem.id) === Number(id));
         if (!item || quantity < 1) return;
         count += quantity;
-        total += quantity * Number(item.prijs);
-        rows.push(`<div class="mandje-regel"><span>${quantity} × ${escapeHtml(item.naam)}</span><span>${formatCurrency(quantity * Number(item.prijs))}</span></div>`);
+        if (!selectedFormulaCode) total += quantity * Number(item.prijs);
+        rows.push(`<div class="mandje-regel"><span>${quantity} × ${escapeHtml(item.naam)}</span><span>${selectedFormulaCode ? 'Inbegrepen' : formatCurrency(quantity * Number(item.prijs))}</span></div>`);
     });
+    const formulaButton = document.querySelector(`.formule-kaart[data-formule-code="${selectedFormulaCode}"]`);
+    if (formulaButton) {
+        const formulaTotal = Number(formulaButton.dataset.formulePrijs) * (Number(document.getElementById('aantal-personen').value) || 0);
+        total = formulaTotal;
+        rows.unshift(`<div class="mandje-regel"><span>${escapeHtml(formulaButton.querySelector('h4').textContent)} · ${document.getElementById('aantal-personen').value} personen</span><span>${formatCurrency(formulaTotal)}</span></div>`);
+    }
     document.getElementById('mandje-aantal').textContent = `${count} ${count === 1 ? 'item' : 'items'}`;
     document.getElementById('mandje-totaal').textContent = formatCurrency(total);
     document.getElementById('mandje-regels').innerHTML = rows.join('') || '<p class="mandje-leeg">Nog geen gerechten gekozen.</p>';
@@ -304,11 +378,17 @@ function updateOrderContext() {
         ? `${table.naam} · ${guests} ${guests === 1 ? 'gast' : 'gasten'}`
         : 'Kies een tafel en vul het aantal gasten in.';
     document.getElementById('btn-versturen').disabled =
-        !Object.keys(cart).length || !validGuests;
+        !selectedFormulaCode || !validGuests;
 }
 
-document.getElementById('tafel-select').addEventListener('change', updateOrderContext);
+document.getElementById('tafel-select').addEventListener('change', () => {
+    updateOrderContext();
+    loadSavedFormula();
+});
 document.getElementById('aantal-personen').addEventListener('input', updateOrderContext);
+document.querySelectorAll('.formule-kaart').forEach((formulaButton) => {
+    formulaButton.addEventListener('click', () => selectFormula(formulaButton.dataset.formuleCode));
+});
 
 document.getElementById('btn-versturen').addEventListener('click', async (event) => {
     const button = event.currentTarget;
@@ -327,6 +407,7 @@ document.getElementById('btn-versturen').addEventListener('click', async (event)
             regels: Object.entries(cart).map(([id, aantal]) => ({ gerecht_id: Number(id), aantal })),
             klant_email: document.getElementById('klant-email').value.trim(),
             aantal_personen: guests,
+            formule_code: selectedFormulaCode,
         });
         if (!result.succes) {
             showMessage(result.fout || 'De bestelling kon niet worden verstuurd.');
@@ -423,9 +504,12 @@ async function renderBill(tableId) {
         return;
     }
     const orderLines = Array.isArray(bill.orderregels) ? bill.orderregels : [];
+    const formulaRow = bill.formule_naam && Number(bill.formule_subtotaal) > 0
+        ? `<div class="mandje-regel"><span>${escapeHtml(bill.formule_naam)} · ${escapeHtml(bill.aantal_personen)} personen</span><span>${formatCurrency(bill.formule_subtotaal)}</span></div>`
+        : '';
     container.innerHTML = `
         <div class="rekening-kop"><div><h2>Rekening · ${escapeHtml(bill.tafel_naam || tables.find((table) => Number(table.id) === tableId)?.naam || `Tafel ${tableId}`)}</h2><p>${bill.aantal_personen ? `${escapeHtml(bill.aantal_personen)} gasten` : 'Aantal gasten onbekend'}</p></div></div>
-        <div class="rekening-regels">${orderLines.map((line) => `<div class="mandje-regel"><span>${escapeHtml(line.gerecht_naam)} × ${escapeHtml(line.aantal)}</span><span>${formatCurrency(line.subtotaal)}</span></div>`).join('') || '<p class="mandje-leeg">Geen orderregels.</p>'}</div>
+        <div class="rekening-regels">${formulaRow}${orderLines.map((line) => `<div class="mandje-regel"><span>${escapeHtml(line.gerecht_naam)} × ${escapeHtml(line.aantal)}</span><span>${bill.formule_code ? 'Inbegrepen' : formatCurrency(line.subtotaal)}</span></div>`).join('') || (!formulaRow ? '<p class="mandje-leeg">Geen orderregels.</p>' : '')}</div>
         <div class="rekening-totaal"><strong>Totaal</strong><strong>${formatCurrency(bill.totaal || 0)}</strong></div>
         <div class="rekening-acties">
             <a class="secundair werk-link-knop" href="../backend/api/bon_pdf.php?tafel_id=${tableId}" target="_blank" rel="noopener">Bon als PDF</a>

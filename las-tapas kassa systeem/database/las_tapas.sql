@@ -76,6 +76,9 @@ CREATE TABLE IF NOT EXISTS bestellingen (
     tafel_id INT NOT NULL,
     klant_email VARCHAR(255) NULL,
     aantal_personen INT NULL,
+    formule_code VARCHAR(32) NULL,
+    formule_naam VARCHAR(100) NULL,
+    formule_prijs DECIMAL(8,2) NULL,
     aangemaakt_op DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     status ENUM('open', 'afgerekend') NOT NULL DEFAULT 'open',
     FOREIGN KEY (tafel_id) REFERENCES tafels(id)

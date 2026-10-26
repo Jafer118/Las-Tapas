@@ -7,11 +7,14 @@ declare(strict_types=1);
  * Shared by bon_gegevens.php and bon_pdf.php to keep this logic in one place.
  */
 
+require_once __DIR__ . '/formules.php';
+
 function getReceiptData(PDO $pdo, int $tableId, int $orderId): ?array
 {
     if ($orderId > 0) {
         $statement = $pdo->prepare(
-            'SELECT b.id, b.aangemaakt_op, b.status, b.klant_email, b.aantal_personen, t.naam AS tafel_naam
+            'SELECT b.id, b.aangemaakt_op, b.status, b.klant_email, b.aantal_personen,
+                    b.formule_code, b.formule_naam, b.formule_prijs, t.naam AS tafel_naam
              FROM bestellingen b
              JOIN tafels t ON t.id = b.tafel_id
              WHERE b.id = ?'
@@ -19,7 +22,8 @@ function getReceiptData(PDO $pdo, int $tableId, int $orderId): ?array
         $statement->execute([$orderId]);
     } elseif ($tableId > 0) {
         $statement = $pdo->prepare(
-            "SELECT b.id, b.aangemaakt_op, b.status, b.klant_email, b.aantal_personen, t.naam AS tafel_naam
+            "SELECT b.id, b.aangemaakt_op, b.status, b.klant_email, b.aantal_personen,
+                    b.formule_code, b.formule_naam, b.formule_prijs, t.naam AS tafel_naam
              FROM bestellingen b
              JOIN tafels t ON t.id = b.tafel_id
              WHERE b.tafel_id = ? AND b.status = 'open'
@@ -46,10 +50,17 @@ function getReceiptData(PDO $pdo, int $tableId, int $orderId): ?array
     $statement->execute([$order['id']]);
     $orderLines = $statement->fetchAll();
 
-    $total = 0;
-    foreach ($orderLines as $orderLine) {
-        $total += $orderLine['subtotaal'];
-    }
+    $formulaTotal = calculateDiningFormulaTotal(
+        $order['formule_code'],
+        $order['aantal_personen'] !== null ? (int) $order['aantal_personen'] : null,
+        $order['formule_prijs'] !== null ? (float) $order['formule_prijs'] : null
+    );
+    $total = calculateOrderTotal(
+        $orderLines,
+        $order['formule_code'],
+        $order['aantal_personen'] !== null ? (int) $order['aantal_personen'] : null,
+        $order['formule_prijs'] !== null ? (float) $order['formule_prijs'] : null
+    );
 
     return [
         'bestelling_id' => $order['id'],
@@ -58,7 +69,11 @@ function getReceiptData(PDO $pdo, int $tableId, int $orderId): ?array
         'status' => $order['status'],
         'klant_email' => $order['klant_email'],
         'aantal_personen' => $order['aantal_personen'],
+        'formule_code' => $order['formule_code'],
+        'formule_naam' => $order['formule_naam'],
+        'formule_prijs' => $order['formule_prijs'],
+        'formule_subtotaal' => $formulaTotal,
         'orderregels' => $orderLines,
-        'totaal' => round($total, 2),
+        'totaal' => $total,
     ];
 }

@@ -524,6 +524,111 @@ nav.subnav a.home-link:hover {
 .bestel-menu .bestel-sectie-kop {
     margin-bottom: 16px;
 }
+.formules {
+    margin: 0 0 22px;
+}
+.formules-kop {
+    margin-bottom: 12px;
+}
+.formules-kop h3 {
+    margin: 0;
+    color: var(--kleur-tekst);
+    font-family: var(--font-kop);
+    font-size: 1.05rem;
+}
+.formules-kop p {
+    margin: 4px 0 0;
+    color: var(--kleur-tekst-zacht);
+    font-size: 0.85rem;
+}
+.formules-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+.formule-kaart {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-height: 190px;
+    padding: 17px;
+    border: 1px solid var(--kleur-paneel-rand);
+    border-radius: var(--rond-groot);
+    background: var(--kleur-paneel-licht);
+    box-shadow: var(--schaduw-kaart);
+    color: var(--kleur-tekst);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 0.15s ease, transform 0.15s ease, background 0.15s ease;
+}
+.formule-kaart:hover {
+    transform: translateY(-2px);
+    border-color: var(--kleur-terracotta);
+}
+.formule-kaart:focus-visible {
+    outline: 3px solid var(--kleur-saffraan);
+    outline-offset: 3px;
+}
+.formule-kaart-populair {
+    border-color: var(--kleur-terracotta);
+    background: linear-gradient(145deg, var(--kleur-paneel-licht), var(--kleur-paneel));
+}
+.formule-kaart.geselecteerd {
+    border: 2px solid var(--kleur-terracotta-op);
+    background: linear-gradient(145deg, var(--kleur-paneel), var(--kleur-bodega-diep));
+    box-shadow: 0 0 0 3px rgba(217, 139, 69, 0.14), var(--schaduw-kaart);
+}
+.formule-duur {
+    color: var(--kleur-terracotta-op);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+}
+.formule-label {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    padding: 4px 7px;
+    border-radius: 999px;
+    background: var(--kleur-terracotta);
+    color: var(--kleur-bodega-diep);
+    font-size: 0.58rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+}
+.formule-kaart h4 {
+    margin: 8px 0 5px;
+    color: var(--kleur-tekst);
+    font-family: var(--font-kop);
+    font-size: 1.1rem;
+}
+.formule-kaart p {
+    margin: 0 0 14px;
+    color: var(--kleur-tekst-zacht);
+    font-size: 0.82rem;
+}
+.formule-kaart strong {
+    margin-top: auto;
+    color: var(--kleur-saffraan);
+    font-family: var(--font-kop);
+    font-size: 1.25rem;
+}
+.formule-kaart small {
+    font-family: var(--font-tekst);
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+.formule-keuze {
+    margin-top: 12px;
+    color: var(--kleur-terracotta-op);
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+.formule-kaart.geselecteerd .formule-keuze {
+    color: var(--kleur-olijf);
+}
 .menu-tabs .tab {
     appearance: none;
     border: 0;
@@ -620,6 +725,8 @@ nav.subnav a.home-link:hover {
     .bestel-stappen li { flex: auto; }
     .bestel-context-velden { grid-template-columns: 1fr; gap: 7px; }
     .bestel-context-velden label:not(:first-child) { margin-top: 7px; }
+    .formules-grid { grid-template-columns: 1fr; }
+    .formule-kaart { min-height: 0; }
     .mandje-samenvatting { grid-template-columns: 1fr; }
     .mandje-totalen {
         grid-template-columns: 1fr auto;

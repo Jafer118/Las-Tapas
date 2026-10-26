@@ -7,6 +7,8 @@ declare(strict_types=1);
  * Expects a JSON body:
  * {
  *   "tafel_id": 10,
+ *   "formule_code": "3-uur",
+ *   "aantal_personen": 2,
  *   "regels": [
  *     { "gerecht_id": 1, "aantal": 2 },
  *     { "gerecht_id": 7, "aantal": 4 }
@@ -26,6 +28,7 @@ requireHttpMethod('POST');
 requireValidCsrfToken();
 
 require_once __DIR__ . '/../db.php';
+require_once __DIR__ . '/../lib/formules.php';
 
 $requestData = decodeJsonRequestBody();
 $tableId = parsePositiveInteger($requestData['tafel_id'] ?? null);
@@ -35,7 +38,7 @@ if ($tableId === null) {
 
 $orderLines = $requestData['regels'] ?? null;
 $orderLinesAreList = is_array($orderLines)
-    && array_keys($orderLines) === range(0, count($orderLines) - 1);
+    && ($orderLines === [] || array_keys($orderLines) === range(0, count($orderLines) - 1));
 $customerEmailIsString = !isset($requestData['klant_email']) || is_string($requestData['klant_email']);
 $customerEmail = $customerEmailIsString && isset($requestData['klant_email'])
     ? trim($requestData['klant_email'])
@@ -45,9 +48,11 @@ $guestCount = isset($requestData['aantal_personen']) && $requestData['aantal_per
         ? filter_var($requestData['aantal_personen'], FILTER_VALIDATE_INT)
         : false)
     : null;
+$formulaCode = $requestData['formule_code'] ?? null;
+$formula = is_string($formulaCode) ? getDiningFormula($formulaCode) : null;
 
-if (!$orderLinesAreList || count($orderLines) === 0 || count($orderLines) > 100) {
-    sendJsonResponse(['succes' => false, 'fout' => 'Een geldige tafel en 1 tot 100 bestelregels zijn verplicht.'], 422);
+if (!$orderLinesAreList || count($orderLines) > 100) {
+    sendJsonResponse(['succes' => false, 'fout' => 'Er mogen maximaal 100 geldige bestelregels worden verstuurd.'], 422);
 }
 
 if (!$customerEmailIsString) {
@@ -60,6 +65,10 @@ if ($customerEmail !== '' && (strlen($customerEmail) > 254 || !filter_var($custo
 
 if ($guestCount !== null && ($guestCount === false || $guestCount <= 0)) {
     sendJsonResponse(['succes' => false, 'fout' => 'Aantal personen moet minimaal 1 zijn.'], 422);
+}
+
+if ($guestCount === null || $guestCount === false || !$formula) {
+    sendJsonResponse(['succes' => false, 'fout' => 'Kies een geldige formule en vul het aantal personen in.'], 422);
 }
 
 foreach ($orderLines as $orderLine) {
@@ -102,20 +111,31 @@ try {
 
     if ($order) {
         $orderId = $order['id'];
-        // Update the order if an email address or party size is provided later.
+        // Keep order details and the selected formula current when adding to an open table.
         if ($customerEmail !== '') {
             $statement = $pdo->prepare('UPDATE bestellingen SET klant_email = ? WHERE id = ?');
             $statement->execute([$customerEmail, $orderId]);
         }
-        if ($guestCount !== null) {
-            $statement = $pdo->prepare('UPDATE bestellingen SET aantal_personen = ? WHERE id = ?');
-            $statement->execute([$guestCount, $orderId]);
-        }
+        $statement = $pdo->prepare(
+            'UPDATE bestellingen
+             SET aantal_personen = ?, formule_code = ?, formule_naam = ?, formule_prijs = ?
+             WHERE id = ?'
+        );
+        $statement->execute([$guestCount, $formulaCode, $formula['naam'], $formula['prijs'], $orderId]);
     } else {
         $statement = $pdo->prepare(
-            'INSERT INTO bestellingen (tafel_id, klant_email, aantal_personen, status) VALUES (?, ?, ?, "open")'
+            'INSERT INTO bestellingen
+                (tafel_id, klant_email, aantal_personen, formule_code, formule_naam, formule_prijs, status)
+             VALUES (?, ?, ?, ?, ?, ?, "open")'
         );
-        $statement->execute([$tableId, $customerEmail !== '' ? $customerEmail : null, $guestCount]);
+        $statement->execute([
+            $tableId,
+            $customerEmail !== '' ? $customerEmail : null,
+            $guestCount,
+            $formulaCode,
+            $formula['naam'],
+            $formula['prijs'],
+        ]);
         $orderId = $pdo->lastInsertId();
     }
 
