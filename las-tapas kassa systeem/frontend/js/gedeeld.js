@@ -39,7 +39,6 @@ async function requireAuthentication() {
     } else if (sessionData.gebruiker) {
         const avatar = document.querySelector('.db-avatar');
         if (avatar) {
-            avatar.textContent = sessionData.gebruiker.naam;
             avatar.removeAttribute('title');
             avatar.style.cursor = 'default';
         }
