@@ -139,6 +139,10 @@
     </section>
 
     <section class="werk-paneel" id="paneel-bereiden" role="tabpanel" aria-labelledby="tab-bereiden" hidden>
+        <section class="db-paneel werk-timers-paneel">
+            <div class="db-paneel-titel">Tafeltimers</div>
+            <div class="werk-timers-inhoud" id="tafel-timers"><p class="db-geen-tafels">Timers laden…</p></div>
+        </section>
         <div class="werk-queue-grid">
             <section class="db-paneel">
                 <div class="db-paneel-titel">Keuken</div>
@@ -532,16 +536,55 @@ async function loadOrderColumn(endpoint, containerId) {
     return data.orderregels.length;
 }
 
+async function loadDiningTimers() {
+    const data = await apiGet('formule_timers.php');
+    const container = document.getElementById('tafel-timers');
+    if (!Array.isArray(data.timers)) {
+        container.innerHTML = '<p class="db-geen-tafels">Tafeltimers konden niet worden geladen.</p>';
+        return;
+    }
+    if (data.timers.length === 0) {
+        container.innerHTML = '<p class="db-geen-tafels">Geen actieve tafeltimers.</p>';
+        return;
+    }
+
+    container.innerHTML = data.timers.map((timer) => `
+        <article class="werk-timer-kaart">
+            <strong>${escapeHtml(timer.tafel_naam)}</strong>
+            <span>${escapeHtml(timer.formule_naam)}</span>
+            <span class="werk-timer-aftellen" data-deadline="${Number(timer.eindigt_op)}" role="timer">Timer laden…</span>
+        </article>`).join('');
+    updateDiningTimerDisplays();
+}
+
+function updateDiningTimerDisplays() {
+    document.querySelectorAll('.werk-timer-aftellen[data-deadline]').forEach((timer) => {
+        const deadline = Number(timer.dataset.deadline) * 1000;
+        if (!Number.isFinite(deadline)) return;
+        const remainingSeconds = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
+        const hours = Math.floor(remainingSeconds / 3600);
+        const minutes = Math.floor((remainingSeconds % 3600) / 60);
+        const seconds = remainingSeconds % 60;
+        timer.textContent = remainingSeconds === 0
+            ? 'Tijd is om'
+            : `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')} resterend`;
+        timer.classList.toggle('verlopen', remainingSeconds === 0);
+    });
+}
+
 async function refreshQueues() {
     const [kitchen, bar] = await Promise.all([
         loadOrderColumn('keuken_bestellingen.php', 'keuken-inhoud'),
         loadOrderColumn('bar_bestellingen.php', 'bar-inhoud'),
     ]);
+    await loadDiningTimers();
     if (Number.isInteger(kitchen) && Number.isInteger(bar)) {
         document.getElementById('stat-orders').textContent = kitchen + bar;
         document.getElementById('tab-open-count').textContent = kitchen + bar;
     }
 }
+
+setInterval(updateDiningTimerDisplays, 1000);
 
 document.querySelector('.werk-queue-grid').addEventListener('click', async (event) => {
     const button = event.target.closest('button[data-order-id]');
