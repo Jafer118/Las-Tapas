@@ -16,23 +16,14 @@
 
 <body>
 
-<!-- =====================================================
-     NAVIGATION
-===================================================== -->
+<!-- NAVIGATION -->
 
 <header class="site">
 
   <div class="nav-inner">
 
     <button class="brand" data-page="home" aria-label="Ga naar home">
-      <span class="restaurant-logo" aria-hidden="true">
-        <span class="logo-sprig logo-sprig--left"><i></i><i></i><i></i><i></i><i></i><i></i></span>
-        <span class="logo-copy">
-          <span class="logo-name">LAS TAPAS</span>
-          <span class="logo-tagline">SMAAK &amp; BELEVING</span>
-        </span>
-        <span class="logo-sprig logo-sprig--right"><i></i><i></i><i></i><i></i><i></i><i></i></span>
-      </span>
+      <img class="nav-logo" src="images/logo.png" alt="Las Tapas – Smaak &amp; beleving">
     </button>
 
     <nav class="links" id="nav-links">
@@ -56,9 +47,7 @@
 
 <main>
 
-<!-- =====================================================
-     HOME
-===================================================== -->
+<!-- HOME -->
 
 <section class="page active" id="page-home">
 
@@ -121,13 +110,8 @@
 
       <div class="hero-image">
 
-        <div class="restaurant-logo" role="img" aria-label="Las Tapas, Smaak &amp; beleving">
-          <span class="logo-sprig logo-sprig--left"><i></i><i></i><i></i><i></i><i></i><i></i></span>
-          <span class="logo-copy">
-            <span class="logo-name">LAS TAPAS</span>
-            <span class="logo-tagline">SMAAK &amp; BELEVING</span>
-          </span>
-          <span class="logo-sprig logo-sprig--right"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+        <div class="logo-card">
+          <img src="images/logo.png" alt="Las Tapas – Smaak &amp; beleving">
         </div>
 
         <div class="hero-image-text">
@@ -227,7 +211,7 @@
   </section>
 
 
-  <!-- LIVE MUSIC -->
+  <!-- LIVE MUSIC (eenmalige optredens) -->
 
   <section class="weekend-section" id="weekend-live">
 
@@ -242,11 +226,12 @@
         <div>
 
           <h2>
-            Weekend Live
+            Live optredens
           </h2>
 
           <p>
-            Iedere week Spaanse live muziek.
+            Drie speciale avonden met Spaanse live muziek.
+            Elke artiest komt eenmalig, dus mis het niet.
           </p>
 
           <div class="rule"></div>
@@ -260,9 +245,10 @@
 
         <article class="artist-card">
 
-          <span class="artist-day">
-            VRIJDAG
-          </span>
+          <div class="artist-top">
+            <span class="artist-day">VRIJDAG 6 NOVEMBER</span>
+            <span class="artist-once">EENMALIG</span>
+          </div>
 
           <div class="artist-icon">
             🎸
@@ -284,11 +270,12 @@
         </article>
 
 
-        <article class="artist-card featured">
+        <article class="artist-card">
 
-          <span class="artist-day">
-            ZATERDAG
-          </span>
+          <div class="artist-top">
+            <span class="artist-day">ZATERDAG 7 NOVEMBER</span>
+            <span class="artist-once">EENMALIG</span>
+          </div>
 
           <div class="artist-icon">
             🎤
@@ -312,9 +299,10 @@
 
         <article class="artist-card">
 
-          <span class="artist-day">
-            ZONDAG
-          </span>
+          <div class="artist-top">
+            <span class="artist-day">ZONDAG 8 NOVEMBER</span>
+            <span class="artist-once">EENMALIG</span>
+          </div>
 
           <div class="artist-icon">
             🎶
@@ -344,9 +332,7 @@
 </section>
 
 
-<!-- =====================================================
-     MENU
-===================================================== -->
+<!-- MENU -->
 
 <section class="page" id="page-menu">
 
@@ -368,6 +354,7 @@
 
           <p>
             Kies een formule en geniet onbeperkt van onze tapas.
+            Alle gerechten zitten bij de formule inbegrepen. Hieronder zie je wat je kunt krijgen.
           </p>
 
           <div class="rule"></div>
@@ -377,7 +364,11 @@
       </div>
 
 
-      <!-- DINING PACKAGES -->
+      <!-- STAP 1: FORMULE -->
+
+      <h3 class="menu-step-title">
+        <span>1</span> Kies een formule
+      </h3>
 
       <div class="ayce-grid">
 
@@ -480,41 +471,35 @@
       </div>
 
 
-      <!-- MENU TABS -->
+      <!-- STAP 2: WAT KUN JE KRIJGEN -->
+
+      <h3 class="menu-step-title">
+        <span>2</span> Dit kun je krijgen
+      </h3>
 
       <div class="menu-tabs">
 
-        <button
-          class="active"
-          data-target="fria">
-          Frías
-        </button>
-
-        <button data-target="caliente">
-          Calientes
-        </button>
-
-        <button data-target="especialidades">
-          Especialidades
-        </button>
-
-        <button data-target="postre">
-          Postres
-        </button>
-
-        <button data-target="bebidas">
-          Bebidas
-        </button>
+        <button class="active" data-target="fria">Frías</button>
+        <button data-target="caliente">Calientes</button>
+        <button data-target="especialidades">Especialidades</button>
+        <button data-target="postre">Postres</button>
+        <button data-target="bebidas">Bebidas</button>
 
       </div>
 
 
-      <!-- DISHES -->
+      <!-- KOUDE GERECHTEN -->
 
       <div class="menu-panel active" id="fria">
 
+        <div class="menu-panel-head">
+          <h3>Frías</h3>
+          <p>Koude gerechten</p>
+        </div>
+
         <div class="dish-list">
 
+<<<<<<< Updated upstream
           <article class="dish"
             data-name="Aceitunas marinadas">
 
@@ -522,48 +507,17 @@
               src="images/menu/aceitunas-marinadas.jpg"
               alt="Aceitunas marinadas">
 
+=======
+          <article class="dish" data-name="Aceitunas marinadas">
+            <img src="https://loremflickr.com/600/400/olives,food?lock=1" alt="Aceitunas marinadas" loading="lazy">
+>>>>>>> Stashed changes
             <div class="dish-content">
-
-              <h3 class="dish-name">
-                Aceitunas marinadas
-              </h3>
-
-              <p class="dish-desc">
-                Gemarineerde Spaanse olijven met kruiden.
-              </p>
-
-              <div class="dish-bottom">
-
-                <span>
-                  Tapas
-                </span>
-
-                <div class="quantity-control">
-
-                  <button
-                    type="button"
-                    class="minus">
-                    −
-                  </button>
-
-                  <strong>
-                    0
-                  </strong>
-
-                  <button
-                    type="button"
-                    class="plus">
-                    +
-                  </button>
-
-                </div>
-
-              </div>
-
+              <h3 class="dish-name">Aceitunas marinadas</h3>
+              <p class="dish-desc">Gemarineerde Spaanse olijven met kruiden.</p>
             </div>
-
           </article>
 
+<<<<<<< Updated upstream
 
           <article class="dish"
             data-name="Pan con tomate">
@@ -572,30 +526,17 @@
               src="images/menu/pan-con-tomate.jpg"
               alt="Pan con tomate">
 
+=======
+          <article class="dish" data-name="Pan con tomate">
+            <img src="https://loremflickr.com/600/400/bread,tomato?lock=2" alt="Pan con tomate" loading="lazy">
+>>>>>>> Stashed changes
             <div class="dish-content">
-
-              <h3 class="dish-name">
-                Pan con tomate
-              </h3>
-
-              <p class="dish-desc">
-                Geroosterd brood met tomaat en olijfolie.
-              </p>
-
-              <div class="dish-bottom">
-                <span>Tapas</span>
-
-                <div class="quantity-control">
-                  <button type="button" class="minus">−</button>
-                  <strong>0</strong>
-                  <button type="button" class="plus">+</button>
-                </div>
-              </div>
-
+              <h3 class="dish-name">Pan con tomate</h3>
+              <p class="dish-desc">Geroosterd brood met tomaat en olijfolie.</p>
             </div>
-
           </article>
 
+<<<<<<< Updated upstream
 
           <article class="dish"
             data-name="Tabla de quesos españoles">
@@ -604,30 +545,17 @@
               src="images/menu/tabla-quesos.jpg"
               alt="Spaanse kazen">
 
+=======
+          <article class="dish" data-name="Tabla de quesos españoles">
+            <img src="https://loremflickr.com/600/400/spanish,cheese?lock=3" alt="Spaanse kazen" loading="lazy">
+>>>>>>> Stashed changes
             <div class="dish-content">
-
-              <h3 class="dish-name">
-                Tabla de quesos españoles
-              </h3>
-
-              <p class="dish-desc">
-                Selectie van Spaanse kazen.
-              </p>
-
-              <div class="dish-bottom">
-                <span>Tapas</span>
-
-                <div class="quantity-control">
-                  <button type="button" class="minus">−</button>
-                  <strong>0</strong>
-                  <button type="button" class="plus">+</button>
-                </div>
-              </div>
-
+              <h3 class="dish-name">Tabla de quesos españoles</h3>
+              <p class="dish-desc">Selectie van Spaanse kazen.</p>
             </div>
-
           </article>
 
+<<<<<<< Updated upstream
 
           <article class="dish"
             data-name="Jamón serrano">
@@ -636,30 +564,17 @@
               src="images/menu/jamon-serrano.jpg"
               alt="Jamón serrano">
 
+=======
+          <article class="dish" data-name="Jamón serrano">
+            <img src="https://loremflickr.com/600/400/ham,spanish?lock=4" alt="Jamón serrano" loading="lazy">
+>>>>>>> Stashed changes
             <div class="dish-content">
-
-              <h3 class="dish-name">
-                Jamón serrano
-              </h3>
-
-              <p class="dish-desc">
-                Dun gesneden Spaanse serranoham.
-              </p>
-
-              <div class="dish-bottom">
-                <span>Tapas</span>
-
-                <div class="quantity-control">
-                  <button type="button" class="minus">−</button>
-                  <strong>0</strong>
-                  <button type="button" class="plus">+</button>
-                </div>
-              </div>
-
+              <h3 class="dish-name">Jamón serrano</h3>
+              <p class="dish-desc">Dun gesneden Spaanse serranoham.</p>
             </div>
-
           </article>
 
+<<<<<<< Updated upstream
 
           <article class="dish"
             data-name="Ensalada de atún">
@@ -668,30 +583,17 @@
               src="images/menu/ensalada-atun.jpg"
               alt="Ensalada de atún">
 
+=======
+          <article class="dish" data-name="Ensalada de atún">
+            <img src="https://loremflickr.com/600/400/tuna,salad?lock=5" alt="Ensalada de atún" loading="lazy">
+>>>>>>> Stashed changes
             <div class="dish-content">
-
-              <h3 class="dish-name">
-                Ensalada de atún
-              </h3>
-
-              <p class="dish-desc">
-                Frisse salade met tonijn en groenten.
-              </p>
-
-              <div class="dish-bottom">
-                <span>Tapas</span>
-
-                <div class="quantity-control">
-                  <button type="button" class="minus">−</button>
-                  <strong>0</strong>
-                  <button type="button" class="plus">+</button>
-                </div>
-              </div>
-
+              <h3 class="dish-name">Ensalada de atún</h3>
+              <p class="dish-desc">Frisse salade met tonijn en groenten.</p>
             </div>
-
           </article>
 
+<<<<<<< Updated upstream
 
           <article class="dish"
             data-name="Gazpacho">
@@ -700,28 +602,14 @@
               src="images/menu/gazpacho.jpg"
               alt="Gazpacho">
 
+=======
+          <article class="dish" data-name="Gazpacho">
+            <img src="https://loremflickr.com/600/400/gazpacho?lock=6" alt="Gazpacho" loading="lazy">
+>>>>>>> Stashed changes
             <div class="dish-content">
-
-              <h3 class="dish-name">
-                Gazpacho
-              </h3>
-
-              <p class="dish-desc">
-                Koude Andalusische tomatensoep.
-              </p>
-
-              <div class="dish-bottom">
-                <span>Tapas</span>
-
-                <div class="quantity-control">
-                  <button type="button" class="minus">−</button>
-                  <strong>0</strong>
-                  <button type="button" class="plus">+</button>
-                </div>
-              </div>
-
+              <h3 class="dish-name">Gazpacho</h3>
+              <p class="dish-desc">Koude Andalusische tomatensoep.</p>
             </div>
-
           </article>
 
         </div>
@@ -729,142 +617,110 @@
       </div>
 
 
+      <!-- WARME GERECHTEN -->
+
       <div class="menu-panel" id="caliente">
+
+        <div class="menu-panel-head">
+          <h3>Calientes</h3>
+          <p>Warme gerechten</p>
+        </div>
 
         <div class="dish-list">
 
           <article class="dish" data-name="Patatas bravas">
+<<<<<<< Updated upstream
             <img src="images/menu/patatas-bravas.jpg" alt="Patatas bravas">
+=======
+            <img src="https://loremflickr.com/600/400/patatas,bravas?lock=7" alt="Patatas bravas" loading="lazy">
+>>>>>>> Stashed changes
             <div class="dish-content">
               <h3 class="dish-name">Patatas bravas</h3>
               <p class="dish-desc">Krokante aardappelen met pittige saus.</p>
-              <div class="dish-bottom">
-                <span>Tapas</span>
-                <div class="quantity-control">
-                  <button type="button" class="minus">−</button>
-                  <strong>0</strong>
-                  <button type="button" class="plus">+</button>
-                </div>
-              </div>
             </div>
           </article>
 
-
           <article class="dish" data-name="Gambas al ajillo">
+<<<<<<< Updated upstream
             <img src="images/menu/gambas-ajillo.jpg" alt="Gambas al ajillo">
+=======
+            <img src="https://loremflickr.com/600/400/shrimp,garlic?lock=8" alt="Gambas al ajillo" loading="lazy">
+>>>>>>> Stashed changes
             <div class="dish-content">
               <h3 class="dish-name">Gambas al ajillo</h3>
               <p class="dish-desc">Garnalen met knoflook en olijfolie.</p>
-              <div class="dish-bottom">
-                <span>Tapas</span>
-                <div class="quantity-control">
-                  <button type="button" class="minus">−</button>
-                  <strong>0</strong>
-                  <button type="button" class="plus">+</button>
-                </div>
-              </div>
             </div>
           </article>
 
-
           <article class="dish" data-name="Calamares fritos">
+<<<<<<< Updated upstream
             <img src="images/menu/calamares-fritos.jpg" alt="Calamares fritos">
+=======
+            <img src="https://loremflickr.com/600/400/calamari,fried?lock=9" alt="Calamares fritos" loading="lazy">
+>>>>>>> Stashed changes
             <div class="dish-content">
               <h3 class="dish-name">Calamares fritos</h3>
               <p class="dish-desc">Krokant gebakken inktvis.</p>
-              <div class="dish-bottom">
-                <span>Tapas</span>
-                <div class="quantity-control">
-                  <button type="button" class="minus">−</button>
-                  <strong>0</strong>
-                  <button type="button" class="plus">+</button>
-                </div>
-              </div>
             </div>
           </article>
 
-
           <article class="dish" data-name="Croquetas">
+<<<<<<< Updated upstream
             <img src="images/menu/croquetas.jpg" alt="Croquetas">
+=======
+            <img src="https://loremflickr.com/600/400/croquettes,food?lock=10" alt="Croquetas" loading="lazy">
+>>>>>>> Stashed changes
             <div class="dish-content">
               <h3 class="dish-name">Croquetas</h3>
               <p class="dish-desc">Spaanse huisgemaakte kroketjes.</p>
-              <div class="dish-bottom">
-                <span>Tapas</span>
-                <div class="quantity-control">
-                  <button type="button" class="minus">−</button>
-                  <strong>0</strong>
-                  <button type="button" class="plus">+</button>
-                </div>
-              </div>
             </div>
           </article>
 
-
           <article class="dish" data-name="Dátiles con bacon">
+<<<<<<< Updated upstream
             <img src="images/menu/datiles-bacon.jpg" alt="Dátiles con bacon">
+=======
+            <img src="https://loremflickr.com/600/400/bacon,dates,food?lock=11" alt="Dátiles con bacon" loading="lazy">
+>>>>>>> Stashed changes
             <div class="dish-content">
               <h3 class="dish-name">Dátiles con bacon</h3>
               <p class="dish-desc">Dadels omwikkeld met bacon.</p>
-              <div class="dish-bottom">
-                <span>Tapas</span>
-                <div class="quantity-control">
-                  <button type="button" class="minus">−</button>
-                  <strong>0</strong>
-                  <button type="button" class="plus">+</button>
-                </div>
-              </div>
             </div>
           </article>
 
-
           <article class="dish" data-name="Pollo al ajillo">
+<<<<<<< Updated upstream
             <img src="images/menu/pollo-ajillo.jpg" alt="Pollo al ajillo">
+=======
+            <img src="https://loremflickr.com/600/400/chicken,garlic?lock=12" alt="Pollo al ajillo" loading="lazy">
+>>>>>>> Stashed changes
             <div class="dish-content">
               <h3 class="dish-name">Pollo al ajillo</h3>
               <p class="dish-desc">Kip met knoflook en Spaanse kruiden.</p>
-              <div class="dish-bottom">
-                <span>Tapas</span>
-                <div class="quantity-control">
-                  <button type="button" class="minus">−</button>
-                  <strong>0</strong>
-                  <button type="button" class="plus">+</button>
-                </div>
-              </div>
             </div>
           </article>
 
-
           <article class="dish" data-name="Chorizo al vino">
+<<<<<<< Updated upstream
             <img src="images/menu/chorizo-vino.jpg" alt="Chorizo al vino">
+=======
+            <img src="https://loremflickr.com/600/400/chorizo,spanish?lock=13" alt="Chorizo al vino" loading="lazy">
+>>>>>>> Stashed changes
             <div class="dish-content">
               <h3 class="dish-name">Chorizo al vino</h3>
               <p class="dish-desc">Chorizo bereid in Spaanse wijn.</p>
-              <div class="dish-bottom">
-                <span>Tapas</span>
-                <div class="quantity-control">
-                  <button type="button" class="minus">−</button>
-                  <strong>0</strong>
-                  <button type="button" class="plus">+</button>
-                </div>
-              </div>
             </div>
           </article>
 
-
           <article class="dish" data-name="Pimientos de padrón">
+<<<<<<< Updated upstream
             <img src="images/menu/pimientos-padron.jpg" alt="Pimientos de padrón">
+=======
+            <img src="https://loremflickr.com/600/400/green,peppers,food?lock=14" alt="Pimientos de padrón" loading="lazy">
+>>>>>>> Stashed changes
             <div class="dish-content">
               <h3 class="dish-name">Pimientos de padrón</h3>
               <p class="dish-desc">Gebakken Spaanse groene pepers.</p>
-              <div class="dish-bottom">
-                <span>Tapas</span>
-                <div class="quantity-control">
-                  <button type="button" class="minus">−</button>
-                  <strong>0</strong>
-                  <button type="button" class="plus">+</button>
-                </div>
-              </div>
             </div>
           </article>
 
@@ -873,108 +729,86 @@
       </div>
 
 
+      <!-- SPECIALITEITEN -->
+
       <div class="menu-panel" id="especialidades">
+
+        <div class="menu-panel-head">
+          <h3>Especialidades</h3>
+          <p>Onze specialiteiten</p>
+        </div>
 
         <div class="dish-list">
 
           <article class="dish" data-name="Tortilla española">
+<<<<<<< Updated upstream
             <img src="images/menu/tortilla-espanola.jpg" alt="Tortilla española">
+=======
+            <img src="https://loremflickr.com/600/400/spanish,omelette?lock=15" alt="Tortilla española" loading="lazy">
+>>>>>>> Stashed changes
             <div class="dish-content">
               <h3 class="dish-name">Tortilla española</h3>
               <p class="dish-desc">Traditionele Spaanse aardappelomelet.</p>
-              <div class="dish-bottom">
-                <span>Specialiteit</span>
-                <div class="quantity-control">
-                  <button type="button" class="minus">−</button>
-                  <strong>0</strong>
-                  <button type="button" class="plus">+</button>
-                </div>
-              </div>
             </div>
           </article>
 
-
           <article class="dish" data-name="Huevos rotos">
+<<<<<<< Updated upstream
             <img src="images/menu/huevos-rotos.jpg" alt="Huevos rotos">
+=======
+            <img src="https://loremflickr.com/600/400/eggs,potatoes?lock=16" alt="Huevos rotos" loading="lazy">
+>>>>>>> Stashed changes
             <div class="dish-content">
               <h3 class="dish-name">Huevos rotos</h3>
               <p class="dish-desc">Aardappelen met gebroken eieren.</p>
-              <div class="dish-bottom">
-                <span>Specialiteit</span>
-                <div class="quantity-control">
-                  <button type="button" class="minus">−</button>
-                  <strong>0</strong>
-                  <button type="button" class="plus">+</button>
-                </div>
-              </div>
             </div>
           </article>
 
-
           <article class="dish" data-name="Pinchos morunos">
+<<<<<<< Updated upstream
             <img src="images/menu/pinchos-morunos.jpg" alt="Pinchos morunos">
+=======
+            <img src="https://loremflickr.com/600/400/meat,skewers?lock=17" alt="Pinchos morunos" loading="lazy">
+>>>>>>> Stashed changes
             <div class="dish-content">
               <h3 class="dish-name">Pinchos morunos</h3>
               <p class="dish-desc">Spaanse gekruide vleesspiesjes.</p>
-              <div class="dish-bottom">
-                <span>Specialiteit</span>
-                <div class="quantity-control">
-                  <button type="button" class="minus">−</button>
-                  <strong>0</strong>
-                  <button type="button" class="plus">+</button>
-                </div>
-              </div>
             </div>
           </article>
 
-
           <article class="dish" data-name="Pulpo a la gallega">
+<<<<<<< Updated upstream
             <img src="images/menu/pulpo-gallega.jpg" alt="Pulpo a la gallega">
+=======
+            <img src="https://loremflickr.com/600/400/octopus,food?lock=18" alt="Pulpo a la gallega" loading="lazy">
+>>>>>>> Stashed changes
             <div class="dish-content">
               <h3 class="dish-name">Pulpo a la gallega</h3>
               <p class="dish-desc">Octopus met aardappel en paprika.</p>
-              <div class="dish-bottom">
-                <span>Specialiteit</span>
-                <div class="quantity-control">
-                  <button type="button" class="minus">−</button>
-                  <strong>0</strong>
-                  <button type="button" class="plus">+</button>
-                </div>
-              </div>
             </div>
           </article>
 
-
           <article class="dish" data-name="Mini paella de mariscos">
+<<<<<<< Updated upstream
             <img src="images/menu/paella-mariscos.jpg" alt="Mini paella de mariscos">
+=======
+            <img src="https://loremflickr.com/600/400/paella,seafood?lock=19" alt="Mini paella de mariscos" loading="lazy">
+>>>>>>> Stashed changes
             <div class="dish-content">
               <h3 class="dish-name">Mini paella de mariscos</h3>
               <p class="dish-desc">Kleine paella met zeevruchten.</p>
-              <div class="dish-bottom">
-                <span>Specialiteit</span>
-                <div class="quantity-control">
-                  <button type="button" class="minus">−</button>
-                  <strong>0</strong>
-                  <button type="button" class="plus">+</button>
-                </div>
-              </div>
             </div>
           </article>
 
-
           <article class="dish" data-name="Mini paella de pollo">
+<<<<<<< Updated upstream
             <img src="images/menu/paella-pollo.jpg" alt="Mini paella de pollo">
+=======
+            <img src="https://loremflickr.com/600/400/paella,chicken?lock=20" alt="Mini paella de pollo" loading="lazy">
+>>>>>>> Stashed changes
             <div class="dish-content">
               <h3 class="dish-name">Mini paella de pollo</h3>
               <p class="dish-desc">Kleine paella met kip en groenten.</p>
-              <div class="dish-bottom">
-                <span>Specialiteit</span>
-                <div class="quantity-control">
-                  <button type="button" class="minus">−</button>
-                  <strong>0</strong>
-                  <button type="button" class="plus">+</button>
-                </div>
-              </div>
             </div>
           </article>
 
@@ -983,74 +817,62 @@
       </div>
 
 
+      <!-- DESSERTS -->
+
       <div class="menu-panel" id="postre">
+
+        <div class="menu-panel-head">
+          <h3>Postres</h3>
+          <p>Desserts</p>
+        </div>
 
         <div class="dish-list">
 
           <article class="dish" data-name="Crema catalana">
+<<<<<<< Updated upstream
             <img src="images/menu/crema-catalana.jpg" alt="Crema catalana">
+=======
+            <img src="https://loremflickr.com/600/400/creme,brulee,dessert?lock=21" alt="Crema catalana" loading="lazy">
+>>>>>>> Stashed changes
             <div class="dish-content">
               <h3 class="dish-name">Crema catalana</h3>
               <p class="dish-desc">Catalaans dessert met krokante suikerlaag.</p>
-              <div class="dish-bottom">
-                <span>Dessert</span>
-                <div class="quantity-control">
-                  <button type="button" class="minus">−</button>
-                  <strong>0</strong>
-                  <button type="button" class="plus">+</button>
-                </div>
-              </div>
             </div>
           </article>
 
-
           <article class="dish" data-name="Flan">
+<<<<<<< Updated upstream
             <img src="images/menu/flan.jpg" alt="Flan">
+=======
+            <img src="https://loremflickr.com/600/400/flan,dessert?lock=22" alt="Flan" loading="lazy">
+>>>>>>> Stashed changes
             <div class="dish-content">
               <h3 class="dish-name">Flan</h3>
               <p class="dish-desc">Spaanse karamelpudding.</p>
-              <div class="dish-bottom">
-                <span>Dessert</span>
-                <div class="quantity-control">
-                  <button type="button" class="minus">−</button>
-                  <strong>0</strong>
-                  <button type="button" class="plus">+</button>
-                </div>
-              </div>
             </div>
           </article>
 
-
           <article class="dish" data-name="Churros con chocolate">
+<<<<<<< Updated upstream
             <img src="images/menu/churros-chocolate.jpg" alt="Churros con chocolate">
+=======
+            <img src="https://loremflickr.com/600/400/churros,chocolate?lock=23" alt="Churros con chocolate" loading="lazy">
+>>>>>>> Stashed changes
             <div class="dish-content">
               <h3 class="dish-name">Churros con chocolate</h3>
               <p class="dish-desc">Churros met warme chocoladesaus.</p>
-              <div class="dish-bottom">
-                <span>Dessert</span>
-                <div class="quantity-control">
-                  <button type="button" class="minus">−</button>
-                  <strong>0</strong>
-                  <button type="button" class="plus">+</button>
-                </div>
-              </div>
             </div>
           </article>
 
-
           <article class="dish" data-name="Tarta de Santiago">
+<<<<<<< Updated upstream
             <img src="images/menu/tarta-santiago.jpg" alt="Tarta de Santiago">
+=======
+            <img src="https://loremflickr.com/600/400/almond,cake,dessert?lock=24" alt="Tarta de Santiago" loading="lazy">
+>>>>>>> Stashed changes
             <div class="dish-content">
               <h3 class="dish-name">Tarta de Santiago</h3>
               <p class="dish-desc">Traditionele Spaanse amandeltaart.</p>
-              <div class="dish-bottom">
-                <span>Dessert</span>
-                <div class="quantity-control">
-                  <button type="button" class="minus">−</button>
-                  <strong>0</strong>
-                  <button type="button" class="plus">+</button>
-                </div>
-              </div>
             </div>
           </article>
 
@@ -1059,135 +881,76 @@
       </div>
 
 
+      <!-- DRANKEN -->
+
       <div class="menu-panel" id="bebidas">
+
+        <div class="menu-panel-head">
+          <h3>Bebidas</h3>
+          <p>Dranken</p>
+        </div>
 
         <div class="dish-list">
 
           <article class="dish" data-name="Vino tinto">
+<<<<<<< Updated upstream
             <img src="images/menu/vino-tinto.jpg" alt="Vino tinto">
+=======
+            <img src="https://loremflickr.com/600/400/red,wine?lock=25" alt="Vino tinto" loading="lazy">
+>>>>>>> Stashed changes
             <div class="dish-content">
               <h3 class="dish-name">Vino tinto</h3>
               <p class="dish-desc">Spaanse rode wijn.</p>
-              <div class="dish-bottom">
-                <span>Drank</span>
-                <div class="quantity-control">
-                  <button type="button" class="minus">−</button>
-                  <strong>0</strong>
-                  <button type="button" class="plus">+</button>
-                </div>
-              </div>
             </div>
           </article>
 
-
           <article class="dish" data-name="Vino blanco">
+<<<<<<< Updated upstream
             <img src="images/menu/vino-blanco.jpg" alt="Vino blanco">
+=======
+            <img src="https://loremflickr.com/600/400/white,wine?lock=26" alt="Vino blanco" loading="lazy">
+>>>>>>> Stashed changes
             <div class="dish-content">
               <h3 class="dish-name">Vino blanco</h3>
               <p class="dish-desc">Frisse Spaanse witte wijn.</p>
-              <div class="dish-bottom">
-                <span>Drank</span>
-                <div class="quantity-control">
-                  <button type="button" class="minus">−</button>
-                  <strong>0</strong>
-                  <button type="button" class="plus">+</button>
-                </div>
-              </div>
             </div>
           </article>
 
-
           <article class="dish" data-name="Sangría">
+<<<<<<< Updated upstream
             <img src="images/menu/sangria.jpg" alt="Sangría">
+=======
+            <img src="https://loremflickr.com/600/400/sangria?lock=27" alt="Sangría" loading="lazy">
+>>>>>>> Stashed changes
             <div class="dish-content">
               <h3 class="dish-name">Sangría</h3>
               <p class="dish-desc">Klassieke Spaanse sangría.</p>
-              <div class="dish-bottom">
-                <span>Drank</span>
-                <div class="quantity-control">
-                  <button type="button" class="minus">−</button>
-                  <strong>0</strong>
-                  <button type="button" class="plus">+</button>
-                </div>
-              </div>
             </div>
           </article>
 
-
           <article class="dish" data-name="Cerveza">
+<<<<<<< Updated upstream
             <img src="images/menu/cerveza.jpg" alt="Cerveza">
+=======
+            <img src="https://loremflickr.com/600/400/spanish,beer?lock=28" alt="Cerveza" loading="lazy">
+>>>>>>> Stashed changes
             <div class="dish-content">
               <h3 class="dish-name">Cerveza</h3>
               <p class="dish-desc">Spaanse bierselectie.</p>
-              <div class="dish-bottom">
-                <span>Drank</span>
-                <div class="quantity-control">
-                  <button type="button" class="minus">−</button>
-                  <strong>0</strong>
-                  <button type="button" class="plus">+</button>
-                </div>
-              </div>
             </div>
           </article>
 
-
           <article class="dish" data-name="Agua mineral">
+<<<<<<< Updated upstream
             <img src="images/menu/agua-mineral.jpg" alt="Agua mineral">
+=======
+            <img src="https://loremflickr.com/600/400/water,bottle?lock=29" alt="Agua mineral" loading="lazy">
+>>>>>>> Stashed changes
             <div class="dish-content">
               <h3 class="dish-name">Agua mineral</h3>
               <p class="dish-desc">Mineraalwater.</p>
-              <div class="dish-bottom">
-                <span>Drank</span>
-                <div class="quantity-control">
-                  <button type="button" class="minus">−</button>
-                  <strong>0</strong>
-                  <button type="button" class="plus">+</button>
-                </div>
-              </div>
             </div>
           </article>
-
-        </div>
-
-      </div>
-
-
-      <!-- ORDER -->
-
-      <div class="order-section">
-
-        <div class="order-card">
-
-          <div>
-
-            <span class="order-label">
-              JOUW SELECTIE
-            </span>
-
-            <h3>
-              Bestelling
-            </h3>
-
-            <div id="order-summary">
-              <p class="summary-empty">
-                Nog geen gerechten gekozen.
-              </p>
-            </div>
-
-          </div>
-
-          <div class="order-total">
-
-            <span>
-              Totaal geselecteerd
-            </span>
-
-            <strong>
-              <span id="total-dishes">0</span>
-              gerechten
-            </strong>
-
-          </div>
 
         </div>
 
@@ -1211,9 +974,7 @@
 </section>
 
 
-<!-- =====================================================
-     RESERVATIONS
-===================================================== -->
+<!-- RESERVATIONS -->
 
 <section class="page" id="page-contact">
 
@@ -1262,6 +1023,18 @@
           <strong>Bevestiging</strong>
         </div>
 
+      </div>
+
+
+      <!-- TIJDLIMIET: 10 MINUTEN -->
+
+      <div class="reservation-timer" id="reservation-timer" aria-live="polite">
+        <span class="timer-icon" aria-hidden="true">⏱</span>
+        <div class="timer-text">
+          <strong id="timer-title">Je hebt 10 minuten om te reserveren</strong>
+          <small id="timer-note">De tijd start zodra je begint met invullen.</small>
+        </div>
+        <span class="timer-clock" id="timer-clock">10:00</span>
       </div>
 
 
@@ -1530,13 +1303,16 @@
 
               <div class="floorplan-box">
 
+                <!-- Sla je foto op als images/plattegrond-nieuw.png -->
                 <img
-                  src="images/plattegrond.png"
-                  alt="Plattegrond van Las Tapas met tafels 1 tot en met 26">
+                  src="images/plattegrond-nieuw.png"
+                  alt="Plattegrond van Las Tapas: begane grond (tafel 1 t/m 10) en eerste verdieping (tafel 11 t/m 26)">
 
                 <p>
                   De plattegrond laat zien waar de tafels
                   zich in het restaurant bevinden.
+                  Tafel 1 t/m 10 staan op de begane grond,
+                  tafel 11 t/m 26 op de eerste verdieping.
                 </p>
 
               </div>
@@ -1754,9 +1530,7 @@
       </form>
 
 
-      <!-- =================================================
-           BEVESTIGEN
-      ================================================= -->
+      <!-- BEVESTIGEN -->
 
       <div class="reservation-review-screen" id="reservation-review-screen">
 
@@ -1861,9 +1635,7 @@
       </div>
 
 
-      <!-- =================================================
-           SUCCESS
-      ================================================= -->
+      <!-- SUCCESS -->
 
       <div
         class="success-screen"
@@ -1964,9 +1736,7 @@
 </main>
 
 
-<!-- =====================================================
-     FOOTER
-===================================================== -->
+<!-- FOOTER -->
 
 <footer>
 
@@ -1976,14 +1746,7 @@
 
       <div>
 
-        <div class="restaurant-logo footer-logo" role="img" aria-label="Las Tapas, Smaak &amp; beleving">
-          <span class="logo-sprig logo-sprig--left"><i></i><i></i><i></i><i></i><i></i><i></i></span>
-          <span class="logo-copy">
-            <span class="logo-name">LAS TAPAS</span>
-            <span class="logo-tagline">SMAAK &amp; BELEVING</span>
-          </span>
-          <span class="logo-sprig logo-sprig--right"><i></i><i></i><i></i><i></i><i></i><i></i></span>
-        </div>
+        <img class="footer-logo-img" src="images/logo.png" alt="Las Tapas – Smaak &amp; beleving">
 
         <p>
           Kleine gerechten, grote avonden.

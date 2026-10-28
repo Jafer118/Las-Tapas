@@ -384,157 +384,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =======================================================
-     DISHES + / -
-  ======================================================= */
-
-  const dishes =
-    document.querySelectorAll(".dish");
-
-
-  const selectedDishes = {};
-
-
-  dishes.forEach(function (dish) {
-
-    const name =
-      dish.dataset.name;
-
-
-    const minus =
-      dish.querySelector(".minus");
-
-    const plus =
-      dish.querySelector(".plus");
-
-    const number =
-      dish.querySelector(
-        ".quantity-control strong"
-      );
-
-
-    selectedDishes[name] = 0;
-
-
-    if (plus) {
-
-      plus.addEventListener(
-        "click",
-        function () {
-
-          selectedDishes[name]++;
-
-          number.textContent =
-            selectedDishes[name];
-
-          updateOrderSummary();
-
-        }
-      );
-
-    }
-
-
-    if (minus) {
-
-      minus.addEventListener(
-        "click",
-        function () {
-
-          if (selectedDishes[name] > 0) {
-
-            selectedDishes[name]--;
-
-          }
-
-
-          number.textContent =
-            selectedDishes[name];
-
-          updateOrderSummary();
-
-        }
-      );
-
-    }
-
-  });
-
-
-  function updateOrderSummary() {
-
-    const summary =
-      document.getElementById(
-        "order-summary"
-      );
-
-    const total =
-      document.getElementById(
-        "total-dishes"
-      );
-
-
-    if (!summary || !total) {
-      return;
-    }
-
-
-    let totalDishes = 0;
-
-    let html = "";
-
-
-    Object.keys(selectedDishes).forEach(
-      function (name) {
-
-        const quantity =
-          selectedDishes[name];
-
-
-        if (quantity > 0) {
-
-          totalDishes += quantity;
-
-
-          html += `
-            <div class="summary-item">
-              <span>
-                ${quantity} × ${name}
-              </span>
-
-              <span>
-                ${quantity}
-              </span>
-            </div>
-          `;
-
-        }
-
-      }
-    );
-
-
-    if (totalDishes === 0) {
-
-      summary.innerHTML = `
-        <p class="summary-empty">
-          Nog geen gerechten gekozen.
-        </p>
-      `;
-
-    } else {
-
-      summary.innerHTML = html;
-
-    }
-
-
-    total.textContent =
-      totalDishes;
-
-  }
-
-
-  /* =======================================================
      RESERVATION STATE
   ======================================================= */
 
@@ -1445,6 +1294,13 @@ document.addEventListener("DOMContentLoaded", function () {
           reservationResult.reservationId;
 
 
+        /* De reservering is gelukt: de timer stopt. */
+
+        stopTimer();
+
+        timerBanner.hidden = true;
+
+
         /* Replace the review screen with the saved reservation confirmation. */
 
         document.getElementById(
@@ -1481,8 +1337,295 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =======================================================
-     NEW RESERVATION
+     RESERVATION TIMER (maximaal 10 minuten)
   ======================================================= */
+
+  const reservationMinutes = 10;
+
+  const timerBanner =
+    document.getElementById("reservation-timer");
+
+  const timerClock =
+    document.getElementById("timer-clock");
+
+  const timerTitle =
+    document.getElementById("timer-title");
+
+  const timerNote =
+    document.getElementById("timer-note");
+
+  let timerInterval = null;
+
+  let timerEndTime = 0;
+
+
+  function formatClock(totalSeconds) {
+
+    const minutes =
+      Math.floor(totalSeconds / 60);
+
+    const seconds =
+      totalSeconds % 60;
+
+    return (
+      String(minutes).padStart(2, "0") +
+      ":" +
+      String(seconds).padStart(2, "0")
+    );
+
+  }
+
+
+  function setTimerState(state) {
+
+    timerBanner.classList.remove(
+      "running",
+      "warning",
+      "expired"
+    );
+
+    if (state) {
+
+      timerBanner.classList.add(state);
+
+    }
+
+  }
+
+
+  function stopTimer() {
+
+    if (timerInterval) {
+
+      clearInterval(timerInterval);
+
+      timerInterval = null;
+
+    }
+
+  }
+
+
+  function showIdleTimer() {
+
+    stopTimer();
+
+    timerBanner.hidden = false;
+
+    setTimerState("");
+
+    timerClock.textContent =
+      formatClock(reservationMinutes * 60);
+
+    timerTitle.textContent =
+      "Je hebt 10 minuten om te reserveren";
+
+    timerNote.textContent =
+      "De tijd start zodra je begint met invullen.";
+
+  }
+
+
+  function startTimer() {
+
+    if (timerInterval) {
+      return;
+    }
+
+    timerEndTime =
+      Date.now() +
+      reservationMinutes * 60 * 1000;
+
+    timerTitle.textContent =
+      "Rond je reservering af";
+
+    timerNote.textContent =
+      "Is de tijd om, dan wordt alles gewist en begin je opnieuw.";
+
+    tickTimer();
+
+    timerInterval =
+      setInterval(tickTimer, 1000);
+
+  }
+
+
+  function tickTimer() {
+
+    const remaining =
+      Math.max(
+        0,
+        Math.ceil(
+          (timerEndTime - Date.now()) / 1000
+        )
+      );
+
+    timerClock.textContent =
+      formatClock(remaining);
+
+    setTimerState(
+      remaining <= 60 ? "warning" : "running"
+    );
+
+    if (remaining === 0) {
+
+      expireTimer();
+
+    }
+
+  }
+
+
+  function expireTimer() {
+
+    stopTimer();
+
+    resetReservation();
+
+    timerBanner.hidden = false;
+
+    setTimerState("expired");
+
+    timerClock.textContent = "00:00";
+
+    timerTitle.textContent =
+      "De tijd is om";
+
+    timerNote.textContent =
+      "Je reservering is gewist. Je kunt opnieuw beginnen.";
+
+  }
+
+
+  /* De timer start bij de eerste handeling in het formulier. */
+
+  if (reservationForm && timerBanner) {
+
+    ["input", "change", "click"].forEach(
+      function (eventName) {
+
+        reservationForm.addEventListener(
+          eventName,
+          startTimer
+        );
+
+      }
+    );
+
+    showIdleTimer();
+
+  }
+
+
+  /* =======================================================
+     RESET / NEW RESERVATION
+  ======================================================= */
+
+  function resetReservation() {
+
+    reservationForm.reset();
+
+
+    reservationForm.style.display =
+      "block";
+
+
+    reservationForm.dataset.name = "";
+    reservationForm.dataset.phone = "";
+    reservationForm.dataset.email = "";
+    reservationForm.dataset.message = "";
+
+
+    document.getElementById(
+      "reservation-review-screen"
+    ).style.display =
+      "none";
+
+
+    document.getElementById(
+      "success-screen"
+    ).style.display =
+      "none";
+
+
+    guests = 2;
+
+    selectedTable = null;
+
+
+    selectedFormula = {
+      name: "3 uur tafelen",
+      price: 36.50
+    };
+
+
+    /* Reset the selected package. */
+
+    bookingFormulas.forEach(
+      function (button) {
+
+        button.classList.remove(
+          "active"
+        );
+
+        if (
+          button.dataset.formula ===
+          "3 uur tafelen"
+        ) {
+
+          button.classList.add(
+            "active"
+          );
+
+        }
+
+      }
+    );
+
+
+    /* Reset the selected table. */
+
+    document
+      .querySelectorAll(".table-option")
+      .forEach(function (button) {
+
+        button.classList.remove(
+          "selected"
+        );
+
+      });
+
+
+    updateGuests();
+
+    updateReservationSummary();
+
+
+    document
+      .getElementById("step-confirmation")
+      .classList.remove("active");
+
+
+    document
+      .getElementById("step-review")
+      .classList.remove("active");
+
+
+    document
+      .getElementById("step-reservation")
+      .classList.add("active");
+
+
+    showIdleTimer();
+
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+
+  }
+
 
   const newReservation =
     document.getElementById(
@@ -1494,116 +1637,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     newReservation.addEventListener(
       "click",
-      function () {
-
-        reservationForm.reset();
-
-
-        reservationForm.style.display =
-          "block";
-
-
-        document.getElementById(
-          "reservation-review-screen"
-        ).style.display =
-          "none";
-
-
-        document.getElementById(
-          "success-screen"
-        ).style.display =
-          "none";
-
-
-        guests = 2;
-
-        selectedTable = null;
-
-
-        selectedFormula = {
-          name: "3 uur tafelen",
-          price: 36.50
-        };
-
-
-        /* Reset the selected package. */
-
-        bookingFormulas.forEach(
-          function (button) {
-
-            button.classList.remove(
-              "active"
-            );
-
-            if (
-              button.dataset.formula ===
-              "3 uur tafelen"
-            ) {
-
-              button.classList.add(
-                "active"
-              );
-
-            }
-
-          }
-        );
-
-
-        /* Reset the selected dishes. */
-
-        Object.keys(selectedDishes)
-          .forEach(function (name) {
-
-            selectedDishes[name] = 0;
-
-          });
-
-
-        dishes.forEach(function (dish) {
-
-          const number =
-            dish.querySelector(
-              ".quantity-control strong"
-            );
-
-          if (number) {
-
-            number.textContent = "0";
-
-          }
-
-        });
-
-
-        updateOrderSummary();
-
-        updateGuests();
-
-        updateReservationSummary();
-
-
-        document
-          .getElementById("step-confirmation")
-          .classList.remove("active");
-
-
-        document
-          .getElementById("step-review")
-          .classList.remove("active");
-
-
-        document
-          .getElementById("step-reservation")
-          .classList.add("active");
-
-
-        window.scrollTo({
-          top: 0,
-          behavior: "smooth"
-        });
-
-      }
+      resetReservation
     );
 
   }
