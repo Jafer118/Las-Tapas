@@ -94,7 +94,6 @@ header.site {
 .nav-logo {
   height: 46px;
   width: auto;
-  border-radius: 8px;
   display: block;
 }
 
@@ -276,10 +275,9 @@ nav.links button[aria-current="page"] {
 
 .logo-card {
   width: min(100%, 460px);
-  background: #F2F4F3;
-  border-radius: 18px;
-  padding: 26px 30px;
-  box-shadow: 0 25px 55px rgba(0,0,0,.35);
+  background: transparent;
+  padding: 0;
+  box-shadow: none;
 }
 
 .logo-card img {
@@ -1473,7 +1471,6 @@ footer {
 .footer-logo-img {
   width: 200px;
   height: auto;
-  border-radius: 8px;
   margin-bottom: 15px;
 }
 
