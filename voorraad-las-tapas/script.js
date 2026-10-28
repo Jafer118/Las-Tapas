@@ -97,12 +97,7 @@ function render() {
     document.querySelector('#result-count').textContent = `${filtered.length} ${filtered.length === 1 ? 'artikel' : 'artikelen'}`;
     document.querySelector('#empty-state').hidden = filtered.length > 0;
     document.querySelector('#last-sync').textContent = new Date().toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
-        const bijvullenButton = document.querySelector('#bijvullen-button');
-    const bijvullenCount = document.querySelector('#bijvullen-count');
-    if (bijvullenButton && bijvullenCount) {
-        bijvullenCount.textContent = lowItems.length;
-        bijvullenButton.disabled = lowItems.length === 0;
-    }
+
 }
 
 function showToast(message) {
@@ -266,16 +261,6 @@ function initializeInventoryDashboard() {
     });
     document.querySelector('#add-form').addEventListener('submit', handleAddItemSubmit);
     document.querySelector('#export-button').addEventListener('click', exportLowStockItems);
-        document.querySelector('#bijvullen-button').addEventListener('click', async () => {
-        if (!confirm(`Wil je alle ${document.querySelector('#bijvullen-count').textContent} artikelen met lage voorraad bijvullen?`)) return;
-        try {
-            await apiRequest('PATCH', { actie: 'bijvullen' });
-            await loadItems(false);
-            showToast('Lage voorraad is bijgevuld.');
-        } catch (error) {
-            showToast(error.message);
-        }
-    });
     document.querySelector('#today-label').textContent = new Intl.DateTimeFormat(
         'nl-NL',
         { weekday: 'long', day: 'numeric', month: 'long' }
