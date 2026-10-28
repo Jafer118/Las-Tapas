@@ -93,7 +93,18 @@ try {
         response(['error' => 'Een geldig artikel-id is verplicht.'], 422);
     }
 
-    if ($method === 'PATCH') {
+        if ($method === 'PATCH') {
+        // Bulk bijvullen: alle lage artikelen aanvullen tot dubbele minimum
+        if (isset($body['actie']) && $body['actie'] === 'bijvullen') {
+            $statement = $pdo->prepare(
+                'UPDATE voorraad_items
+                 SET voorraad = minimumvoorraad * 2
+                 WHERE voorraad <= minimumvoorraad AND actief = 1'
+            );
+            $statement->execute();
+            response(['bijgevuld' => $statement->rowCount()]);
+        }
+
         $delta = parseStockDelta($body['delta'] ?? null);
         if ($delta === null) {
             response(['error' => 'Ongeldige voorraadmutatie.'], 422);
