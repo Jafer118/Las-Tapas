@@ -512,6 +512,169 @@ nav.subnav a.home-link:hover {
     width: 100%;
     min-height: 42px;
 }
+.bestel-personen {
+    display: grid;
+    grid-template-columns: 44px minmax(70px, 110px) 44px;
+    gap: 8px;
+    align-items: center;
+}
+.bestel-personen input {
+    text-align: center;
+    font-weight: 700;
+}
+.personen-aanpassen {
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    border: 1px solid var(--kleur-terracotta);
+    border-radius: 50%;
+    background: transparent;
+    color: var(--kleur-saffraan);
+    font-size: 1.3rem;
+}
+.personen-aanpassen:hover {
+    background: var(--kleur-terracotta);
+    color: var(--kleur-bodega-diep);
+}
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+.bestel-plattegrond {
+    overflow: hidden;
+    margin: 16px 0;
+    padding: 8px;
+    border: 1px solid var(--kleur-paneel-rand);
+    border-radius: var(--rond-klein);
+    background: #fff;
+}
+.bestel-plattegrond img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+}
+.tafel-legenda {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 18px;
+    margin: 10px 0 16px;
+    color: var(--kleur-tekst-zacht);
+    font-size: 0.78rem;
+}
+.tafel-legenda span {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+}
+.tafel-legenda i {
+    width: 11px;
+    height: 11px;
+    border: 1px solid var(--kleur-olijf);
+    border-radius: 3px;
+    background: rgba(156, 179, 121, 0.3);
+}
+.tafel-legenda .tafel-legenda-bezet {
+    border-color: var(--kleur-terracotta);
+    background: rgba(217, 139, 69, 0.35);
+}
+.tafel-legenda .tafel-legenda-selectie {
+    border: 2px solid var(--kleur-saffraan);
+    background: var(--kleur-paneel-licht);
+}
+.tafel-keuze-info {
+    margin-bottom: 10px;
+    color: var(--kleur-saffraan);
+    font-size: 0.85rem;
+}
+.bestel-tafel-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 9px;
+}
+.bestel-tafel-kaart {
+    display: grid;
+    justify-items: center;
+    gap: 4px;
+    min-width: 0;
+    padding: 12px 7px;
+    border: 1px solid var(--kleur-paneel-rand);
+    border-radius: var(--rond-klein);
+    background: var(--kleur-bodega-diep);
+    color: var(--kleur-tekst);
+    text-align: center;
+    transition: border-color 0.15s ease, transform 0.15s ease, background 0.15s ease;
+}
+.bestel-tafel-kaart:hover:not(:disabled) {
+    transform: translateY(-2px);
+    border-color: var(--kleur-terracotta);
+}
+.bestel-tafel-kaart.bezet {
+    border-color: rgba(217, 139, 69, 0.65);
+    background: rgba(107, 30, 42, 0.7);
+}
+.bestel-tafel-kaart.geselecteerd {
+    border: 2px solid var(--kleur-saffraan);
+    background: var(--kleur-paneel-licht);
+    box-shadow: 0 0 0 3px rgba(217, 139, 69, 0.14);
+}
+.bestel-tafel-kaart:disabled {
+    opacity: 0.38;
+    cursor: not-allowed;
+}
+.bestel-tafel-kaart:focus-visible,
+.personen-aanpassen:focus-visible {
+    outline: 3px solid var(--kleur-saffraan);
+    outline-offset: 2px;
+}
+.bestel-tafel-icoon {
+    color: var(--kleur-olijf);
+    font-size: 0.85rem;
+}
+.bestel-tafel-kaart.bezet .bestel-tafel-icoon {
+    color: var(--kleur-terracotta-op);
+}
+.bestel-tafel-kaart strong {
+    overflow-wrap: anywhere;
+    font-size: 0.82rem;
+}
+.bestel-tafel-kaart small,
+.bestel-tafel-status {
+    color: var(--kleur-tekst-zacht);
+    font-size: 0.68rem;
+}
+.bestel-tafel-status {
+    color: var(--kleur-olijf);
+    font-weight: 700;
+}
+.bestel-tafel-kaart.bezet .bestel-tafel-status {
+    color: var(--kleur-terracotta-op);
+}
+.bestel-tafel-selectie {
+    margin: 22px 0;
+    padding: 18px;
+    border: 1px solid var(--kleur-paneel-rand);
+    border-radius: var(--rond-groot);
+    background: rgba(43, 15, 22, 0.4);
+}
+.bestel-tafel-kop {
+    margin-bottom: 12px;
+}
+.bestel-tafel-kop h2 {
+    margin: 0;
+}
+.bestel-tafel-kop p {
+    margin: 5px 0 0;
+    color: var(--kleur-tekst-zacht);
+    font-size: 0.82rem;
+}
 .capaciteit-info {
     min-height: 1.3em;
     margin: 14px 0 0;
@@ -727,6 +890,8 @@ nav.subnav a.home-link:hover {
     .bestel-context-velden label:not(:first-child) { margin-top: 7px; }
     .formules-grid { grid-template-columns: 1fr; }
     .formule-kaart { min-height: 0; }
+    .bestel-tafel-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .bestel-tafel-selectie { margin: 18px 0; padding: 12px; }
     .mandje-samenvatting { grid-template-columns: 1fr; }
     .mandje-totalen {
         grid-template-columns: 1fr auto;

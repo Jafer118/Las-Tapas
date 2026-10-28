@@ -18,7 +18,6 @@
         <img src="img/logo-las-tapas.png" alt="Las Tapas — Smaak & Beleving" class="db-logo">
     </div>
     <div class="db-user-actions">
-        <span class="db-avatar">LT</span>
         <button type="button" class="db-logout" id="logout-button">Uitloggen</button>
     </div>
 </header>
@@ -61,14 +60,15 @@
             <div class="db-paneel-titel">Nieuwe bestelling</div>
             <div class="werk-paneel-inhoud">
                 <div class="werk-context-velden">
-                    <label for="tafel-select">Tafel</label>
-                    <select id="tafel-select" required><option value="">Tafels laden…</option></select>
                     <label for="aantal-personen">Aantal gasten</label>
-                    <input type="number" id="aantal-personen" min="1" value="2" required>
+                    <div class="bestel-personen">
+                        <button type="button" class="personen-aanpassen" id="personen-minder" aria-label="Minder personen">−</button>
+                        <input type="number" id="aantal-personen" min="1" value="2" required>
+                        <button type="button" class="personen-aanpassen" id="personen-meer" aria-label="Meer personen">+</button>
+                    </div>
                     <label for="klant-email">E-mailadres voor bon <span>(optioneel)</span></label>
                     <input type="email" id="klant-email" placeholder="naam@voorbeeld.nl">
                 </div>
-                <p id="capaciteit-info" class="capaciteit-info" aria-live="polite"></p>
 
                 <section class="formules" aria-labelledby="formules-titel">
                     <div class="formules-kop">
@@ -101,6 +101,25 @@
                     </div>
                 </section>
 
+                <section class="bestel-tafel-selectie" aria-labelledby="bestel-tafel-titel">
+                    <div class="bestel-tafel-kop">
+                        <div><h2 id="bestel-tafel-titel">Kies een tafel</h2><p>Selecteer een tafel op de plattegrond of in het tafelenoverzicht.</p></div>
+                    </div>
+                    <label for="tafel-select" class="visually-hidden">Geselecteerde tafel</label>
+                    <select id="tafel-select" class="visually-hidden" required><option value="">Tafels laden…</option></select>
+                    <div class="bestel-plattegrond">
+                        <img src="images/plattegrond-kassa.png" alt="Plattegrond van het restaurant met de tafels">
+                    </div>
+                    <div class="tafel-legenda" aria-label="Legenda tafels">
+                        <span><i class="tafel-legenda-vrij"></i> Vrij</span>
+                        <span><i class="tafel-legenda-bezet"></i> Bezet · bestelling toevoegen</span>
+                        <span><i class="tafel-legenda-selectie"></i> Geselecteerd</span>
+                    </div>
+                    <div class="tafel-keuze-info">Beschikbare tafelgroottes voor <strong id="tafel-gasten-aantal">2</strong> personen</div>
+                    <div id="tafel-keuze" class="bestel-tafel-grid" aria-label="Kies een restauranttafel"></div>
+                    <p id="capaciteit-info" class="capaciteit-info" aria-live="polite"></p>
+                </section>
+
                 <div class="werk-subkop">
                     <div><h2>Menukaart</h2><p>Kies de gerechten en dranken voor deze tafel.</p></div>
                     <div class="menu-tabs" id="menu-tabs" role="tablist" aria-label="Menucategorieën"></div>
@@ -120,6 +139,10 @@
     </section>
 
     <section class="werk-paneel" id="paneel-bereiden" role="tabpanel" aria-labelledby="tab-bereiden" hidden>
+        <section class="db-paneel werk-timers-paneel">
+            <div class="db-paneel-titel">Tafeltimers</div>
+            <div class="werk-timers-inhoud" id="tafel-timers"><p class="db-geen-tafels">Timers laden…</p></div>
+        </section>
         <div class="werk-queue-grid">
             <section class="db-paneel">
                 <div class="db-paneel-titel">Keuken</div>
@@ -259,6 +282,7 @@ function renderTableOptions() {
         orderSelect.add(new Option(`${table.naam} · max. ${table.capaciteit} personen · ${status}`, table.id));
     });
     if (tables.some((table) => String(table.id) === previousOrderTable)) orderSelect.value = previousOrderTable;
+    renderOrderTablePicker();
 
     const checkoutSelect = document.getElementById('afreken-tafel');
     const previousCheckoutTable = checkoutSelect.value;
@@ -272,6 +296,48 @@ function renderTableOptions() {
         document.getElementById('rekening-laden').disabled = true;
         document.getElementById('rekening-details').innerHTML = '<p class="mandje-leeg">Selecteer een tafel om de rekening te bekijken.</p>';
     }
+}
+
+function renderOrderTablePicker() {
+    const container = document.getElementById('tafel-keuze');
+    if (!container) return;
+    const guestCount = Number(document.getElementById('aantal-personen').value) || 0;
+    const tableSelect = document.getElementById('tafel-select');
+    let selectedTableId = tableSelect.value;
+    const selectedTable = tables.find((table) => String(table.id) === selectedTableId);
+    if (selectedTable && Number(selectedTable.capaciteit) < guestCount) {
+        tableSelect.value = '';
+        selectedTableId = '';
+    }
+    container.replaceChildren();
+
+    if (tables.length === 0) {
+        container.textContent = 'Er zijn geen tafels beschikbaar.';
+        return;
+    }
+
+    tables.forEach((table) => {
+        const capacity = Number(table.capaciteit);
+        const isTooSmall = capacity < guestCount;
+        const isSelected = String(table.id) === selectedTableId;
+        const tableButton = document.createElement('button');
+        tableButton.type = 'button';
+        tableButton.className = `bestel-tafel-kaart${table.status === 'bezet' ? ' bezet' : ''}${isSelected ? ' geselecteerd' : ''}`;
+        tableButton.disabled = isTooSmall;
+        tableButton.setAttribute('aria-pressed', String(isSelected));
+        tableButton.setAttribute('aria-label', `${table.naam}, ${capacity} plaatsen, ${table.status === 'bezet' ? 'bezet, bestelling toevoegen' : 'vrij'}${isTooSmall ? ', te klein voor dit gezelschap' : ''}`);
+        tableButton.innerHTML = `
+            <span class="bestel-tafel-icoon" aria-hidden="true">●</span>
+            <strong>${escapeHtml(table.naam)}</strong>
+            <small>${capacity} plaatsen</small>
+            <span class="bestel-tafel-status">${table.status === 'bezet' ? 'Bezet' : 'Vrij'}</span>
+        `;
+        tableButton.addEventListener('click', () => {
+            tableSelect.value = String(table.id);
+            tableSelect.dispatchEvent(new Event('change'));
+        });
+        container.appendChild(tableButton);
+    });
 }
 
 function renderMenuTabs() {
@@ -361,9 +427,12 @@ function updateCart() {
 }
 
 function updateOrderContext() {
+    const guests = Number(document.getElementById('aantal-personen').value) || 0;
+    document.getElementById('tafel-gasten-aantal').textContent = guests;
+    renderOrderTablePicker();
+
     const tableId = document.getElementById('tafel-select').value;
     const table = tables.find((item) => String(item.id) === tableId);
-    const guests = Number(document.getElementById('aantal-personen').value) || 0;
     const validGuests = table && guests >= 1 && guests <= Number(table.capaciteit);
     document.getElementById('capaciteit-info').textContent = !table
         ? 'Selecteer een tafel om door te gaan.'
@@ -371,9 +440,6 @@ function updateOrderContext() {
             ? `${table.naam} heeft plaats voor maximaal ${table.capaciteit} personen.`
             : `${table.naam} · maximaal ${table.capaciteit} personen · ${table.status === 'bezet' ? 'bestelling wordt toegevoegd aan de lopende tafel' : 'tafel is vrij'}.`;
     document.getElementById('capaciteit-info').classList.toggle('capaciteit-waarschuwing', Boolean(table && !validGuests));
-    const guestInput = document.getElementById('aantal-personen');
-    if (table) guestInput.max = table.capaciteit;
-    else guestInput.removeAttribute('max');
     document.getElementById('mandje-context').textContent = table && validGuests
         ? `${table.naam} · ${guests} ${guests === 1 ? 'gast' : 'gasten'}`
         : 'Kies een tafel en vul het aantal gasten in.';
@@ -381,11 +447,24 @@ function updateOrderContext() {
         !selectedFormulaCode || !validGuests;
 }
 
+function adjustGuestCount(delta) {
+    const guestField = document.getElementById('aantal-personen');
+    const maximum = Math.max(1, ...tables.map((table) => Number(table.capaciteit) || 0));
+    guestField.value = Math.max(1, Math.min(maximum, (Number(guestField.value) || 1) + delta));
+    refreshGuestCount();
+}
+
+function refreshGuestCount() {
+    updateCart();
+}
+
 document.getElementById('tafel-select').addEventListener('change', () => {
     updateOrderContext();
     loadSavedFormula();
 });
-document.getElementById('aantal-personen').addEventListener('input', updateOrderContext);
+document.getElementById('aantal-personen').addEventListener('input', refreshGuestCount);
+document.getElementById('personen-minder').addEventListener('click', () => adjustGuestCount(-1));
+document.getElementById('personen-meer').addEventListener('click', () => adjustGuestCount(1));
 document.querySelectorAll('.formule-kaart').forEach((formulaButton) => {
     formulaButton.addEventListener('click', () => selectFormula(formulaButton.dataset.formuleCode));
 });
@@ -457,16 +536,55 @@ async function loadOrderColumn(endpoint, containerId) {
     return data.orderregels.length;
 }
 
+async function loadDiningTimers() {
+    const data = await apiGet('formule_timers.php');
+    const container = document.getElementById('tafel-timers');
+    if (!Array.isArray(data.timers)) {
+        container.innerHTML = '<p class="db-geen-tafels">Tafeltimers konden niet worden geladen.</p>';
+        return;
+    }
+    if (data.timers.length === 0) {
+        container.innerHTML = '<p class="db-geen-tafels">Geen actieve tafeltimers.</p>';
+        return;
+    }
+
+    container.innerHTML = data.timers.map((timer) => `
+        <article class="werk-timer-kaart">
+            <strong>${escapeHtml(timer.tafel_naam)}</strong>
+            <span>${escapeHtml(timer.formule_naam)}</span>
+            <span class="werk-timer-aftellen" data-deadline="${Number(timer.eindigt_op)}" role="timer">Timer laden…</span>
+        </article>`).join('');
+    updateDiningTimerDisplays();
+}
+
+function updateDiningTimerDisplays() {
+    document.querySelectorAll('.werk-timer-aftellen[data-deadline]').forEach((timer) => {
+        const deadline = Number(timer.dataset.deadline) * 1000;
+        if (!Number.isFinite(deadline)) return;
+        const remainingSeconds = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
+        const hours = Math.floor(remainingSeconds / 3600);
+        const minutes = Math.floor((remainingSeconds % 3600) / 60);
+        const seconds = remainingSeconds % 60;
+        timer.textContent = remainingSeconds === 0
+            ? 'Tijd is om'
+            : `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')} resterend`;
+        timer.classList.toggle('verlopen', remainingSeconds === 0);
+    });
+}
+
 async function refreshQueues() {
     const [kitchen, bar] = await Promise.all([
         loadOrderColumn('keuken_bestellingen.php', 'keuken-inhoud'),
         loadOrderColumn('bar_bestellingen.php', 'bar-inhoud'),
     ]);
+    await loadDiningTimers();
     if (Number.isInteger(kitchen) && Number.isInteger(bar)) {
         document.getElementById('stat-orders').textContent = kitchen + bar;
         document.getElementById('tab-open-count').textContent = kitchen + bar;
     }
 }
+
+setInterval(updateDiningTimerDisplays, 1000);
 
 document.querySelector('.werk-queue-grid').addEventListener('click', async (event) => {
     const button = event.target.closest('button[data-order-id]');

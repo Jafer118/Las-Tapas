@@ -794,6 +794,40 @@ body.dashboard {
     gap: 16px;
     align-items: start;
 }
+.werk-timers-paneel {
+    margin-bottom: 16px;
+}
+.werk-timers-inhoud {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 12px;
+    padding: 16px;
+}
+.werk-timer-kaart {
+    display: grid;
+    gap: 5px;
+    padding: 12px;
+    border: 1px solid var(--kleur-paneel-rand);
+    border-radius: var(--rond-klein);
+    background: var(--kleur-bodega-diep);
+}
+.werk-timer-kaart > strong {
+    color: var(--kleur-saffraan);
+    font-family: var(--font-kop);
+}
+.werk-timer-kaart > span {
+    color: var(--kleur-tekst-zacht);
+    font-size: 0.82rem;
+}
+.werk-timer-kaart .werk-timer-aftellen {
+    color: var(--kleur-tekst);
+    font-size: 1rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+.werk-timer-kaart .werk-timer-aftellen.verlopen {
+    color: var(--kleur-terracotta-op);
+}
 .werk-queue-inhoud {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
