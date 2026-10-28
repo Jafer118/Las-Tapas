@@ -17,7 +17,7 @@ declare(strict_types=1);
  *
  * Performs these steps in a single transaction:
  *  1. Finds or creates an open order for the table.
- *  2. Checks stock for each item.
+ * 2. Checks inventory stock for each item.
  *  3. Adds order lines and deducts stock.
  *  4. Marks the table as occupied.
  */
@@ -139,13 +139,24 @@ try {
         $orderId = $pdo->lastInsertId();
     }
 
-    // 3. Check stock, add each order line, and deduct stock.
-    $menuItemStatement = $pdo->prepare('SELECT naam, prijs, voorraad FROM gerechten WHERE id = ? FOR UPDATE');
+    // 3. Check inventory, add each order line, and deduct stock.
+    $menuItemStatement = $pdo->prepare('SELECT naam, categorie, prijs FROM gerechten WHERE id = ? FOR UPDATE');
+    $inventoryItemStatement = $pdo->prepare(
+        'SELECT id, voorraad
+         FROM voorraad_items
+         WHERE naam = ? AND categorie = ? AND actief = 1
+         ORDER BY id
+         LIMIT 1
+         FOR UPDATE'
+    );
     $insertOrderLineStatement = $pdo->prepare(
         'INSERT INTO orderregels (bestelling_id, gerecht_id, aantal, prijs_per_stuk, status)
          VALUES (?, ?, ?, ?, "besteld")'
     );
-    $decreaseStockStatement = $pdo->prepare('UPDATE gerechten SET voorraad = voorraad - ? WHERE id = ?');
+    $decreaseInventoryStatement = $pdo->prepare(
+        'UPDATE voorraad_items SET voorraad = voorraad - ? WHERE id = ? AND voorraad >= ?'
+    );
+    $synchronizeMenuStockStatement = $pdo->prepare('UPDATE gerechten SET voorraad = ? WHERE id = ?');
 
     foreach ($orderLines as $orderLine) {
         $menuItemId = (int) $orderLine['gerecht_id'];
@@ -158,14 +169,30 @@ try {
             throw new InvalidArgumentException("Gerecht met id {$menuItemId} bestaat niet.");
         }
 
-        if ($menuItem['voorraad'] < $quantity) {
-            throw new InvalidArgumentException("Onvoldoende voorraad voor '{$menuItem['naam']}' (nog {$menuItem['voorraad']} beschikbaar).");
+        $inventoryItemStatement->execute([$menuItem['naam'], $menuItem['categorie']]);
+        $inventoryItem = $inventoryItemStatement->fetch();
+        if (!$inventoryItem) {
+            throw new RuntimeException("No active inventory item matches menu item {$menuItemId}.");
+        }
+
+        if ($inventoryItem['voorraad'] < $quantity) {
+            throw new InvalidArgumentException(
+                "Onvoldoende voorraad voor '{$menuItem['naam']}' (nog {$inventoryItem['voorraad']} beschikbaar)."
+            );
         }
 
         // Store the current price so later menu changes do not affect past orders.
         $insertOrderLineStatement->execute([$orderId, $menuItemId, $quantity, $menuItem['prijs']]);
 
-        $decreaseStockStatement->execute([$quantity, $menuItemId]);
+        $decreaseInventoryStatement->execute([$quantity, $inventoryItem['id'], $quantity]);
+        if ($decreaseInventoryStatement->rowCount() !== 1) {
+            throw new RuntimeException("Inventory stock changed while placing order for menu item {$menuItemId}.");
+        }
+
+        $synchronizeMenuStockStatement->execute([
+            $inventoryItem['voorraad'] - $quantity,
+            $menuItemId,
+        ]);
     }
 
     $statement = $pdo->prepare("UPDATE tafels SET status = 'bezet' WHERE id = ?");

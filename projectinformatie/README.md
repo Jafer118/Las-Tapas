@@ -45,10 +45,11 @@ The restaurant website, point-of-sale system, and inventory manager are
 separate application surfaces with different responsibilities. The website
 contains the restaurant's public-facing content and reservation interface.
 The point-of-sale frontend handles staff interaction, while its PHP backend is
-the authority for authentication, input validation, stock changes, order
-state, and payment operations. The inventory application has its own PHP
-endpoints and login. Database changes belong in the relevant application's
-SQL schema or a documented migration.
+the authority for authentication, input validation, order state, and payment
+operations. The point-of-sale system and inventory application share
+`voorraad_items` for stock quantities, so an order deducts stock visible in the
+inventory screen. Database changes belong in the relevant application's SQL
+schema or a documented migration.
 
 The root `.editorconfig` intentionally remains at the repository root so its
 formatting rules apply to every application. Portal content and shared
@@ -62,22 +63,25 @@ unchanged where they are existing contracts shared by the applications.
    phpMyAdmin or the MySQL CLI. This creates the `las_tapas` database with
    tables and example data (tables and dishes). It also creates the
    `kassa_gebruikers` and `kassa_wachtwoord_resets` tables.
-2. If the `las_tapas` database already exists, import
+2. Import `voorraad-las-tapas/voorraad.sql` into the same database. Ordering
+   reads and deducts stock from `voorraad_items`, which is also managed by the
+   inventory screen.
+3. If the `las_tapas` database already exists, import
    `las-tapas kassa systeem/database/migrate_auth_tables.sql` to create the
    cashier login tables and
    `las-tapas kassa systeem/database/migrate_table_capacities.sql` to align
    the 26 table capacities with the restaurant website. The capacity migration
    can be safely run more than once.
-3. Configure `LAS_TAPAS_DB_HOST`, `LAS_TAPAS_DB_NAME`, `LAS_TAPAS_DB_USER`, and
+4. Configure `LAS_TAPAS_DB_HOST`, `LAS_TAPAS_DB_NAME`, `LAS_TAPAS_DB_USER`, and
    `LAS_TAPAS_DB_PASS` in the web-server environment if the local defaults do
    not match your WAMP/XAMPP installation. Defaults are for a local MySQL
    server using `root` with an empty password.
-4. Set `APP_ENV=development` in the local WAMP/XAMPP environment when serving
+5. Set `APP_ENV=development` in the local WAMP/XAMPP environment when serving
    over plain HTTP. This allows local session cookies and exposes reset links
    for testing without email. The default production mode suppresses reset-token
    disclosure and requires HTTPS session cookies.
-5. Place the repository under the web server document root.
-6. Open `las-tapas kassa systeem/frontend/login.html` under the repository's
+6. Place the repository under the web server document root.
+7. Open `las-tapas kassa systeem/frontend/login.html` under the repository's
    local web URL and sign in with the sample admin account
    `admin@lastapas.nl` / `LasTapas123!`. Change the sample password
    immediately after the first login via the reset flow. Never use sample
