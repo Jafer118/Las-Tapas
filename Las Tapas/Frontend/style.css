@@ -210,13 +210,18 @@ nav.links {
 }
 
 nav.links button,
-.footer-navigation button {
+.footer-navigation button,
+.footer-navigation a {
   background: transparent;
   border: 1px solid transparent;
   color: var(--cream);
   padding: 10px 16px;
   border-radius: 999px;
   transition: .2s;
+}
+
+.footer-navigation a {
+  text-decoration: none;
 }
 
 nav.links button:hover,
