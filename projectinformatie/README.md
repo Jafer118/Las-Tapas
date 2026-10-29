@@ -71,7 +71,10 @@ unchanged where they are existing contracts shared by the applications.
    cashier login tables and
    `las-tapas kassa systeem/database/migrate_table_capacities.sql` to align
    the 26 table capacities with the restaurant website. The capacity migration
-   can be safely run more than once.
+   can be safely run more than once. Also run
+   `las-tapas kassa systeem/database/migrate_stock_sync_triggers.sql` to remove
+   conflicting stock-sync triggers and ensure stock changes participate in
+   order transactions.
 4. Configure `LAS_TAPAS_DB_HOST`, `LAS_TAPAS_DB_NAME`, `LAS_TAPAS_DB_USER`, and
    `LAS_TAPAS_DB_PASS` in the web-server environment if the local defaults do
    not match your WAMP/XAMPP installation. Defaults are for a local MySQL

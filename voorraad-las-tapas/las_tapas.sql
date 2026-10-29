@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS voorraad_items (
     PRIMARY KEY (id),
     INDEX idx_voorraad_actief (actief),
     INDEX idx_voorraad_categorie (categorie)
-);
+) ENGINE=InnoDB;
 
 INSERT INTO voorraad_items (naam, categorie, voorraad, minimumvoorraad, prijs, actief)
 SELECT menu_items.naam, menu_items.categorie, menu_items.voorraad, menu_items.minimumvoorraad, menu_items.prijs, 1

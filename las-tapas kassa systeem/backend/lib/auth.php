@@ -5,10 +5,12 @@ require_once __DIR__ . '/validation.php';
 
 $https = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
 $isProduction = strtolower(getenv('APP_ENV') ?: 'production') === 'production';
+$host = strtolower((string) ($_SERVER['HTTP_HOST'] ?? ''));
+$isLocalHttp = !$https && preg_match('/\A(?:localhost|127\.0\.0\.1|\[::1\])(?::\d+)?\z/', $host) === 1;
 if (session_status() !== PHP_SESSION_ACTIVE) {
     session_set_cookie_params([
         'httponly' => true,
-        'secure' => $https || $isProduction,
+        'secure' => $https || ($isProduction && !$isLocalHttp),
         'samesite' => 'Lax',
     ]);
     session_start();
